@@ -1,3 +1,4 @@
+/*
 The MIT License (MIT)
 
 Copyright (c) 2014 gskinner.com, inc.
@@ -19,3 +20,24 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+ */
+(function () {
+	"use strict";
+
+	var s = {};
+	
+	/*
+	 * Description.
+	 * @method page
+	 * @param {Object} path Path of the current page being tracked.
+	 */
+	s.page = function (path) {
+		ga("send", "pageview", "/"+path);
+	};
+
+	s.event = function(category, action, label) {
+		ga("send", "event", category, action, label);
+	};
+	
+	window.Tracking = s;
+})();

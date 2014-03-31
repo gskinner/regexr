@@ -1,0 +1,38 @@
+@mixin linear-gradient($fromColor, $toColor) {
+	background-color: $toColor; /* Fallback Color */
+	background: -webkit-gradient(linear, left top, left bottom, from($fromColor), to($toColor)); /* Saf4+, Chrome */
+	background: -webkit-linear-gradient(top, $fromColor, $toColor); /* Chrome 10+, Saf5.1+, iOS 5+ */
+	background:    -moz-linear-gradient(top, $fromColor, $toColor); /* FF3.6 */
+	background:     -ms-linear-gradient(top, $fromColor, $toColor); /* IE10 */
+	background:      -o-linear-gradient(top, $fromColor, $toColor); /* Opera 11.10+ */
+	background:         linear-gradient(top, $fromColor, $toColor);
+}
+
+@mixin vendor-prefix($name, $argument) {
+	-webkit-#{$name}: #{$argument};
+	-ms-#{$name}: #{$argument};
+	-moz-#{$name}: #{$argument};
+	-o-#{$name}: #{$argument};
+	#{$name}: #{$argument};
+}
+
+@mixin calc ($property: null, $equation: null) {
+	#{$property}: -webkit-calc(#{$equation});
+	#{$property}: -moz-calc(#{$equation});
+	#{$property}: calc(#{$equation});
+}
+
+@function pxToRem($value) {
+	@return #{($value/$font-size)}rem;
+}
+
+%user-select-none {
+	@include vendor-prefix(user-select, none);
+}
+
+@font-face {
+	font-family: $icon-font;
+	src: url('../assets/regexr-icons.eot'), url('../assets/regexr-icons.woff') format('woff'), url('../assets/regexr-icons.ttf') format('truetype'), url('../assets/regexr-icons.svg') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}

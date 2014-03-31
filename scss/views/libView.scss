@@ -1,0 +1,267 @@
+.cursor {
+	&.pointer {
+		cursor: pointer;
+	}
+	&.default {
+		cursor: default;
+	}
+}
+
+.lib {
+	position: absolute;
+	bottom: 0;
+	top: 3rem;
+
+	width: $lib-width;
+	background: $lib-bg;
+	float: left;
+	color: $lib-color;
+
+	.title, .content {
+		background: $lib-title-bg;
+		@include calc("width", "100% - #{$pad*2}");
+	}
+
+	.title span.button {
+		font-weight: bold;
+		color: $white;
+
+		&.noicon {
+			cursor: default;
+			top: -0.1rem;
+		}
+	}
+
+	.content {
+		position: absolute;
+		bottom: 0;
+		width: $lib-width - $pad * 3;
+		height: $lib-content-height;
+		padding: $pad *1.5;
+		line-height: 1.5em;
+
+		h1 {
+			font-size: 1em;
+			margin:0;
+			margin-top: 1em;
+			color: $white;
+		}
+
+		em {
+			font-style: normal;
+			background: $theme-color;
+			margin-left: 1px;
+			color: black;
+		}
+
+		hr {
+			margin-top: 0.375em;
+			margin-bottom: 0.375em;
+			border: 0;
+			border-bottom: solid 1px lighten($lib-bg, 13%);
+		}
+
+		p {
+			margin-top: 1em;
+			margin-bottom: 1em;
+		}
+
+		ul {
+			margin: 0;
+			padding-left: 0;
+			list-style-position: inside;
+		}
+
+		b {
+			color: lighten($lib-color, 15%);
+		}
+
+		code {
+			color: lighten($lib-color, 25%);
+		}
+
+		.load.icon {
+			color: darken($lib-color, 22%);
+			float: right;
+			cursor: pointer;
+
+			&:after {
+				content: "\e212";
+			}
+
+			&:hover {
+				color: $hover-color;
+			}
+		}
+	}
+
+	.button {
+		color: $lib-color;
+	}
+}
+
+/*   EXPR UI test  */
+.title.expr {
+	background: $theme-color;
+}
+.editor.expr {
+	font-weight: bold;
+}
+
+.expr .results {
+	@extend %user-select-none;
+	position: absolute;
+	right: 0;
+	font-size: 0.75rem;
+	font-weight: bold;
+	margin: 0.125rem;
+	margin-right: ($pad);
+	padding: 0.5rem;
+	background: $theme-color;
+	border-radius: 3px;
+	cursor: default;
+	z-index: $z-index-middle;
+
+	&.nomatch {
+		background: $title-bg;
+	}
+	&.error {
+		background: $error-color;
+		font-weight: bold;
+	}
+}
+
+/*   SOURCE UI   */
+.source .measure {
+	position: absolute;
+	top: $pad;
+	bottom: $pad;
+	left: $pad;
+	right: $pad;
+	visibility: hidden;
+}
+
+.source .canvas {
+	position: absolute;
+	background: $editor-bg;
+}
+
+/*  SUBST UI */
+.title.subst {
+	cursor: pointer;
+}
+
+.title.subst:hover .button {
+	color: $hover-color;
+}
+
+.editor.substres {
+	background: $editor-substres-bg;
+
+	.CodeMirror {
+		color: lighten($color, 34%);
+	}
+}
+
+.editor.subst {
+	font-weight: bold;
+	border-bottom: dotted $subst-border $title-bg;
+}
+
+.subst-disabled {
+	.title.subst {
+		color: lighten($color, 40%);
+	}
+
+	.editor.subst, .editor.substres {
+		display:none;
+	}
+
+	.subst .button:before {
+		content: attr(data-alticon);
+	}
+}
+
+.subst-disabled .editor.source {
+	@include calc("height", "100% - #{3*$title-h-pad + 1*$editor-h-pad + 2*$pad}");
+}
+
+.editor.source, .editor.substres {
+	@include calc("height", "100%/2 - #{3*$title-h-pad + 2*$editor-h-pad + 4*$pad}/2 - #{$subst-border}");
+}
+
+/* Syntax highlighting */
+.exp-decorator {
+	color: #b9babf;
+	font-weight: bold;
+}
+
+.exp-related {
+	border-bottom: solid 1px rgba(0, 0, 0, 0.22);
+	border-top: solid 1px rgba(0, 0, 0, 0.22);
+	margin-bottom: -1px;
+	margin-top: -1px;
+}
+
+.exp-related-left {
+	border-left: solid 1px rgba(0, 0, 0, 0.22);
+	margin-left: -1px;
+}
+
+.exp-related-right {
+	border-right: solid 1px rgba(0, 0, 0, 0.22);
+	margin-right: -1px;
+}
+
+.exp-selected {
+	border-top: solid 2px rgba(0, 0, 0, 0.33);
+	border-bottom: solid 2px rgba(0, 0, 0, 0.33);
+	margin-bottom: -2px;
+	margin-top: -2px;
+}
+
+.exp-selected-left {
+	border-left: solid 2px rgba(0, 0, 0, 0.33);
+	margin-left: -2px;
+}
+
+.exp-selected-right {
+	border-right: solid 2px rgba(0, 0, 0, 0.33);
+	margin-right: -2px;
+}
+
+.exp-error {
+	border-bottom: solid 2px $error-color;
+}
+
+.exp-esc {
+	color: #C0C;
+}
+
+.exp-quant, .exp-lazy, .exp-alt {
+	color: #35F;
+}
+
+.exp-anchor {
+	color: #930;
+}
+
+.exp-group, .exp-backref, .exp-lookaround {
+	color: #090;
+}
+
+.exp-charclass, .exp-set, .exp-subst {
+	color: #D70;
+}
+
+.exp-group-0 { background: rgba(0, 250, 0, 0.13); }
+
+.exp-group-1 { background: rgba(0, 235, 0, 0.23); }
+
+.exp-group-2 { background: rgba(0, 220, 0, 0.32); }
+
+.exp-group-3 { background: rgba(0, 205, 0, 0.40); }
+
+.exp-group-set {
+	background: rgba(255, 255, 0, 0.3);
+}

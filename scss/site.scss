@@ -1,0 +1,43 @@
+.video {
+	position: absolute;
+	z-index: $z-index-top + 100;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: rgba(30,30,30,.95);
+	cursor: pointer;
+
+	iframe {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		@include vendor-prefix(transform, translate(-50%, -50%));
+	}
+
+	&:before {
+		content: "x";
+		color: $white;
+		position: absolute;
+		top: $pad;
+		right: $pad;
+	}
+}
+
+.not-supported {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: $lib-bg;
+	color: $lib-color;
+	z-index: $z-index-top;
+
+	.content {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		@include vendor-prefix(transform, translate(-50%, -50%));
+	}
+}

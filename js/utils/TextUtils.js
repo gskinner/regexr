@@ -1,3 +1,4 @@
+/*
 The MIT License (MIT)
 
 Copyright (c) 2014 gskinner.com, inc.
@@ -19,3 +20,13 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+ */
+var TextUtils = {};
+
+TextUtils.shorten = function(str, length) {
+	return !str ? str : (str.length <= length) ? str : str.substr(0,length-1)+"\u2026";
+};
+
+TextUtils.htmlSafe = function(str) {
+	return str==null ? "" : (""+str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/  /g, " &nbsp;");
+};

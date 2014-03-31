@@ -1,3 +1,4 @@
+/*
 The MIT License (MIT)
 
 Copyright (c) 2014 gskinner.com, inc.
@@ -19,3 +20,27 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+ */
+(function () {
+	var s = {};
+
+// public properties:
+
+// private properties:
+	s._currentPath = null;
+
+// public methods:
+	s.go = function (url) {
+		if (s._currentPath === url) { return; }
+		s._currentPath = url;
+
+		if (window.history.pushState) {
+			window.history.pushState(null, null, url || "/");
+		} else {
+			window.location.hash = url || "";
+		}
+	};
+
+// private methods:
+	window.BrowserHistory = s;
+})();

@@ -1,0 +1,109 @@
+.menu {
+	@extend %user-select-none;
+
+	display: none;
+	cursor: default;
+
+	header {
+		font-weight: bold;
+		display: block;
+		color: $title-bg;
+		font-family: $sans-serif;
+	}
+
+	&.flags {
+		line-height: 1.75rem;
+		min-width: 10rem;
+	}
+
+	&.save, &.share {
+		label {
+			display: inline-block;
+			margin-top: 0.25em;
+		}
+
+		input[type="button"] {
+			width: 40%;
+			background: $theme-color;
+			margin-top: 0.5em;
+			font-weight: bold;
+			font-family: $sans-serif;
+			float: right;
+			cursor: pointer;
+
+			&:hover {
+				color: $hover-color;
+			}
+		}
+
+	  	.public-wrap {
+		  padding-top: .5rem;
+		}
+
+	  	input[type="checkbox"] {
+	 	 width: 13px;
+	     height: 13px;
+	     padding: 0;
+	     margin:0;
+	     vertical-align: bottom;
+	     position: relative;
+	     top: -1px;
+		}
+
+		.update-button {
+		  position: absolute;
+		}
+
+		.error-default {
+			overflow: hidden;
+			float: left;
+			padding-top: 0.45rem;
+
+			height: 0.0;
+			@include vendor-prefix(transition, height $default-transition-duration);
+		}
+
+		.error-show {
+			@extend .view-show-visible;
+			height: 5.65rem;
+		}
+	}
+
+	&.share {
+		.success {
+			position: absolute;
+			top: pxToRem(42px);
+		}
+
+		.information-default {
+			@extend .view-show;
+
+			overflow: hidden;
+
+			height: 0.0;
+			@include vendor-prefix(transition, height $default-transition-duration);
+		}
+
+		.information-show {
+			@extend .view-show-visible;
+			height: 3rem + $pad;
+		}
+
+		#copyTxt {
+			@extend input;
+			margin-bottom: 0;
+			display: inline-block;
+		}
+	}
+
+	&.save {
+		.error-input {
+			border-color: $error-color;
+			border-width: 1px;
+		}
+
+		.error-text {
+			color: $error-color;
+		}
+	}
+}

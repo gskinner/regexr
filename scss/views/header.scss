@@ -1,0 +1,53 @@
+.top {
+	background: $top-bg;
+	color: $top-color;
+	height: $top-height;
+	padding: $pad;
+	font-size: 0.75rem;
+
+	h1 {
+		margin: 0;
+		position: relative;
+		font-size: 1.25rem;
+		font-weight: normal;
+		display: inline-block;
+		vertical-align: middle;
+		top: -0.25rem;
+		color:$theme-color;
+
+		&.icon {
+			font-size: 1.5rem;
+			top: -0.25rem;
+			margin-right: 0.125rem;
+		}
+	}
+
+	.links {
+		float: right;
+		margin-top: 0.3rem;
+
+		a {
+			margin-right: 1em;
+			color: shade($theme-color, 25%);
+
+			&.video-link {
+				&.cta {
+					color: $white;
+				}
+			}
+
+			&.transition {
+				@include vendor-prefix(transition, color $cta-transition-duration);
+			}
+
+			&:hover {
+				@include vendor-prefix(transition, color 0);
+				color: $white;
+			}
+		}
+
+		a:last-child {
+			margin-right: 0;
+		}
+	}
+}
