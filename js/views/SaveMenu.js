@@ -124,9 +124,11 @@ SOFTWARE.
 		if (id && token) {
 			this._saveType = "update";
 			this.updateBtn.value = "Updating...";
+			Tracking.event("save", "update-click");
 		} else {
 			this._saveType = "save";
 			this.submitBtn.value = "Saving...";
+			Tracking.event("save", "save-click");
 		}
 
 		$.addClass(this.updateBtn, "disabled");

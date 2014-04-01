@@ -75,14 +75,17 @@ SOFTWARE.
 		$.addClass($.el("#shareCopyLink", this.element), "hidden");
 
 		this.createNoFlashCopyLink(this.copyExpression, function() {
+			Tracking.event("share", "copy", "expression-noflash");
 			return _this.docsView.getExpression();
 		});
 
 		this.createNoFlashCopyLink(this.copyPattern, function() {
+			Tracking.event("share", "copy", "pattern-noflash");
 			return _this.docsView.getPattern();
 		});
 
 		this.createNoFlashCopyLink(this.copyJavascript, function() {
+			Tracking.event("share", "copy", "javascript-noflash");
 			return _this.createJavascriptCopy();
 		});
 	};
