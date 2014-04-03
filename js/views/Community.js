@@ -107,6 +107,10 @@ SOFTWARE.
 			this.tagsInput.showLoading(false);
 		}
 	};
+	
+	p.updateFavoriteRowStyle = function() {
+		// do nothing. Override Favourites.
+	};
 
 	scope.Community = Community;
 

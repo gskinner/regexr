@@ -91,6 +91,11 @@
 		background: $theme-color;
 		color: $color;
 	}
+	
+	.item.removed {
+		text-decoration: line-through;
+		opacity: 0.5;
+	}
 }
 
 .button {

@@ -311,6 +311,17 @@ SOFTWARE.
 		} else {
 			$.swapClass(this.favoriteBtn, "full", "empty")
 		}
+		this.updateFavoriteRowStyle();
+	};
+	
+	p.updateFavoriteRowStyle = function() {
+		// TODO: this can probably be improved, but it works for now.
+		if (!this.list.selectedElement) { return; }
+		if (!Settings.getFavorite(this.list.selectedItem.id)) {
+			$.addClass(this.list.selectedElement, "removed");
+		} else {
+			$.removeClass(this.list.selectedElement, "removed");
+		}
 	};
 
 	scope.Favorites = Favorites;
