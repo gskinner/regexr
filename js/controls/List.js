@@ -40,6 +40,7 @@ SOFTWARE.
 	p.helpers = null;
 	p.selectedIndex = -1;
 	p.selectedItem = null;
+	p.selectedElement = null;
 
 	p.focusProxy = null;
 	p.keyupProxy = null;
@@ -134,6 +135,7 @@ SOFTWARE.
 
 		this.selectedIndex = idx;
 		this.selectedItem = this.data[this.selectedIndex];
+		this.selectedElement = el;
 
 		var rowRect = el.getBoundingClientRect();
 		var elRect = this.element.getBoundingClientRect();
