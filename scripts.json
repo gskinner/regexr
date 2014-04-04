@@ -10,6 +10,7 @@
 		"js/BrowserHistory.js",
 		"js/events/Event.js",
 		"js/events/EventDispatcher.js",
+		"js/events/DataEvent.js",
 		"js/utils/Utils.js",
 		"js/events/TransitionEvents.js",
 		"js/Settings.js",

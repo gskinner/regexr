@@ -26,8 +26,10 @@ SOFTWARE.
 
 	var s = {};
 
+	createjs.EventDispatcher.initialize(s);
+
 	s.setRating = function(id, value) {
-		store.set("r"+id, value);
+		s._saveValue("r"+id, value);
 	};
 
 	s.getRating = function(id) {
@@ -36,9 +38,10 @@ SOFTWARE.
 
 	s.setFavorite = function(id, value) {
 		if (value) {
-			store.set("f"+id, 1);
+			s._saveValue("f"+id, 1);
 		} else {
 			store.remove("f"+id);
+			s.dispatchEvent(new DataEvent("change", {type:"f"+id, value:value}));
 		}
 	};
 
@@ -63,7 +66,7 @@ SOFTWARE.
 
 	s.setUpdateToken = function(patternID, token) {
 		token.localExpire = new Date().getTime() + (1000*60*60*24);
-		store.set("s"+patternID, token);
+		s._saveValue("s"+patternID, token);
 	};
 
 	s.getUpdateToken = function(patternID) {
@@ -83,11 +86,16 @@ SOFTWARE.
 
 	s.trackVisit = function() {
 		var visitCount = store.get("v") || 0;
-		store.set("v", ++visitCount);
+		s._saveValue("v", ++visitCount);
 	};
 
 	s.getVisitCount = function() {
 		return store.get("v") || 0;
+	};
+
+	s._saveValue = function(key, value) {
+		store.set(key, value);
+		s.dispatchEvent(new DataEvent("change", {type:key, value:value}));
 	};
 
 	scope.Settings = s;

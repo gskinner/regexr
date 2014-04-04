@@ -198,6 +198,14 @@ SOFTWARE.
 		return item;
 	};
 
+	p.getElementAt = function(idx) {
+		return this.element.childNodes[idx];
+	};
+
+	p.getDataAt = function(idx) {
+		return this.data[idx];
+	};
+
 	p.handleEvent = function(evt) {
 		this.triggerChange(evt.currentTarget.index);
 	};

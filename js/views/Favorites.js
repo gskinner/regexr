@@ -35,6 +35,7 @@ SOFTWARE.
 	p.docView = null;
 	p.rating = null;
 	p._visible = false;
+	p._settingsChangeProxy = null;
 
 	p.init = function(element, content) {
 		this.element = element;
@@ -68,6 +69,8 @@ SOFTWARE.
 				this
 		);
 
+		this._settingsChangeProxy = $.bind(this, this.handleSettingsChange);
+
 		this.list.on("change", $.bind(this, this.onListChange));
 		this.list.on("enter", $.bind(this, this.handleListEnter));
 		this.initView();
@@ -88,6 +91,8 @@ SOFTWARE.
 		this.content.appendChild(this.contentTemplate);
 		this.content.addEventListener("click", this.loadClickProxy);
 
+		Settings.addEventListener("change", this._settingsChangeProxy);
+
 		this.createRating();
 		this.search();
 		this.onListChange();
@@ -98,11 +103,37 @@ SOFTWARE.
 		this._visible = false;
 		$.addClass(this.element, "hidden");
 		this.content.removeEventListener("click", this.loadClickProxy);
+		Settings.removeEventListener("change", this._settingsChangeProxy);
 	};
 
 	p.createRating = function() {
 		this.rating = new Rating(0, 5, $.el(".rating", this.content), true);
 		this.rating.addEventListener("change", $.bind(this, this.handleRatingChange));
+	};
+
+	p.handleSettingsChange = function(event)  {
+		var data = event.data;
+		var id = Number(data.type.substr(1));
+		var type = data.type.charAt(0);
+
+		if (type == "f") {
+			var idx = this.getIndexByid(id);
+			if (idx != -1) {
+				this.updateFavorite(id);
+			} else {
+				this.search();
+			}
+		}
+	};
+
+	p.getIndexByid = function(id) {
+		var listData = this.list.data;
+		for (var i=0;i<listData.length;i++) {
+			if (listData[i].id == id) {
+				return i;
+			}
+		}
+		return -1;
 	};
 
 	p.showLoading = function(value) {
@@ -127,6 +158,8 @@ SOFTWARE.
 	};
 
 	p.handleFavoritesLoad = function(data) {
+		if (!this._visible) { return; }
+
 		if (data && data.results) {
 			this.list.setData(data.results);
 		} else {
@@ -305,23 +338,34 @@ SOFTWARE.
 	};
 
 	p.updateFavorite = function(id) {
-		var isFav = Settings.getFavorite(id);
-		if (isFav) {
-			$.swapClass(this.favoriteBtn, "empty", "full")
-		} else {
-			$.swapClass(this.favoriteBtn, "full", "empty")
+		var selData = this.list.getDataAt(this.list.selectedIndex);
+		if (selData.id == id) {
+			var isFav = Settings.getFavorite(id);
+			if (isFav) {
+				$.swapClass(this.favoriteBtn, "empty", "full")
+			} else {
+				$.swapClass(this.favoriteBtn, "full", "empty")
+			}
 		}
-		this.updateFavoriteRowStyle();
+
+		this.updateFavoriteRowStyle(this.getIndexByid(id));
 	};
-	
-	p.updateFavoriteRowStyle = function() {
-		// TODO: this can probably be improved, but it works for now.
-		if (!this.list.selectedElement) { return; }
-		if (!Settings.getFavorite(this.list.selectedItem.id)) {
-			$.addClass(this.list.selectedElement, "removed");
+
+	p.updateFavoriteRowStyle = function(index) {
+		if (index < 0) { return false; }
+
+		var el = this.list.getElementAt(index);
+		if (!el) { return; }
+
+		var data = this.list.getDataAt(index);
+
+		if (!Settings.getFavorite(data.id)) {
+			$.addClass(el, "removed");
 		} else {
-			$.removeClass(this.list.selectedElement, "removed");
+			$.removeClass(el, "removed");
 		}
+
+		return true;
 	};
 
 	scope.Favorites = Favorites;

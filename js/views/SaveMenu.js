@@ -159,9 +159,12 @@ SOFTWARE.
 	p.handleSaveSuccess = function(result) {
 		var isFav = $.hasClass(this.favouriteChk, "checked");
 		var id = result.results[0].id;
-		Settings.setFavorite(id, isFav);
 
-		setTimeout($.bind(this, this.showSaveSuccessView), (this.saveStartTime+s.MIN_SAVE_TIME)-Date.now());
+		var _this = this;
+		setTimeout(function() {
+			_this.showSaveSuccessView();
+			Settings.setFavorite(id, isFav);
+		}, (this.saveStartTime+s.MIN_SAVE_TIME)-Date.now());
 	};
 
 	p.resetForm = function() {
