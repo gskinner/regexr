@@ -3,8 +3,10 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule . / [L]
 
+AddType 'application/x-font-woff' .woff
+
 # BEGIN GZIP
 <ifmodule mod_deflate.c>
-AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml text/css application/x-javascript application/javascript
+AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml text/css application/x-javascript application/javascript application/x-font-woff application/octet-stream
 </ifmodule>
 # END GZIP
