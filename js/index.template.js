@@ -55,7 +55,9 @@ SOFTWARE.
 		var docView = new DocView($.el("#docview"));
 		var def = $.el("#docview .default");
 		DocView.DEFAULT_TEXT = (def.textContent || def.innerText).trim().replace("{{ctrl}}", Utils.getCtrlKey().toLowerCase());
-		docView.setText(DocView.DEFAULT_TEXT);
+		docView.setText(); // need to do this as well as the defer below, to keep the history clean.
+		$.defer(docView, docView.setText); // this fixes an issue with CodeMirror returning bad char positions at specific widths.
+		
 		def.style.display = "none";
 
 		docView.setExpression(DocView.DEFAULT_EXPRESSION).setSubstitution(DocView.DEFAULT_SUBSTITUTION);

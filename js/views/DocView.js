@@ -113,7 +113,6 @@ SOFTWARE.
 
 		var sourceEditor = $.el(".editor.source", el);
 		var srcCM = this.sourceCM = this.getCM(sourceEditor, {lineWrapping: true});
-
 		srcCM.on("change", $.bind(this, this.deferUpdate));
 		srcCM.on("scroll", $.bind(this, this.drawSourceHighlights));
 
@@ -157,8 +156,7 @@ SOFTWARE.
 		this.saveTooltip = Tooltip.add(saveBtn, $.el(".menu.save"), {mode:"press", controller:this.saveMenu, className:"save"});
 
 		window.addEventListener("resize", $.bind(this, this.deferResize));
-		this.resize();
-		this.deferResize(); // this (hopefully) fixes an odd bug in some browsers where the initial draw is wrong.
+		this.deferResize(); // defering this resolves some issues at certain sizes.
 		this.setupUndo();
 
 		this.setInitialExpression();
@@ -497,10 +495,10 @@ SOFTWARE.
 		$.defer(this, this.update, "update", t);
 	};
 
-	p.deferResize = function() {
+	p.deferResize = function(t) {
 		this.sourceHighlighter.clear();
 		$.addClass(this.sourceCanvas, "hidden");
-		$.defer(this, this.resize, "resize", 500);
+		$.defer(this, this.resize, "resize", t||500);
 	};
 
 	p.getCM = function(target, opts, width, height) {
