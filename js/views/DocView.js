@@ -158,6 +158,7 @@ SOFTWARE.
 
 		window.addEventListener("resize", $.bind(this, this.deferResize));
 		this.resize();
+		this.deferResize(); // this (hopefully) fixes an odd bug in some browsers where the initial draw is wrong.
 		this.setupUndo();
 
 		this.setInitialExpression();

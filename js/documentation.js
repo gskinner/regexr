@@ -520,13 +520,38 @@ var errors = {
 	// infinite is handled in the Help section.
 };
 
-// add escaped characters:
+// add escaped characters to the reference:
+var reference = library.kids[1];
 var chars = "\t\n\v\f\r\0.\\+*?^$[]{}()|/";
 var tokens = "tnvfr0";
-var kids = library.kids[1].kids[2].kids;
+var kids = reference.kids[2].kids;
 for (var i=0; i<chars.length; i++) {
 	kids.push(Docs.getEscCharDocs(chars[i], tokens[i], misc.kids[0].tip));
 }
+
+
+/*
+// add the "All" reference section:
+kids = reference.kids;
+kids.unshift({
+	label: "All",
+	desc: "All RegEx tokens supported in JS.",
+	kids: []
+	});
+var all = kids[0].kids;
+for (i=0; i<kids.length; i++) {
+	var entries = kids[i].kids;
+	for (var j=0; j<entries.length; j++) {
+		var entry = entries[j];
+		var o = {};
+		for (var n in entry) { o[n] = entry[n]; }
+		o.label = o.label||o.id;
+		delete(o.id);
+		all.push(o);
+	}
+}
+//*/
+
 
 Docs.setContent({errors:errors, library:library, misc:misc});
 
