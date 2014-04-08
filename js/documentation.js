@@ -46,8 +46,9 @@ var library = {
 			{
 			label:"Substitution panel",
 			desc:"Click the <b>Substitution</b> title bar below the <b>Text</b> panel to show or hide the <b>Substitution</b> panel."+
-				"<p>Matches in the <b>Text</b> panel will be replaced by the substitution string and displayed as you type.</p>"+
-				"<p>Roll over highlighted tokens in the substitution string for information.</p>"
+				"<p>Matches in the <b>Text</b> panel are replaced by the substitution string & displayed as you type.</p>"+
+				"<p>Escaped characters compatible with the JS string format are supported, such as <code>\\n</code>, <code>\\t</code> & <code>\\u0009</code>.</p>"+
+				"<p>Roll over tokens in the substitution string for information.</p>"
 			},
 			{
 			label:"Library panel",
@@ -372,6 +373,11 @@ var library = {
 				label: "escaped $",
 				desc:"Inserts a dollar sign character ($).",
 				token:"$$$$"
+				},
+				{
+				label: "escaped characters",
+				token: "\\n",
+				desc: "Escaped characters compatible with the JS string format, such as <code>\\n</code>, <code>\\t</code>, <code>\\x09</code>, & <code>\\u0009</code> are supported in the substitution string."
 				}
 			]
 			},
