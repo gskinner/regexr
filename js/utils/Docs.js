@@ -122,7 +122,7 @@ Docs.forToken = function(token) {
 	// Special cases:
 	if (clss == "quant") { node = ids[clss]; }
 	if (type == "char" || clss == "esc") {
-		if (clss == "esc") { pre = ((ids[type]&&ids[type].desc)||"Escaped character.")+" "; }
+		if (clss == "esc") { pre = ((ids[type]&&ids[type].desc)||"<b>Escaped character.</b>")+" "; }
 		node = ids["char"];
 	}
 
