@@ -482,7 +482,7 @@ var misc = {
 		tip:"Matches a {{getChar()}} character (char code {{code}})."
 		},
 		{
-		id:"subst_char",
+		id:"js_char",
 		label: "character",
 		tip:"Inserts a {{getChar()}} character (char code {{code}})."
 		},

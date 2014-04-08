@@ -123,7 +123,7 @@ Docs.forToken = function(token) {
 	if (clss == "quant") { node = ids[clss]; }
 	if (type == "char" || clss == "esc") {
 		if (clss == "esc") { pre = ((ids[type]&&ids[type].desc)||"<b>Escaped character.</b>")+" "; }
-		node = ids["char"];
+		node = ids[token.js ? "js_char" : "char"];
 	}
 
 	tip = node ? (node.tip||node.desc) : "no docs for type='"+type+"'";

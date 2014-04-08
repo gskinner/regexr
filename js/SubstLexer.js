@@ -54,8 +54,7 @@ SOFTWARE.
 			}
 
 			if (!token.type) {
-				//continue;
-				token.type = "subst_char";
+				token.type = "js_char";
 				token.code = c.charCodeAt(0);
 			}
 
