@@ -100,7 +100,7 @@ module.exports = function (grunt) {
 		},
 
 		clean: {
-			build: ["<%= deployFolder %>!(v1|.git|php)**"],
+			build: ["<%= deployFolder %>!(v1|.git|php|sitemap.txt|*.md)**"],
 			postBuild: ["<%= deployFolder %>**/*.tmp"]
 		}
 	});
