@@ -439,7 +439,12 @@ SOFTWARE.
 
 		this.substHighlighter.draw(token);
 		this.substHover.token = token;
-		if (!this.error) { source = source.replace(regex, str); }
+		if (!this.error && this.substLexer.errors.length == 0) {
+			try {  str = eval('"'+str.replace(/"/g,'\\"')+'"'); } catch (e) {
+				console.error("UNCAUGHT js string error", e);
+			}
+			source = source.replace(regex, str);
+		}
 		this.substResCM.setValue(source);
 	};
 

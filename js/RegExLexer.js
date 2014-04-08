@@ -133,11 +133,7 @@ SOFTWARE.
 			} else if (c == "{" && !charset && str.substr(i).search(/^{\d+,?\d*}/) != -1) {
 				this.parseQuant(str, token);
 			} else if (c == "\\") {
-				if (i+1 == closeIndex) {
-					token.err = "esccharopen";
-				} else {
-					this.parseEsc(str, token, charset, capgroups);
-				}
+				this.parseEsc(str, token, charset, capgroups, closeIndex);
 			} else if (c == "?" && !charset) {
 				if (!prev || prev.clss != "quant") {
 					token.type = charTypes[c];
@@ -148,7 +144,7 @@ SOFTWARE.
 					token.type = "lazy";
 					token.related = [prev];
 				}
-			} else if (c == "-" && charset && prev.code != null && str.length > i+1 && prev.prev && prev.prev.type != "range") {
+			} else if (c == "-" && charset && prev.code != null && prev.prev && prev.prev.type != "range") {
 				// this may be the start of a range, but we'll need to validate after the next token.
 				token.type = "range";
 			} else {
@@ -237,14 +233,16 @@ SOFTWARE.
 		return token;
 	};
 
-	p.parseEsc = function(str, token, charset, capgroups) {
-		// note \x{} not supported in JS
-		var i = token.i, match, o;
+	p.parseEsc = function(str, token, charset, capgroups, closeIndex) {
+		// jsMode tries to read escape chars as a JS string which is less permissive than JS RegExp,
+		// and doesn't support \c or backreferences
+		var i = token.i, jsMode = token.js, match, o;
 		var sub = str.substr(i+1), c=sub[0];
+		if (i+1 == (closeIndex||str.length)) { token.err = "esccharopen"; return; }
 
 		// TODO: Note that in Chrome: \u & \x will match u & x in a set, but outside it they are decomposed \\x
 
-		if (!charset && (match = sub.match(/^\d\d?/)) && (o = capgroups[parseInt(match[0])-1])) {
+		if (!jsMode && !charset && (match = sub.match(/^\d\d?/)) && (o = capgroups[parseInt(match[0])-1])) {
 			// back reference - only if there is a matching capture group
 			token.type = "backref";
 			token.related = [o];
@@ -261,12 +259,14 @@ SOFTWARE.
 			token.code = parseInt(sub,16);
 		} else if (match = sub.match(/^x[\da-fA-F]{2}/)) {
 			// hex ascii: \xFF
+			// \x{} not supported in JS regexp
 			sub = match[0].substr(1);
 			token.type = "eschexadecimal";
 			token.l += 3;
 			token.code = parseInt(sub,16);
-		} else if (match = sub.match(/^c[a-zA-Z]/)) {
+		} else if (!jsMode && (match = sub.match(/^c[a-zA-Z]/))) {
 			// control char: \cA \cz
+			// not supported in JS strings
 			sub = match[0].substr(1);
 			token.type = "esccontrolchar";
 			token.l += 2;
@@ -275,17 +275,19 @@ SOFTWARE.
 		} else if (match = sub.match(/^[0-7]{1,3}/)) {
 			// octal ascii
 			sub = match[0];
-			if (parseInt(sub, 8) > 255) { sub = sub.substr(0,2); }
+			if (parseInt(sub, 8) > 255) { sub = sub.substr(0, 2); }
 			token.type = "escoctal";
 			token.l += sub.length;
-			token.code = parseInt(sub,8);
-		} else if (c == "c") {
+			token.code = parseInt(sub, 8);
+		} else if (!jsMode && c == "c") {
 			// control char without a code - strangely, this is decomposed into literals equivalent to "\\c"
 			return this.parseChar(str, token, charset); // this builds the "/" token
 		} else {
 			// single char
 			token.l++;
-			token.type = RegExLexer.ESC_CHARS_SPECIAL[c];
+			if (jsMode && (c == "x" || c == "u")) { token.err = "esccharbad"; }
+			if (!jsMode) { token.type = RegExLexer.ESC_CHARS_SPECIAL[c]; }
+			
 			if (token.type) {
 				token.clss = (c.toLowerCase() == "b") ? "anchor" : "charclass";
 				return token;
