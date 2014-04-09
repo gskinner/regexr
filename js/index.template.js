@@ -40,6 +40,10 @@ SOFTWARE.
 			return;
 		}
 
+		if (document.location.host != "regexr.com" && document.location.host != "www.regexr.com") {
+			$.removeClass($.el(".beta-banner"), "hidden");
+		}
+
 		// Setup our copy functionality.
 		ZeroClipboard.config(
 			{
