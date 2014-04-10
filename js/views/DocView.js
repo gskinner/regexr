@@ -28,7 +28,7 @@ SOFTWARE.
 	var p = DocView.prototype;
 
 	DocView.DEFAULT_EXPRESSION = "/([A-Z])\\w+/g";
-	DocView.DEFAULT_SUBSTITUTION = "[$&]";
+	DocView.DEFAULT_SUBSTITUTION = "\\n# $&:\\n\\t";
 	DocView.VALID_FLAGS = "igm";
 
 	p.isMac = false; // for keyboard shortcuts.
