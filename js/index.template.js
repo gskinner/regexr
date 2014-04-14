@@ -35,6 +35,7 @@ SOFTWARE.
 	p._ctaAnimation = null;
 
 	p.init = function () {
+	
 		// If the browser is not supported, don't let them in.
 		if (!$.isSupported()) {
 			return;
@@ -106,7 +107,7 @@ SOFTWARE.
 			this._ctaAnimation(this._ctaAnimation);
 			var animationStopInt = setTimeout(function() {
 				anim.stop = true;
-			}, 19900);
+			}, 30000);
 		}
 
 		Settings.trackVisit();
