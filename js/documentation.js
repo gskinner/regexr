@@ -34,7 +34,7 @@ var library = {
 			{
 			label:"Expression panel",
 			desc:"This is where you enter a regular expression to test. The results in the <b>Text</b> panel will update as you type. Roll over the expression for information on each token."+
-				"<p>The buttons to the right allow you to save & share your pattern, or edit the expression flags.</p>"+
+				"<p>The buttons to the right allow you to save & share your pattern, or edit the expression flags. Saved patterns can be updated for 24hrs.</p>"+
 				"<p>The results bubble will show the number of matches, or indicate errors.</p>"
 			},
 			{
