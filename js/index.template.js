@@ -133,8 +133,10 @@ SOFTWARE.
 			id = match[1];
 		}
 
-		var _this = this;
+		if (ExpressionModel.id == $.idToNumber(id)+'') { return; }
+
 		if ($.isIDValid(id)) {
+			var _this = this;
 			ServerModel.getPatternByID(id).then(function (data) {
 				ExpressionModel.setLastSave(data);
 				var pattern = $.parsePattern(data.pattern);

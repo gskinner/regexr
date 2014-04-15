@@ -252,9 +252,11 @@ SOFTWARE.
 	};
 
 	p.handleListEnter = function() {
+		var id =  this.list.selectedItem.id;
+		if (ExpressionModel.id == id) { return; }
+
 		this.insertContent("all");
 
-		var id =  this.list.selectedItem.id;
 		ExpressionModel.setID(id);
 		if (id > -1) {
 			BrowserHistory.go($.createID(id));
