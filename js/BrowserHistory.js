@@ -24,10 +24,12 @@ SOFTWARE.
 (function () {
 	var s = {};
 
+	createjs.EventDispatcher.initialize(s);
 // public properties:
 
 // private properties:
 	s._currentPath = null;
+	s._currentLocation = null;
 
 // public methods:
 	s.go = function (url) {
@@ -35,10 +37,38 @@ SOFTWARE.
 		s._currentPath = url;
 
 		if (window.history.pushState) {
-			window.history.pushState(null, null, url || "/");
+			History.pushState(null, null, url || "/");
 		} else {
 			window.location.hash = url || "";
 		}
+
+		s._currentLocation = document.location.toString();
+	};
+
+	s.init = function() {
+		History.init();
+
+		// Use history.js for modern browsers
+		if (window.history.pushState) {
+			History.Adapter.bind(window, 'statechange', $.bind(s, s.handleHistoryChange));
+		} else {
+			// Custom support for #tags (for ie9)
+			window.addEventListener("hashchange", $.bind(s, s.handleHashChange));
+		}
+	};
+
+	s.handleHistoryChange = function(evt) {
+		s.dispatchEvent("change");
+	};
+
+	s.handleHashChange = function(evt) {
+		var path = document.location.hash.substr(1);
+		if (s._currentPath === path) {
+			return;
+		}
+		s._currentPath = path;
+
+		s.dispatchEvent("change");
 	};
 
 // private methods:

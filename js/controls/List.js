@@ -206,6 +206,15 @@ SOFTWARE.
 		return this.data[idx];
 	};
 
+	p.findIndexByValue = function(key, value) {
+		for (var i=0;i<this.data.length;i++) {
+			if (this.data[i][key] == value) {
+				return i;
+			}
+		}
+		return -1;
+	};
+
 	p.handleEvent = function(evt) {
 		this.triggerChange(evt.currentTarget.index);
 	};
