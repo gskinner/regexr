@@ -8,9 +8,9 @@
 }
 
 .lib {
-	position: absolute;
-	bottom: 0;
-	top: 3rem;
+	position: relative;
+	@include calc("height", "100% - #{$top-h-pad}");
+	top: 0;
 
 	width: $lib-width;
 	background: $lib-bg;
