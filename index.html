@@ -341,7 +341,9 @@ Since our initial load can cause errors, we just catch them and show the overlay
 </script>
 
 <!-- <% if (build) { %> -->
-	<%=index %>
+	<script>
+		// injected on build:<%=index %>
+	</script>
 <!-- <% } else { %> -->
 	<script src="js/index.template.js"></script>
 <!-- <% } %> -->

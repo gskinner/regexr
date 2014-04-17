@@ -6,7 +6,22 @@ var folderMount = function folderMount(connect, point) {
 };
 
 module.exports = function (grunt) {
-
+	
+	/*
+	Load all the tasks we need
+	Usually we use uglifyJS for code minification.
+	However uglify breaks the Unicode characters Codemirror uses in its RegEx expressions,
+	whereas yui does not.
+	 */
+	grunt.loadNpmTasks("grunt-yui-compressor");
+	grunt.loadNpmTasks("grunt-contrib-sass");
+	grunt.loadNpmTasks("grunt-contrib-connect");
+	grunt.loadNpmTasks('grunt-contrib-clean');
+	grunt.loadNpmTasks('grunt-contrib-htmlmin');
+	grunt.loadNpmTasks('grunt-contrib-copy');
+	grunt.loadTasks('tasks/');
+	
+	
 	grunt.initConfig({
 		pkg: grunt.file.readJSON("package.json"),
 		deployFolder: 'build/',
@@ -106,6 +121,33 @@ module.exports = function (grunt) {
 	});
 
 	/**
+	 * Runs the index.html file through grunts template system.
+	 *
+	 */
+	grunt.registerTask("parse-index", function (type) {
+		var templateFile = grunt.file.read("index.html");
+		var indexJs = minifyJS(grunt.file.read("js/index.template.js"));
+		var buildIndexTag = "\n"+indexJs+"";
+
+		var output = grunt.template.process(templateFile, {data:{build:true, index:buildIndexTag, noCache:Date.now()}})
+
+		//Write a temp html file, the htmlmin task will minify it to index.html
+		grunt.file.write(grunt.config.get("deployFolder")+"index.html.tmp", output);
+	});
+
+	grunt.registerTask("build", [
+		"clean:build",
+		"sass",
+		"cssmin",
+		"min",
+		"parse-index",
+		"htmlmin",
+		"copy",
+		"clean:postBuild",
+		"connect:build"
+	]);
+
+	/**
 	 * Loads our scripts.json file.
 	 *
 	 */
@@ -147,45 +189,4 @@ module.exports = function (grunt) {
 		var result = uglify.minify(script, uglifyConfig);
 		return result.code;
 	}
-
-	/**
-	 * Runs the index.html file through grunts template system.
-	 *
-	 */
-	grunt.registerTask("parse-index", function (type) {
-		var templateFile = grunt.file.read("index.html");
-		var indexJs = minifyJS(grunt.file.read("js/index.template.js"));
-		var buildIndexTag = "<script>"+indexJs+"</script>";
-
-		var output = grunt.template.process(templateFile, {data:{build:true, index:buildIndexTag, noCache:Date.now()}})
-
-		//Write a temp html file, the htmlmin task will minify it to index.html
-		grunt.file.write(grunt.config.get("deployFolder")+"index.html.tmp", output);
-	});
-
-	grunt.registerTask("build", [
-		"clean:build",
-		"sass",
-		"cssmin",
-		"min",
-		"parse-index",
-		"htmlmin",
-		"copy",
-		"clean:postBuild",
-		"connect:build"
-	]);
-
-	/*
-	Load all the tasks we need
-	Usually we use uglifyJS for code minification.
-	However uglify breaks the Unicode characters Codemirror uses in its RegEx expressions,
-	whereas yui does not.
-	 */
-	grunt.loadNpmTasks("grunt-yui-compressor");
-	grunt.loadNpmTasks("grunt-contrib-sass");
-	grunt.loadNpmTasks("grunt-contrib-connect");
-	grunt.loadNpmTasks('grunt-contrib-clean');
-	grunt.loadNpmTasks('grunt-contrib-htmlmin');
-	grunt.loadNpmTasks('grunt-contrib-copy');
-	grunt.loadTasks('tasks/');
 };
