@@ -71,6 +71,8 @@ SOFTWARE.
 
 		this._settingsChangeProxy = $.bind(this, this.handleSettingsChange);
 
+		ExpressionModel.on("change", this.handleExpressionChange, this);
+
 		this.list.on("change", $.bind(this, this.onListChange));
 		this.list.on("enter", $.bind(this, this.handleListEnter));
 		this.initView();
@@ -157,6 +159,13 @@ SOFTWARE.
 		}
 	};
 
+	p.handleExpressionChange = function(evt) {
+		if (!this._visible) { return; }
+
+		var index = this.list.findIndexByValue('id', ExpressionModel.id+'');
+		this.list.setSelectedIndex(index);
+	};
+
 	p.handleFavoritesLoad = function(data) {
 		if (!this._visible) { return; }
 
@@ -235,7 +244,7 @@ SOFTWARE.
 			this.docView.showSubstitution();
 		} else if (type == "all") {
 			if (ExpressionModel.id != data.id) {
-				ExpressionModel.id = data.id;
+				ExpressionModel.setID(data.id);
 				this.docView.populateAll(expression, flags, data.content, data.replace);
 				ServerModel.trackVisit(data.id);
 			}
@@ -243,10 +252,12 @@ SOFTWARE.
 	};
 
 	p.handleListEnter = function() {
+		var id =  this.list.selectedItem.id;
+		if (ExpressionModel.id == id) { return; }
+
 		this.insertContent("all");
 
-		var id =  this.list.selectedItem.id;
-		ExpressionModel.id = id;
+		ExpressionModel.setID(id);
 		if (id > -1) {
 			BrowserHistory.go($.createID(id));
 		} else {

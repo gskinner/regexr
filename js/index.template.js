@@ -33,13 +33,17 @@ SOFTWARE.
 	};
 	var p = s.prototype = {};
 	p._ctaAnimation = null;
+	p.docView = null;
 
 	p.init = function () {
-	
+
 		// If the browser is not supported, don't let them in.
 		if (!$.isSupported()) {
 			return;
 		}
+
+		BrowserHistory.init();
+		BrowserHistory.on("change", this.handleHistoryChange, this);
 
 		if (document.location.host != "regexr.com" && document.location.host != "www.regexr.com") {
 			$.removeClass($.el(".beta-banner"), "hidden");
@@ -58,11 +62,12 @@ SOFTWARE.
 		List.spinner = $.el(".spinner");
 
 		var docView = new DocView($.el("#docview"));
+		this.docView = docView;
 		var def = $.el("#docview .default");
 		DocView.DEFAULT_TEXT = (def.textContent || def.innerText).trim().replace("{{ctrl}}", Utils.getCtrlKey().toLowerCase());
 		docView.setText(); // need to do this as well as the defer below, to keep the history clean.
 		$.defer(docView, docView.setText); // this fixes an issue with CodeMirror returning bad char positions at specific widths.
-		
+
 		def.style.display = "none";
 
 		docView.setExpression(DocView.DEFAULT_EXPRESSION).setSubstitution(DocView.DEFAULT_SUBSTITUTION);
@@ -112,7 +117,14 @@ SOFTWARE.
 
 		Settings.trackVisit();
 		Settings.cleanSaveTokens();
+		this.navigate();
+	};
 
+	p.handleHistoryChange = function(evt) {
+		this.navigate();
+	};
+
+	p.navigate = function() {
 		// Check for a deep-link
 		var url = document.location.toString();
 		var match = /[\/#\?]([\w\d]+)$/ig.exec(url);
@@ -121,11 +133,14 @@ SOFTWARE.
 			id = match[1];
 		}
 
+		if (ExpressionModel.id == $.idToNumber(id)+'') { return; }
+
 		if ($.isIDValid(id)) {
+			var _this = this;
 			ServerModel.getPatternByID(id).then(function (data) {
 				ExpressionModel.setLastSave(data);
 				var pattern = $.parsePattern(data.pattern);
-				docView.populateAll(pattern.ex, pattern.flags, data.content, data.replace);
+				_this.docView.populateAll(pattern.ex, pattern.flags, data.content, data.replace);
 			}, function () {
 				BrowserHistory.go();
 			});

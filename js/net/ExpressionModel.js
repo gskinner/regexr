@@ -25,6 +25,8 @@ SOFTWARE.
 	"use strict";
 
 	var s = {};
+	createjs.EventDispatcher.initialize(s);
+
 	s.docView = null;
 	s.id = null;
 	s._lastSave = null;
@@ -76,6 +78,7 @@ SOFTWARE.
 
 		s.id = id;
 		s._lastSave = pattern;
+		s.dispatchEvent("change");
 
 		return result;
 	};
@@ -85,10 +88,13 @@ SOFTWARE.
 	};
 
 	s.setLastSave = function(value) {
+		if (s.id == value.id) { return; }
+
 		s.id = value.id;
 		if (Settings.getUpdateToken(s.id)) {
 			s._lastSave = value;
 		}
+		s.dispatchEvent("change");
 	};
 
 	s.getLastSave = function() {
@@ -97,6 +103,13 @@ SOFTWARE.
 		}
 		return s._lastSave;
 	};
+
+	s.setID = function(value) {
+		if (s.id == value) { return; }
+
+		s.id = value;
+		s.dispatchEvent("change");
+	}
 
 	scope.ExpressionModel = s;
 
