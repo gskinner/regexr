@@ -28,5 +28,5 @@ TextUtils.shorten = function(str, length) {
 };
 
 TextUtils.htmlSafe = function(str) {
-	return str==null ? "" : (""+str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/  /g, " &nbsp;");
+	return str==null ? "" : (""+str).replace(/&/g, "&amp;").replace(/</g, "&lt;");
 };
