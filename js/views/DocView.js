@@ -453,15 +453,15 @@ SOFTWARE.
 	};
 
 	p.updateResults = function() {
-		var str="no match", div=this.exprResults, tip=null;
+		var str="no match", div=this.exprResults, tip=null, l=this.matches.length;
 		$.removeClass(div, "error");
 		$.removeClass(div, "nomatch");
 		if (this.error) {
 			str = this.error;
 			$.addClass(div, "error");
 			tip = Docs.forErrorResult(str, this.exprLexer.errors);
-		} else if (this.matches.length > 0) {
-			str = this.matches.length+" matches";
+		} else if (l > 0) {
+			str = l+" match"+(l==1 ? "" : "es");
 		} else {
 			$.addClass(div, "nomatch");
 		}
