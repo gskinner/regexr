@@ -460,7 +460,9 @@ SOFTWARE.
 			str = this.error;
 			$.addClass(div, "error");
 			tip = Docs.forErrorResult(str, this.exprLexer.errors);
-		} else if (this.matches.length > 0) {
+		} else if (this.matches.length === 1) {
+			str = "1 match";
+		} else if (this.matches.length > 1) {
 			str = this.matches.length+" matches";
 		} else {
 			$.addClass(div, "nomatch");
