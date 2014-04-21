@@ -538,15 +538,16 @@ for (var i=0; i<chars.length; i++) {
 
 
 /*
-// add the "All" reference section:
+// add the "All" reference section. This is kind of fragile at the moment.
 kids = reference.kids;
 kids.unshift({
 	label: "All",
-	desc: "All RegEx tokens supported in JS.",
+	desc: "All RegEx tokens supported in JS. Does not include Substitution or Flags.",
 	kids: []
 	});
 var all = kids[0].kids;
 for (i=0; i<kids.length; i++) {
+	if (kids[i].target) { continue; }
 	var entries = kids[i].kids;
 	for (var j=0; j<entries.length; j++) {
 		var entry = entries[j];
