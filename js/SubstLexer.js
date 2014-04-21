@@ -70,8 +70,9 @@ SOFTWARE.
 	};
 	
 	p.parseSubst = function(str, token, capGroups) {
-		var match = str.substr(token.i+1).match(/^([$&`']|\d\d?)/), d = match[0];
+		var match = str.substr(token.i+1).match(/^([$&`']|\d\d?)/);
 		if (!match) { return; }
+		var d = match[0];
 		
 		token.type = SubstLexer.SUBST_TYPES[d];
 
