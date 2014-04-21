@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 (function() {
+	
 	var DocView = function(element) {
 		this.initialize(element);
 	};
@@ -178,7 +179,7 @@ SOFTWARE.
 		this.setText(content);
 
 		if (substitution) {
-			this.setSubstitution(substitution)
+			this.setSubstitution(substitution);
 			this.showSubstitution();
 		} else {
 			this.showSubstitution(false);
@@ -210,7 +211,7 @@ SOFTWARE.
 
 	p.setFlags = function(flags) {
 		flags = this.validateFlags(flags);
-		var expCM = this.expressionCM
+		var expCM = this.expressionCM;
 		var str = expCM.getValue();
 		var index = str.lastIndexOf("/");
 		expCM.replaceRange(flags, {line:0, ch:index+1}, {line:0, ch:str.length}); // this doesn't work if readOnly is false.
@@ -342,7 +343,7 @@ SOFTWARE.
 	};
 
 	p.undo = function() {
-		if (this.historyIndex == 0) { return; }
+		if (this.historyIndex === 0) { return; }
 		this.history[--this.historyIndex].undo();
 	};
 
@@ -439,7 +440,7 @@ SOFTWARE.
 
 		this.substHighlighter.draw(token);
 		this.substHover.token = token;
-		if (!this.error && this.substLexer.errors.length == 0) {
+		if (!this.error && this.substLexer.errors.length === 0) {
 			try {  str = eval('"'+str.replace(/"/g,'\\"')+'"'); } catch (e) {
 				console.error("UNCAUGHT js string error", e);
 			}
