@@ -6,6 +6,7 @@
 	color: lighten($grey, 25%);
 	padding: $pad;
 	border-radius: 3px;
+	word-wrap: break-word;
 
 	hr {
 		height: 0;

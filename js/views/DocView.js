@@ -101,7 +101,7 @@ SOFTWARE.
 
 	p.buildUI = function(el) {
 		var expressionEditor = $.el(".editor.expr", el);
-		var expCM = this.expressionCM = this.getCM(expressionEditor, {autofocus:true, maxLength:1000, singleLine:true}, "calc(100% - 5.5rem)", "auto");
+		var expCM = this.expressionCM = this.getCM(expressionEditor, {autofocus:true, maxLength:2500, singleLine:true}, "calc(100% - 5.5rem)", "auto");
 		expCM.on("change", $.bind(this, this.deferUpdate));
 		expCM.on("mousedown", $.bind(this, this.expressionClick));
 		expCM.on("change", $.bind(this, this.handleExpressionCMChange));
@@ -129,7 +129,7 @@ SOFTWARE.
 		substTitle.addEventListener("mousedown", $.bind(this, this.onSubstClick));
 
 		var substEditor = $.el(".editor.subst", el);
-		var substCM = this.substCM = this.getCM(substEditor, {maxLength:100, singleLine:true}, "100%", "auto");
+		var substCM = this.substCM = this.getCM(substEditor, {maxLength:500, singleLine:true}, "100%", "auto");
 		substCM.on("change", $.bind(this, this.deferUpdate));
 		this.substHighlighter = new ExpressionHighlighter(substCM);
 		this.substHover = new ExpressionHover(substCM, this.substHighlighter);
