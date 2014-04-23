@@ -1,12 +1,12 @@
 var path = require("path");
-var uglify = require('uglify-js');
+var uglify = require("uglify-js");
 
 var folderMount = function folderMount(connect, point) {
 	return connect.static(path.resolve(point));
 };
 
 module.exports = function (grunt) {
-	
+
 	/*
 	Load all the tasks we need
 	Usually we use uglifyJS for code minification.
@@ -14,25 +14,51 @@ module.exports = function (grunt) {
 	whereas yui does not.
 	 */
 	grunt.loadNpmTasks("grunt-yui-compressor");
+	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-sass");
 	grunt.loadNpmTasks("grunt-contrib-connect");
-	grunt.loadNpmTasks('grunt-contrib-clean');
-	grunt.loadNpmTasks('grunt-contrib-htmlmin');
-	grunt.loadNpmTasks('grunt-contrib-copy');
-	grunt.loadTasks('tasks/');
-	
-	
+	grunt.loadNpmTasks("grunt-contrib-clean");
+	grunt.loadNpmTasks("grunt-contrib-htmlmin");
+	grunt.loadNpmTasks("grunt-contrib-copy");
+	grunt.loadNpmTasks("grunt-contrib-concat");
+	grunt.loadTasks("tasks/");
+
+
 	grunt.initConfig({
 		pkg: grunt.file.readJSON("package.json"),
-		deployFolder: 'build/',
+		deployFolder: "build/",
 
-		'min': {
+		// YUI-min
+		min: {
 			options: {
 				report: false
 			},
-			'build': {
-				'src': getScripts().app,
-				'dest': '<%= deployFolder %>js/scripts.min.js'
+			build: {
+				src: getScripts().yui,
+				dest: "<%= deployFolder %>js/yui.min.js"
+			}
+		},
+
+		uglify: {
+			options: {
+				compress: {
+					global_defs: {
+						DEBUG: false
+					},
+					dead_code: true
+				}
+			},
+			build: {
+				files: {
+					"<%= deployFolder %>js/uglify.min.js":getScripts().uglify
+				}
+			}
+		},
+
+		concat: {
+			build: {
+				src: ["<%= deployFolder %>js/yui.min.js",  "<%= deployFolder %>js/uglify.min.js"],
+				dest:  "<%= deployFolder %>js/scripts.min.js",
 			}
 		},
 
@@ -40,7 +66,7 @@ module.exports = function (grunt) {
 			build:{
 				options: {
 					compass: true,
-					style: 'compact', // Can be nested, compact, compressed, expanded
+					style: "compact", // Can be nested, compact, compressed, expanded
 					precision: 2,
 				},
 				files: {
@@ -64,13 +90,13 @@ module.exports = function (grunt) {
 			}
 		},
 
-		'cssmin': {
+		cssmin: {
 			options: {
 				report: false
 			},
-			'build': {
-				'src': "css/regexr.css",
-				'dest': '<%= deployFolder %>css/regexr.css'
+			build: {
+				src: "css/regexr.css",
+				dest: "<%= deployFolder %>css/regexr.css"
 			}
 		},
 
@@ -80,11 +106,11 @@ module.exports = function (grunt) {
 					{
 						expand: true,
 						src:[
-							'assets/**',
-							'php/**',
-							'*.ico',
-							'.htaccess',
-							'manifest.json'
+							"assets/**",
+							"php/**",
+							"*.ico",
+							".htaccess",
+							"manifest.json"
 						],
 						dest: "<%= deployFolder %>"
 					}
@@ -95,7 +121,7 @@ module.exports = function (grunt) {
 		connect: {
 			build: {
 				options: {
-					hostname: '*',
+					hostname: "*",
 					keepalive:true,
 					middleware: function (connect, options) {
 						return [folderMount(connect, grunt.config.get("deployFolder"))]
@@ -110,13 +136,13 @@ module.exports = function (grunt) {
 				collapseWhitespace: true
 			},
 			build: {
-				files:[{src: '<%= deployFolder %>index.html.tmp', dest: '<%= deployFolder %>index.html'}],
+				files:[{src: "<%= deployFolder %>index.html.tmp", dest: "<%= deployFolder %>index.html"}],
 			}
 		},
 
 		clean: {
 			build: ["<%= deployFolder %>!(v1|.git|php|sitemap.txt|*.md)**"],
-			postBuild: ["<%= deployFolder %>**/*.tmp"]
+			postBuild: ["<%= deployFolder %>**/*.tmp", "<%= deployFolder %>js/yui.min.js", "<%= deployFolder %>js/uglify.min.js"]
 		}
 	});
 
@@ -140,6 +166,8 @@ module.exports = function (grunt) {
 		"sass",
 		"cssmin",
 		"min",
+		"uglify",
+		"concat",
 		"parse-index",
 		"htmlmin",
 		"copy",
@@ -152,20 +180,20 @@ module.exports = function (grunt) {
 	 *
 	 */
 	function getScripts() {
-		var scripts = grunt.file.readJSON('scripts.json');
+		var scripts = grunt.file.readJSON("scripts.json");
 		var missing = [];
 		for (var n in scripts) {
 			var arr = scripts[n];
 			arr.forEach(function(item, index, array) {
 				if (!grunt.file.exists(item)) {
-					missing.push(n+': '+item);
+					missing.push(n+": "+item);
 				}
 			});
 		}
 
 		if (missing.length) {
 			// \x07 == beep sound in the terminal.
-			grunt.log.warn('\x07Missing ', missing.length + ' scripts.\n\t' + missing.join('\n\t'));
+			grunt.log.warn("\x07Missing ", missing.length + " scripts.\n\t" + missing.join("\n\t"));
 		}
 
 		return scripts;

@@ -1,6 +1,8 @@
 {
-	"app":[
-		"js/third-party/codemirror.js",
+	"yui": [
+		"js/third-party/codemirror.js"
+	],
+	"uglify": [
 		"js/third-party/promise-0.1.1.js",
 		"js/third-party/ZeroClipboard.js",
 		"js/third-party/classList.js",
