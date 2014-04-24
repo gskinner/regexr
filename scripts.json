@@ -1,11 +1,13 @@
 {
 	"yui": [
-		"js/third-party/codemirror.js"
+		"js/third-party/codemirror.js",
+		"js/utils/TextUtils.js",
+		"js/documentation.js"
 	],
 	"uglify": [
 		"js/third-party/promise-0.1.1.js",
-		"js/third-party/ZeroClipboard.js",
 		"js/third-party/classList.js",
+		"js/third-party/ZeroClipboard.js",
 		"js/third-party/store.js",
 		"js/third-party/placeholders.min.js",
 		"js/third-party/history.adapter.native.js",
@@ -22,7 +24,6 @@
 		"js/controls/TagInput.js",
 		"js/utils/CMUtils.js",
 		"js/controls/Tooltip.js",
-		"js/utils/TextUtils.js",
 		"js/SourceHighlighter.js",
 		"js/ExpressionHighlighter.js",
 		"js/ExpressionHover.js",
@@ -35,7 +36,6 @@
 		"js/views/ShareMenu.js",
 		"js/views/SaveMenu.js",
 		"js/utils/Docs.js",
-		"js/documentation.js",
 		"js/RegExLexer.js",
 		"js/SubstLexer.js",
 		"js/net/ServerModel.js",

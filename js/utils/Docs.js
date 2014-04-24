@@ -163,3 +163,17 @@ Docs.getEscCharDocs = function(c, t, template) {
 Docs.getCtrlKey = function() {
 	return Utils.getCtrlKey();
 };
+
+// Inject text from the documentation file.
+(function() {
+	// add escaped characters to the reference:
+	var reference = documentation.library.kids[1];
+	var chars = "\t\n\v\f\r\0.\\+*?^$[]{}()|/";
+	var tokens = "tnvfr0";
+	var kids = reference.kids[2].kids;
+	for (var i=0; i<chars.length; i++) {
+		kids.push(Docs.getEscCharDocs(chars[i], tokens[i], documentation.misc.kids[0].tip));
+	}
+
+	Docs.setContent({errors:documentation.errors, library:documentation.library, misc:documentation.misc});
+})();

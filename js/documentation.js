@@ -527,16 +527,6 @@ var errors = {
 	// infinite is handled in the Help section.
 };
 
-// add escaped characters to the reference:
-var reference = library.kids[1];
-var chars = "\t\n\v\f\r\0.\\+*?^$[]{}()|/";
-var tokens = "tnvfr0";
-var kids = reference.kids[2].kids;
-for (var i=0; i<chars.length; i++) {
-	kids.push(Docs.getEscCharDocs(chars[i], tokens[i], misc.kids[0].tip));
-}
-
-
 /*
 // add the "All" reference section. This is kind of fragile at the moment.
 kids = reference.kids;
@@ -560,7 +550,6 @@ for (i=0; i<kids.length; i++) {
 }
 //*/
 
-
-Docs.setContent({errors:errors, library:library, misc:misc});
+window.documentation = {library:library, misc:misc, errors:errors};
 
 })();
