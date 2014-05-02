@@ -57,7 +57,7 @@
 		.error-default {
 			overflow: hidden;
 			float: left;
-			padding-top: 0.45rem;
+			padding-top: 0rem;
 
 			height: 0.0;
 			@include vendor-prefix(transition, height $default-transition-duration);
@@ -66,6 +66,13 @@
 		.error-show {
 			@extend .view-show-visible;
 			height: 5.65rem;
+			padding-top: 0.45rem;
+		}
+
+		.sub-header {
+			margin-top: -.5rem;
+			font-size: .75rem;
+			color: $grey;
 		}
 	}
 

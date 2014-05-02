@@ -1,30 +1,30 @@
 /*
-The MIT License (MIT)
+ The MIT License (MIT)
 
-Copyright (c) 2014 gskinner.com, inc.
+ Copyright (c) 2014 gskinner.com, inc.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
  */
-(function (scope) {
+(function(scope) {
 	"use strict";
 
-	var s = function (element, docsView) {
+	var s = function(element, docsView) {
 		this.initialize(element, docsView);
 	};
 	var p = s.prototype = new createjs.EventDispatcher();
@@ -75,6 +75,8 @@ SOFTWARE.
 
 		this.errorMessage = $.el("#errorMessage", this.element);
 
+		this.saveDetails = $.el(".save-details-wrap", this.el);
+
 		this.saveElements = [this.titleInput, this.descriptionTxt, this.authorTxt, this.tagsTxt, this.submitBtn];
 	};
 
@@ -83,6 +85,16 @@ SOFTWARE.
 			$.removeClass(event.target, "checked");
 		} else {
 			$.addClass(event.target, "checked");
+		}
+
+		this.updateSaveDetailsState();
+	};
+
+	p.updateSaveDetailsState = function() {
+		if ($.hasClass(this.publicChk, "checked") || $.hasClass(this.favouriteChk, "checked")) {
+			$.removeClass(this.saveDetails, "hidden");
+		} else {
+			$.addClass(this.saveDetails, "hidden");
 		}
 	};
 
@@ -97,7 +109,7 @@ SOFTWARE.
 		}
 	};
 
-	p.handleUpdateClick = function () {
+	p.handleUpdateClick = function() {
 		if (!$.hasClass(this.updateBtn, "disabled")) {
 			var lastSave = ExpressionModel.getLastSave();
 			var token = Settings.getUpdateToken(lastSave.id);
@@ -107,16 +119,24 @@ SOFTWARE.
 	};
 
 	p.submit = function(id, token) {
-		var name = this.titleInput.value;
-		var description = this.descriptionTxt.value;
-		var author = this.authorTxt.value;
-		var tags =  this.tagsInput.getTags();
+		var name = null;
+		var description = null;
+		var author = null;
+		var tags = null
 
-		if (!name || name.length < 2) {
-			this.titleInput.focus();
-			$.addClass(this.titleInput, "error-input");
-			$.addClass($.el("#titleTxt-req", this.element), "error-text");
-			return;
+		// Only save for info if its not hidden.
+		if (!$.hasClass(this.saveDetails, "hidden")) {
+			name = this.titleInput.value;
+			description = this.descriptionTxt.value;
+			author = this.authorTxt.value;
+			tags = this.tagsInput.getTags();
+
+			if (!name || name.length < 2) {
+				this.titleInput.focus();
+				$.addClass(this.titleInput, "error-input");
+				$.addClass($.el("#titleTxt-req", this.element), "error-text");
+				return;
+			}
 		}
 
 		this.saveStartTime = Date.now();
@@ -164,7 +184,7 @@ SOFTWARE.
 		setTimeout(function() {
 			_this.showSaveSuccessView();
 			Settings.setFavorite(id, isFav);
-		}, (this.saveStartTime+s.MIN_SAVE_TIME)-Date.now());
+		}, (this.saveStartTime + s.MIN_SAVE_TIME) - Date.now());
 	};
 
 	p.resetForm = function() {
@@ -262,6 +282,8 @@ SOFTWARE.
 			} else {
 				$.removeClass(this.favouriteChk, "checked");
 			}
+
+			this.updateSaveDetailsState();
 		} else {
 			$.addClass(this.updateBtn, "hidden");
 		}
@@ -272,13 +294,13 @@ SOFTWARE.
 	};
 
 	p.enableElements = function(els, enable) {
-		 for (var i=0;i<els.length;i++) {
-			 if (!enable) {
+		for (var i = 0; i < els.length; i++) {
+			if (!enable) {
 				els[i].setAttribute("disabled", "disabled");
-			 } else {
+			} else {
 				els[i].removeAttribute("disabled");
-			 }
-		 }
+			}
+		}
 	};
 
 	scope.SaveMenu = s;

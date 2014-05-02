@@ -257,24 +257,8 @@ http://regexr.com/foo.html?q=bar
 		</header>
 		<hr />
 		<div id="saveView" class="hidden">
-			<label for="titleTxt">name</label> <span id="titleTxt-req">*</span><br />
-			<input id="titleTxt" type="text" max="30" maxlength="30" required><br />
-
-			<label for="descriptionTxt">description</label><br />
-			<textarea id="descriptionTxt" rows="3" max="250" maxlength="250"></textarea> <br />
-
-			<label for="tagsTxt">tags</label><br />
-			<input id="tagsTxt" type="text" max="50" maxlength="50"><br />
-			<div class="tag-list-container">
-				<div class="tag-list" tabindex="2">
-					<div class="renderer item"><span>{{getLabel()}}</span></div>
-				</div>
-			</div>
-			<label for="authorTxt">author</label><br />
-			<input id="authorTxt" type="text" max="20" maxlength="20"><br />
 			<div class="public-wrap">
-				<br/>
-				<header>
+				<header class="sub-header">
 					Add to
 				</header>
 				<hr/>
@@ -282,6 +266,25 @@ http://regexr.com/foo.html?q=bar
 				<a id="favouriteChk" class="check">&nbsp;Favourites</a><br/>
 				<hr/>
 			</div>
+
+			<div class="save-details-wrap hidden">
+				<label for="titleTxt">name</label> <span id="titleTxt-req">*</span><br />
+				<input id="titleTxt" type="text" max="30" maxlength="30" required><br />
+
+				<label for="descriptionTxt">description</label><br />
+				<textarea id="descriptionTxt" rows="3" max="250" maxlength="250"></textarea> <br />
+
+				<label for="tagsTxt">tags</label><br />
+				<input id="tagsTxt" type="text" max="50" maxlength="50"><br />
+				<div class="tag-list-container">
+					<div class="tag-list" tabindex="2">
+						<div class="renderer item"><span>{{getLabel()}}</span></div>
+					</div>
+				</div>
+				<label for="authorTxt">author</label><br />
+				<input id="authorTxt" type="text" max="20" maxlength="20"><br />
+			</div>
+
 
 			<input id="saveBtn" type="button" class="save-button" value="Save">
 			<input id="updateBtn" type="button" class="update-button" value="Update">
