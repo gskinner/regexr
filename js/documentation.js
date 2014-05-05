@@ -75,6 +75,7 @@ var library = {
 		kids: [
 			{
 			label: "Character classes",
+			id: "charclasses",
 			desc: "Character classes match a character from a specific set. There are a number of predefined character classes and you can also define your own sets.",
 			kids: [
 				{
@@ -160,6 +161,7 @@ var library = {
 
 			{
 			label:"Anchors",
+			id:"anchors",
 			desc:"Anchors are unique in that they match a position within a string, not a character.",
 			kids:[
 				{
@@ -198,6 +200,7 @@ var library = {
 			},
 			{
 			label: "Escaped characters",
+			id:"escchars",
 			desc: "Some characters have special meaning in regular expressions and must be escaped. All escaped characters begin with the <code>\\</code> character.<br/><br/> Within a character set, only <code>\\</code>, <code>-</code>, and <code>]</code> need to be escaped.",
 			kids: [
 				{
@@ -233,6 +236,7 @@ var library = {
 			},
 			{
 			label: "Groups & Lookaround",
+			id:"groups",
 			desc: "Groups allow you to combine a sequence of tokens to operate on them together. Capture groups can be referenced by a backreference and accessed separately in the results."+
 				 "<hr/>Lookaround lets you match a group without including it in the result.",
 			kids: [
@@ -288,6 +292,7 @@ var library = {
 			},
 			{
 			label: "Quantifiers & Alternation",
+			id:"quants",
 			desc: "Quantifiers indicate that the preceding token must be matched a certain number of times. By default, quantifiers are greedy, and will match as many characters as possible."+
 				"<hr/>Alternation acts like a boolean OR, matching one sequence or another.",
 			kids: [
@@ -419,7 +424,7 @@ var library = {
 		},
 		{
 		id:"cheatsheet",
-		label: "Cheat Sheet",
+		label: "Cheatsheet",
 		max:true,
 		kids:[],
 		icon: "&#xE072;",

@@ -144,19 +144,21 @@ table.cheatsheet {
 	position: relative;
 	border-spacing: 0;
 	
-	td {
-		margin:0;
-		padding:0;
-		border:0;
+	th {
+		@extend %user-select-none;
+		cursor: pointer;
+		background: rgba(255,255,255,0.06);
+		text-align: left;
+		padding: 0.25rem 0.25rem 0.25rem 0.375rem;
+		
+		&:hover {
+			color:$white;
+		}
 	}
 	
 	td:first-child {
 		font-family: $monospace;
 		color: $white;
-		padding-right: 0.5em;
-	}
-	
-	tr:nth-child(odd) {
-		background: rgba(255,255,255,0.02);
+		padding-right: 0.25em;
 	}
 }

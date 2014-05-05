@@ -79,7 +79,7 @@ module.exports = function (grunt) {
 			run: {
 				options: {
 					compass: true,
-					// In prep-tasks, we change the style for a build, to compressed;
+					// In prep-tasks, we change the style for a build, to nested;
 					style: "nested", // Can be nested, compact, compressed, expanded
 					"line-numbers": true,
 					precision: 2,
@@ -190,7 +190,7 @@ module.exports = function (grunt) {
 				}
 			});
 		}
-
+		
 		if (missing.length) {
 			// \x07 == beep sound in the terminal.
 			grunt.log.warn("\x07Missing ", missing.length + " scripts.\n\t" + missing.join("\n\t"));

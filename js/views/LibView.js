@@ -128,7 +128,6 @@ SOFTWARE.
 		
 		if (item.max) {
 			$.addClass(this.content, "maximized");
-			console.log("max");
 		} else {
 			$.removeClass(this.content, "maximized");
 		}

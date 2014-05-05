@@ -34,6 +34,7 @@ SOFTWARE.
 	var p = s.prototype = {};
 	p._ctaAnimation = null;
 	p.docView = null;
+	p.libView = null;
 
 	p.init = function () {
 
@@ -77,6 +78,7 @@ SOFTWARE.
 		docView.resetHistory();
 
 		var libView = new LibView($.el("#libview"), Docs.content.library);
+		this.libView = libView;
 
 		libView.docView = docView;
 		docView.libView = libView;
