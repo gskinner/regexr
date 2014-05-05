@@ -427,7 +427,7 @@ var library = {
 		label: "Cheatsheet",
 		max:true,
 		kids:[],
-		icon: "&#xE072;",
+		icon: "&#xE603;",
 		desc:"pulled from html"
 		},
 		{
