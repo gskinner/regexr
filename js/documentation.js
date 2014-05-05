@@ -418,6 +418,14 @@ var library = {
 
 		},
 		{
+		id:"cheatsheet",
+		label: "Cheat Sheet",
+		max:true,
+		kids:[],
+		icon: "&#xE072;",
+		desc:"pulled from html"
+		},
+		{
 		label: "Examples",
 		id:"examples",
 		icon: "&#xE065;",

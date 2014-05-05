@@ -39,6 +39,12 @@
 		height: $lib-content-height;
 		padding: $pad *1.5;
 		line-height: 1.5em;
+		overflow-y: auto;
+		
+		&.maximized {
+			height: auto;
+			top: $title-h-pad+0.125rem;
+		}
 
 		h1 {
 			font-size: 1em;
@@ -133,3 +139,24 @@
   }
 }
 
+table.cheatsheet {
+	width:100%;
+	position: relative;
+	border-spacing: 0;
+	
+	td {
+		margin:0;
+		padding:0;
+		border:0;
+	}
+	
+	td:first-child {
+		font-family: $monospace;
+		color: $white;
+		padding-right: 0.5em;
+	}
+	
+	tr:nth-child(odd) {
+		background: rgba(255,255,255,0.02);
+	}
+}

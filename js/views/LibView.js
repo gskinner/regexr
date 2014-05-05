@@ -125,6 +125,13 @@ SOFTWARE.
 			this.favorites.show();
 			$.addClass(this.list.element, "hidden");
 		}
+		
+		if (item.max) {
+			$.addClass(this.content, "maximized");
+			console.log("max");
+		} else {
+			$.removeClass(this.content, "maximized");
+		}
 
 		$.removeClass(this.element, "hidden");
 	};

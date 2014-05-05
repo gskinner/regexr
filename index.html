@@ -161,6 +161,38 @@
 			<li>Search for & rate <b>Community</b> patterns.</li>
 		</ul>
 	</div>
+	<div id="cheatsheet">
+		<table class="cheatsheet">
+			<tr><td>.</td><td>any char except newline</td></tr>
+			<tr><td>\w \d \s</td><td>word, digit, space char</td></tr>
+			<tr><td>\W \D \S</td><td>NOT word, digit, space char</td></tr>
+			<tr><td>[abc]</td><td>any of a, b, or c</td></tr>
+			<tr><td>[^abc]</td><td>NOT a, b, or c</td></tr>
+			<tr><td>[a-g]</td><td>a char between a & g</td></tr>
+			
+			<tr><td>^ $</td><td>start / end of the string</td></tr>
+			<tr><td>\b</td><td>word boundary</td></tr>
+			
+			<tr><td>\. \* \\</td><td>escaped special chars</td></tr>
+			<tr><td>\u00A9</td><td>unicode escaped &copy;</td></tr>
+			
+			<tr><td>(abc)</td><td>capture group</td></tr>
+			<tr><td>\1 \2</td><td>backreference to capture group</td></tr>
+			<tr><td>(?:abc)</td><td>non-capturing group</td></tr>
+			<tr><td>(?=abc)</td><td>positive lookahead</td></tr>
+			<tr><td>(?!abc)</td><td>negative lookahead</td></tr>
+			
+			<tr><td>a+</td><td>one or more</td></tr>
+			<tr><td>a*</td><td>zero or more</td></tr>
+			<tr><td>a?</td><td>zero or one</td></tr>
+			<tr><td>a{5}</td><td>exactly five</td></tr>
+			<tr><td>a{1,3}</td><td>between 1 & 3</td></tr>
+			<tr><td>a{2,}</td><td>two or more</td></tr>
+			<tr><td>a+? a*?</td><td>match as few as possible</td></tr>
+			
+		</table>
+		
+	</div>
 </div>
 
 <div class="doc subst-disabled" id="docview">
