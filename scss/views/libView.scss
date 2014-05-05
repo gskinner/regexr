@@ -35,9 +35,9 @@
 	.content {
 		position: absolute;
 		bottom: 0;
-		width: $lib-width - $pad * 3;
-		height: $lib-content-height;
 		padding: $pad *1.5;
+		@include calc("width", "#{$lib-width - $pad * 3} - 1px");
+		height: $lib-content-height;
 		line-height: 1.5em;
 		overflow-y: auto;
 		
