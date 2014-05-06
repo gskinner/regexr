@@ -12,6 +12,7 @@
 		"js/third-party/placeholders.min.js",
 		"js/third-party/history.adapter.native.js",
 		"js/third-party/history.js",
+		"js/RegExJS.js",
 		"js/events/Event.js",
 		"js/events/EventDispatcher.js",
 		"js/utils/Utils.js",

@@ -50,7 +50,8 @@ module.exports = function (grunt) {
 			},
 			build: {
 				files: {
-					"<%= deployFolder %>js/uglify.min.js":getScripts().uglify
+					"<%= deployFolder %>js/uglify.min.js":getScripts().uglify,
+					"<%= deployFolder %>js/regExWorker.template.js":"js/regExWorker.template.js"
 				}
 			}
 		},
@@ -153,6 +154,7 @@ module.exports = function (grunt) {
 	grunt.registerTask("parse-index", function (type) {
 		var templateFile = grunt.file.read("index.html");
 		var indexJs = minifyJS(grunt.file.read("js/index.template.js"));
+
 		var buildIndexTag = "\n"+indexJs+"";
 
 		var output = grunt.template.process(templateFile, {data:{build:true, index:buildIndexTag, noCache:Date.now()}})

@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 (function() {
-	
+
 	var DocView = function(element) {
 		this.initialize(element);
 	};
@@ -409,28 +409,24 @@ SOFTWARE.
 		catch (e) { this.error = "ERROR"; }
 		matches.length = index = 0;
 
-		while (!this.error) {
-			match = regex.exec(str);
-			if (!match) { break; }
-			if (g && index === regex.lastIndex) { this.error = "infinite"; break; }
-			match.end = (index = match.index+match[0].length)-1;
-			match.input = null;
-			matches.push(match);
-			if (!g) { break; } // or it will become infinite.
-		}
+		var _this = this;
+		RegExJS.match(regex, str, function(error, matches) {
+			_this.error = error;
+			_this.matches = matches;
 
-		this.updateResults();
-		$.defer(this, this.drawSourceHighlights, "draw");
+			_this.updateResults();
+			$.defer(_this, _this.drawSourceHighlights, "draw");
 
-		if (ExpressionModel.isDirty()) {
-			BrowserHistory.go();
-		}
+			if (ExpressionModel.isDirty()) {
+				BrowserHistory.go();
+			}
 
-		if (ExpressionModel.id) {
-			BrowserHistory.go($.createID(ExpressionModel.id));
-		}
+			if (ExpressionModel.id) {
+				BrowserHistory.go($.createID(ExpressionModel.id));
+			}
 
-		this.updateSubst(str, regex);
+			_this.updateSubst(str, regex);
+		});
 	};
 
 	p.updateSubst = function(source, regex) {

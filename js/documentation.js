@@ -61,6 +61,12 @@ var library = {
 			label:"The 'infinite' error",
 			desc:"The expression can match 0 characters, and therefore matches infinitely.",
 			ext:" <h1>Example:</h1><code>.*</code> can match <code>0</code> characters, and therefore will match infinitely."
+			},
+			{
+			id:"timeout",
+			label:"The 'timeout' error",
+			desc:"The expression took longer than 250ms to execute.<br><span class='small-text'><hr>** Certain patterns can cause exponential growth, and may timeout.</span>",
+			ext:" <h1>Example:</h1> Using <code>^(a+)+$</code> to match <code>aaaaaaaaaaaaaaaaaaaaaaaaaaaaB</code> will match each 'a' an indeterminate number of times, and therefore will eventually timeout."
 			}
 		]
 		},

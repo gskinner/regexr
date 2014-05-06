@@ -9,6 +9,8 @@
 
 	<meta name="description" content="Regular expression tester with syntax highlighting, contextual help, video tutorial, reference, and searchable community patterns." />
 
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+
 	<!-- Windows8 Pin to home. -->
 	<meta name="application-name" content="RegExr"/>
 	<meta name="msapplication-TileColor" content="#44A4E0"/>
@@ -23,6 +25,7 @@
 
 	<!-- Only use these tags during a build. -->
 	<!-- <% if (build) { %> -->
+	<script src="js/regExWorker.template.js?no=<%=noCache %>"></script>
 	<script src="js/scripts.min.js?no=<%=noCache %>"></script>
 	<!-- <% } else { %> -->
 	<!--
@@ -39,6 +42,7 @@
 	<script src="js/third-party/placeholders.min.js"></script>
 	<script src="js/third-party/history.adapter.native.js"></script>
 	<script src="js/third-party/history.js"></script>
+	<script src="js/RegExJS.js"></script>
 	<script src="js/events/Event.js"></script>
 	<script src="js/events/EventDispatcher.js"></script>
 	<script src="js/Tracking.js"></script>
@@ -380,7 +384,6 @@ Since our initial load can cause errors, we just catch them and show the overlay
 		}
 	}
 </script>
-
 <!-- <% if (build) { %> -->
 	<script>
 		// injected on build:<%=index %>

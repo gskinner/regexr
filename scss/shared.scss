@@ -91,7 +91,7 @@
 		background: $theme-color;
 		color: $color;
 	}
-	
+
 	.item.removed {
 		text-decoration: line-through;
 		opacity: 0.5;
@@ -187,3 +187,6 @@
 	display: inline-block;
 }
 
+.small-text {
+	font-size: .7rem;
+}
