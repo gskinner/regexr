@@ -67,6 +67,7 @@ var library = {
 
 		{
 		label: "Reference",
+		id: "reference",
 		icon: "&#xE072;",
 		desc: "Information on all of the tokens available to create regular expressions."
 			+"<p>Click a selected item again to insert it into your Expression.</p>"
