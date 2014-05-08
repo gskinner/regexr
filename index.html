@@ -175,32 +175,32 @@
 			<tr><td>[abc]</td><td>any of a, b, or c</td></tr>
 			<tr><td>[^abc]</td><td>not a, b, or c</td></tr>
 			<tr><td>[a-g]</td><td>charcter between a & g</td></tr>
-			
+
 			<tr><th colspan="2" onclick="regexr.libView.show('anchors')">Anchors</th></tr>
 			<tr><td>^abc$</td><td>start / end of the string</td></tr>
 			<tr><td>\b</td><td>word boundary</td></tr>
-			
+
 			<tr><th colspan="2" onclick="regexr.libView.show('escchars')">Escaped characters</th></tr>
 			<tr><td>\.  \*  \\</td><td>escaped special characters</td></tr>
 			<tr><td>\t  \n  \r</td><td>tab, linefeed, carriage return</td></tr>
 			<tr><td>\u00A9</td><td>unicode escaped &copy;</td></tr>
-			
+
 			<tr><th colspan="2" onclick="regexr.libView.show('groups')">Groups & Lookaround</th></tr>
 			<tr><td>(abc)</td><td>capture group</td></tr>
 			<tr><td>\1</td><td>backreference to group #1</td></tr>
 			<tr><td>(?:abc)</td><td>non-capturing group</td></tr>
 			<tr><td>(?=abc)</td><td>positive lookahead</td></tr>
 			<tr><td>(?!abc)</td><td>negative lookahead</td></tr>
-			
+
 			<tr><th colspan="2" onclick="regexr.libView.show('quants')">Quantifiers & Alternation</th></tr>
 			<tr><td>a*  a+  a?</td><td>0 or more, 1 or more, 0 or 1</td></tr>
 			<tr><td>a{5} a{2,}</td><td>exactly five, two or more</td></tr>
 			<tr><td>a{1,3}</td><td>between one & three</td></tr>
 			<tr><td>a+? a{2,}?</td><td>match as few as possible</td></tr>
 			<tr><td>ab|cd</td><td>match ab or cd</td></tr>
-			
+
 		</table>
-		
+
 	</div>
 </div>
 
@@ -372,7 +372,9 @@ http://regexr.com/foo.html?q=bar
 
 <div class="not-supported hidden">
 	<div class="top">
-		<h1 class="icon regexr-logo">&#xE600;</h1><h1 class="regexr-text">RegExr</h1><span class="version regexr-text">v2.0</span>
+		<h1 class="icon regexr-logo">&#xE600;</h1>
+
+		<h1 class="regexr-text">RegExr</h1><span class="version regexr-text">v2.0</span>
 	</div>
 	<div class="content">
 		<p>RegExr requires a modern browser</p>
