@@ -10,6 +10,7 @@
 	<meta name="description" content="Regular expression tester with syntax highlighting, contextual help, video tutorial, reference, and searchable community patterns." />
 
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+	<meta name="viewport" content="user-scalable=yes">
 
 	<!-- Windows8 Pin to home. -->
 	<meta name="application-name" content="RegExr"/>
@@ -359,13 +360,23 @@ http://regexr.com/foo.html?q=bar
 <!-- White spinner used in the community search. -->
 <img class="hidden spinner white" src="data:image/gif;base64,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" />
 
-<div id="notSupported" class="not-supported hidden">
+<div class="not-supported-mobile hidden">
 	<div class="top">
 		<h1 class="icon regexr-logo">&#xE600;</h1><h1 class="regexr-text">RegExr</h1><span class="version regexr-text">v2.0</span>
 	</div>
 	<div class="content">
-		<p>Uh-oh, it looks like your browser is not supported.</p>
-		<p>RegExr only supports modern desktop browsers.</p>
+		<p>RegExr isn't optimized for mobile devices yet. You can still take a look, but it might be a bit quirky.</p>
+		<a id="closeOverlay">Let me in!</a>
+	</div>
+</div>
+
+<div class="not-supported hidden">
+	<div class="top">
+		<h1 class="icon regexr-logo">&#xE600;</h1><h1 class="regexr-text">RegExr</h1><span class="version regexr-text">v2.0</span>
+	</div>
+	<div class="content">
+		<p>RegExr requires a modern browser</p>
+		<p>Please update your browser to the latest version and try again.</p>
 		<p class="flash hidden">If you have Flash support you can still visit <a href="v1/">RegExr version 1</a></p>
 	</div>
 </div>
@@ -375,13 +386,19 @@ To fix showing the "Not supported" screen in IE 7 (and other old browsers).
 Since our initial load can cause errors, we just catch them and show the overlay if they happen.
 -->
 <script>
-	if (!Utils.isSupported()) {
-		var el = document.getElementById("notSupported");
-		el.className = "not-supported";
+	if (!$.isSupported()) {
+		var el = document.querySelector(".not-supported");
+		$.removeClass(el, "hidden");
 		if (ZeroClipboard.detectFlashSupport()) {
 			var flash = document.getElementsByClassName('flash')[0];
 			flash.className = "";
 		}
+	} else if($.partialSupport()) {
+		var el = document.querySelector(".not-supported-mobile");
+		$.removeClass(el, "hidden");
+		$.el("#closeOverlay").addEventListener("click", function() {
+			$.addClass(el, "hidden");
+		});
 	}
 </script>
 <!-- <% if (build) { %> -->

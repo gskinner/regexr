@@ -36,3 +36,33 @@
 	font-weight: normal;
 	font-style: normal;
 }
+
+
+@mixin bpPixelDensity ($pd: 2, $width: null) {
+	// 1.25
+	@if $pd == 1.25 {
+		@media (-webkit-min-device-pixel-ratio: $pd),
+		(min-resolution: 120dpi) { @content; }
+	}
+	// 1.3
+	@if $pd == 1.3 {
+		@media (-webkit-min-device-pixel-ratio: $pd),
+		(min-resolution: 124.8dpi) { @content; }
+	}
+	// 1.5
+	@if $pd == 1.5 {
+		@media (-webkit-min-device-pixel-ratio: $pd),
+		(min-resolution: 144dpi) { @content; }
+	}
+	// 2
+	@if $pd == 2 {
+		@if $width != null {
+			@media (-webkit-min-device-pixel-ratio: $pd) and (min-width: $width),
+			(min-resolution: 192dpi) and (min-width: $width) { @content; }
+		} @else {
+			@media (-webkit-min-device-pixel-ratio: $pd),
+			(min-resolution: 192dpi) { @content; }
+		}
+	}
+
+}

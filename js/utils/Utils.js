@@ -182,20 +182,24 @@ Utils.populateSelector = function (selector, items) {
 };
 
 Utils.isSupported = function() {
-	// No iPhone (iPad works ok);
-	var iosType = $.iosType();
-	if (iosType != null && iosType != "ipad") {
-		return false;
-	}
-
-	// No android.
-	if ($.isAndroid()) {
-		return false;
-	}
-
-	// This should catch the majority of other not supported browsers.
+	// This should catch all the not supported browsers.
 	return $.isCanvasSupported() && $.isCalcSupported() && store.enabled;
 };
+
+Utils.partialSupport = function() {
+	// If we're not all supported just say no.
+	if (!Utils.isSupported()) {
+		return false;
+	}
+
+	// iOS and Android both kind of work.
+	if ($.iosType() != null || $.isAndroid()) {
+		return true;
+	}
+
+	// Should never actually get here.
+	return false;
+}
 
 Utils.isCalcSupported = function () {
 	return this.checkCalc("-webkit-") || this.checkCalc("-moz-") || this.checkCalc();

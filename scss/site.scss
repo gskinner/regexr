@@ -40,6 +40,18 @@
 		top: 50%;
 		@include vendor-prefix(transform, translate(-50%, -50%));
 	}
+
+	font-size: 1.2rem;
+	@include bpPixelDensity(1.5) {
+		font-size: 2.5rem;
+	}
+}
+
+.not-supported-mobile {
+	@extend .not-supported;
+
+	background: rgba(30,30,30,.95);
+	font-size: 2.5rem;
 }
 
 .beta-banner {
