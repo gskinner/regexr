@@ -237,7 +237,7 @@ SOFTWARE.
 		// jsMode tries to read escape chars as a JS string which is less permissive than JS RegExp, and doesn't support \c or backreferences, used for subst
 		
 		// Note: \8 & \9 are treated differently: IE & Chrome match "8", Safari & FF match "\8", we support the former case since Chrome & IE are dominant
-		// Note: in Chrome \u & \x will match u & x in a set, but outside it they are decomposed \\x, RegExr does not support this case
+		// Note: Chrome does weird things with \x & \u depending on a number of factors, we ignore this.
 		var i = token.i, jsMode = token.js, match, o;
 		var sub = str.substr(i+1), c=sub[0];
 		if (i+1 == (closeIndex||str.length)) { token.err = "esccharopen"; return; }
