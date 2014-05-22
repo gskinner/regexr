@@ -27,6 +27,18 @@ var library = {
 				"<p>RegExr uses your browser's RegExp engine for matching, and its syntax highlighting and documentation reflect the Javascript RegExp standard.</p>"
 			},
 			{
+			id:"infinite",
+			label:"The 'infinite' error",
+			desc:"The expression can match 0 characters, and therefore matches infinitely.",
+			ext:" <h1>Example:</h1><code>.*</code> can match an empty string of <code>0</code> characters, and therefore will match infinitely."
+			},
+			{
+			id:"timeout",
+			label:"The 'timeout' error",
+			desc:"The expression took longer than 250ms to execute.",
+			ext:" For some expressions the time to execute grows exponentially, often due to nested quantifiers. <h1>Example:</h1> When <code>(a+)+Z</code> is executed on <code>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</code> it attempts to match any number of 'a' characters any number of times, which results in exponential growth."
+			},
+			{
 			label:"Getting started",
 			desc:"RegExr provides real-time visual results, syntax highlighting, tooltips, and undo/redo ({{getCtrlKey()}}-Z / Y) so it's easy and fun to explore Regular Expressions."+
 				"<p>Browse through the <b>Reference</b> and test different tokens to see what they do, then check out the <b>Examples</b> to see how tokens work together.</p>"
@@ -55,18 +67,6 @@ var library = {
 			desc:"The <b>Library</b> includes help content and a reference that includes info on all regular expression tokens and flags."+
 				"<p>Tap a selected item in the reference to insert it into your <b>Expression</b>. Click the <span class='icon'>&#xE212;</span> beside an example to load it.</p>"+
 				"<p>The library also includes example patterns, searchable community submissions, and your saved favourites.</p>"
-			},
-			{
-			id:"infinite",
-			label:"The 'infinite' error",
-			desc:"The expression can match 0 characters, and therefore matches infinitely.",
-			ext:" <h1>Example:</h1><code>.*</code> can match <code>0</code> characters, and therefore will match infinitely."
-			},
-			{
-			id:"timeout",
-			label:"The 'timeout' error",
-			desc:"The expression took longer than 250ms to execute.<br><span class='small-text'><hr>** Certain patterns can cause exponential growth, and may timeout.</span>",
-			ext:" <h1>Example:</h1> Using <code>^(a+)+$</code> to match <code>aaaaaaaaaaaaaaaaaaaaaaaaaaaaB</code> will match each 'a' an indeterminate number of times, and therefore will eventually timeout."
 			}
 		]
 		},
