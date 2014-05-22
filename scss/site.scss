@@ -30,8 +30,8 @@
 	right: 0;
 	top: 0;
 	bottom: 0;
-	background: $lib-bg;
-	color: $lib-color;
+	background: $top-bg;
+	color: $white;
 	z-index: $z-index-top;
 
 	.content {
@@ -41,7 +41,7 @@
 		@include vendor-prefix(transform, translate(-50%, -50%));
 	}
 
-	font-size: 1.2rem;
+	font-size: 1.75rem;
 	@include bpPixelDensity(1.5) {
 		font-size: 2.5rem;
 	}
@@ -49,14 +49,12 @@
 
 .not-supported-mobile {
 	@extend .not-supported;
-
-	background: rgba(30,30,30,.95);
-	font-size: 2.5rem;
+	background: rgba($top-bg,0.95);
 }
 
 .beta-banner {
 	color: #ff0000;
 	font-weight: bold;
-	font-size: .70rem;
+	font-size: 0.70rem;
 	padding-left: 0.2rem;
 }
