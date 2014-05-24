@@ -34,6 +34,7 @@ SOFTWARE.
 	p.highlighter = null;
 	p.token = null;
 	p.offset = 0;
+	p.isMouseDown = false;
 
 	p.initialize = function(cm, highlighter) {
 		this.cm = cm;
@@ -43,12 +44,27 @@ SOFTWARE.
 		this.tooltip = Tooltip.add(cm.display.lineDiv);
 		this.tooltip.on("mousemove", this.onMouseMove, this);
 		this.tooltip.on("mouseout", this.onMouseOut, this);
+		
+		cm.on("mousedown", $.bind(this, this.onMouseDown));
+	};
+	
+	p.onMouseDown = function(evt) {
+		if (evt.which != 1) { return; } 
+		this.onMouseMove(); // clear current
+		this.isMouseDown = true;
+		(window.addEventListener ? window : document).addEventListener("mouseup", $.bind(this, this.onMouseUp));
+	};
+	
+	p.onMouseUp = function(evt) {
+		if (evt.which != 1) { return; } 
+		this.isMouseDown = false;
 	};
 
 	p.onMouseMove = function(evt) {
+		if (this.isMouseDown) { return; }
 		var index, cm=this.cm, token=this.token, target = null;
 
-		if (token && (index = CMUtils.getCharIndexAt(cm, evt.clientX, evt.clientY+window.pageYOffset)) != null) {
+		if (evt && token && (index = CMUtils.getCharIndexAt(cm, evt.clientX, evt.clientY+window.pageYOffset)) != null) {
 			index -= this.offset;
 			while (token) {
 				if (index >= token.i && index < token.end) { target = token; break; }
@@ -56,7 +72,7 @@ SOFTWARE.
 			}
 		}
 		if (target && target.proxy) { target = target.proxy; }
-
+		
 		this.highlighter.selectToken(target);
 		var rect = (index != null) && CMUtils.getCharRect(cm, index);
 		if (rect) { rect.right = rect.left = evt.clientX; }
