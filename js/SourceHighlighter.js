@@ -32,6 +32,9 @@ SOFTWARE.
 	p.cm = null;
 	p.canvas = null;
 	p.fill =  "#6CF";
+	p.lineSpacing = 2;
+	p.lastBottom = -1;
+	p.lastRight = -1;
 
 	p.initialize = function(cm, canvas, fill) {
 		this.cm = cm;
@@ -52,7 +55,7 @@ SOFTWARE.
 		var scroll = cm.getScrollInfo();
 		var top = cm.indexFromPos(cm.coordsChar({left:0, top:scroll.top}, "local"));
 		var bottom = cm.indexFromPos(cm.coordsChar({left:scroll.clientWidth, top:scroll.top+scroll.clientHeight}, "local"));
-
+		
 		for (var i=0,l=matches.length; i<l; i++) {
 			var match = matches[i];
 			var active = (match == activeMatch);
@@ -66,6 +69,7 @@ SOFTWARE.
 			if (active) { ctx.globalAlpha = 0.6; }
 			var startRect = cm.charCoords(startPos, "local");
 			var endRect = cm.charCoords(endPos, "local");
+			
 			if (startRect.bottom == endRect.bottom) {
 				this.drawHighlight(ctx, startRect.left, startRect.top, endRect.right, endRect.bottom, scroll.top);
 			} else {
@@ -87,7 +91,17 @@ SOFTWARE.
 	};
 
 	p.drawHighlight = function(ctx, left, top, right, bottom, scrollY, startCap, endCap) {
-		var capW = 4;
+		var capW = 5;
+		
+		left = left+0.5|0;
+		right = right+0.5|0;
+		top = top+0.5|0 + this.lineSpacing;
+		bottom = bottom+0.5|0;
+		
+		if (top > this.lastBottom-1) { this.lastBottom = bottom; }
+		else if (left < this.lastRight) { left = this.lastRight; }
+		this.lastRight = right;
+		
 		var a = ctx.globalAlpha;
 		if (startCap) {
 			ctx.globalAlpha = a*0.5;
@@ -105,6 +119,7 @@ SOFTWARE.
 
 	p.clear = function() {
 		this.canvas.width = this.canvas.width;
+		this.lastBottom = -1;
 	};
 
 	window.SourceHighlighter = SourceHighlighter;
