@@ -91,14 +91,15 @@ SOFTWARE.
 	};
 
 	p.drawHighlight = function(ctx, left, top, right, bottom, scrollY, startCap, endCap) {
-		var capW = 5;
+		var capW = 4;
 		
+		if (right < 0 || left+1 >= right) { return; } // weird bug in CodeMirror occasionally returns negative values
 		left = left+0.5|0;
 		right = right+0.5|0;
-		top = top+0.5|0 + this.lineSpacing;
+		top = (top+0.5|0) + this.lineSpacing;
 		bottom = bottom+0.5|0;
 		
-		if (top > this.lastBottom-1) { this.lastBottom = bottom; }
+		if (top+1 > this.lastBottom) { this.lastBottom = bottom; }
 		else if (left < this.lastRight) { left = this.lastRight; }
 		this.lastRight = right;
 		
@@ -114,7 +115,7 @@ SOFTWARE.
 			right -= capW;
 		}
 		ctx.globalAlpha = a;
-		ctx.fillRect(left+1, top-scrollY, right-left-1, bottom-top); // flooring these values with |0 looks great on Chrome, but not other browsers.
+		ctx.fillRect(left+1, top-scrollY, right-left-1, bottom-top);
 	};
 
 	p.clear = function() {
