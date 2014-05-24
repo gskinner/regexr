@@ -48,16 +48,16 @@ SOFTWARE.
 		cm.on("mousedown", $.bind(this, this.onMouseDown));
 	};
 	
-	p.onMouseDown = function(evt) {
-		if (evt.which != 1) { return; } 
-		this.onMouseMove(); // clear current
-		this.isMouseDown = true;
-		(window.addEventListener ? window : document).addEventListener("mouseup", $.bind(this, this.onMouseUp));
+	p.onMouseDown = function(cm, evt) {
+		if (evt.which == 1 || evt.button == 1) {
+			this.onMouseMove(); // clear current
+			this.isMouseDown = true;
+			(window.addEventListener ? window : document).addEventListener("mouseup", $.bind(this, this.onMouseUp));
+		}
 	};
 	
 	p.onMouseUp = function(evt) {
-		if (evt.which != 1) { return; } 
-		this.isMouseDown = false;
+		if (evt.button == 1 || evt.which == 1) { this.isMouseDown = false; } 
 	};
 
 	p.onMouseMove = function(evt) {
