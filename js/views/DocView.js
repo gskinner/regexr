@@ -157,7 +157,7 @@ SOFTWARE.
 		this.saveTooltip = Tooltip.add(saveBtn, $.el(".menu.save"), {mode:"press", controller:this.saveMenu, className:"save"});
 
 		window.addEventListener("resize", $.bind(this, this.deferResize));
-		this.deferResize(); // defering this resolves some issues at certain sizes.
+		this.deferResize(); // deferring this resolves some issues at certain sizes.
 		this.setupUndo();
 
 		this.setInitialExpression();
@@ -393,7 +393,7 @@ SOFTWARE.
 	p.update = function() {
 		this.error = null;
 
-		var match, regex, index, matches=this.matches;
+		var regex, matches=this.matches;
 		var str = this.sourceCM.getValue();
 		var expr = this.expressionCM.getValue();
 		var o = this.decomposeExpression(expr);
@@ -407,7 +407,7 @@ SOFTWARE.
 
 		try { regex = new RegExp(o.pattern, o.flags); }
 		catch (e) { this.error = "ERROR"; }
-		matches.length = index = 0;
+		matches.length = 0;
 
 		var _this = this;
 		RegExJS.match(regex, str, function(error, matches) {
@@ -497,10 +497,10 @@ SOFTWARE.
 		$.defer(this, this.update, "update", t);
 	};
 
-	p.deferResize = function(t) {
+	p.deferResize = function() {
 		this.sourceHighlighter.clear();
 		$.addClass(this.sourceCanvas, "hidden");
-		$.defer(this, this.resize, "resize", t||500);
+		$.defer(this, this.resize, "resize", 500);
 	};
 
 	p.getCM = function(target, opts, width, height) {
