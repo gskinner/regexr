@@ -183,7 +183,7 @@ Utils.populateSelector = function (selector, items) {
 
 Utils.isSupported = function() {
 	// This should catch all the not supported browsers.
-	return $.isCanvasSupported() && $.isCalcSupported() && store.enabled;
+	return $.isCanvasSupported() && $.isCalcSupported();
 };
 
 Utils.partialSupport = function() {

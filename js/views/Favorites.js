@@ -95,6 +95,10 @@ SOFTWARE.
 
 		Settings.addEventListener("change", this._settingsChangeProxy);
 
+		if (!store.enabled) {
+			$.addClass(this.favoriteBtn, "hidden");
+		}
+
 		this.createRating();
 		this.search();
 		this.onListChange();
@@ -169,7 +173,19 @@ SOFTWARE.
 	p.handleFavoritesLoad = function(data) {
 		if (!this._visible) { return; }
 
-		if (data && data.results) {
+		if (!store.enabled) {
+			var promotionData = {
+				content: "Favorites requires local storage to be enabled.",
+				description: "Your local storage may be disabled due to security restrictions, or could simply be disabled. Check your browsers settings to find out.",
+				id: "-1",
+				name: "Local storage is not available",
+				pattern: "/(Favo)u?(rite)(s?)/ig",
+				replace: "$1$2$3",
+				weightedVote: "0",
+				author:"gskinner.com"
+			};
+			this.list.setData([promotionData]);
+		} else if (data && data.results) {
 			this.list.setData(data.results);
 		} else {
 			var promotionData = {

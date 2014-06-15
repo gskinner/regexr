@@ -25,6 +25,7 @@ SOFTWARE.
 	"use strict";
 
 	var s = {};
+	s._values = {};
 
 	createjs.EventDispatcher.initialize(s);
 
@@ -33,7 +34,7 @@ SOFTWARE.
 	};
 
 	s.getRating = function(id) {
-		return store.get("r"+id) || 0;
+		return s._geValue("r"+id) || 0;
 	};
 
 	s.setFavorite = function(id, value) {
@@ -46,7 +47,7 @@ SOFTWARE.
 	};
 
 	s.getFavorite = function(id) {
-		return store.get("f"+id) == 1?true:false;
+		return s._geValue("f"+id) == 1?true:false;
 	};
 
 	s.getAllFavorites = function() {
@@ -70,7 +71,7 @@ SOFTWARE.
 	};
 
 	s.getUpdateToken = function(patternID) {
-		return store.get("s"+patternID);
+		return s._geValue("s"+patternID);
 	};
 
 	s.cleanSaveTokens = function() {
@@ -85,17 +86,29 @@ SOFTWARE.
 	};
 
 	s.trackVisit = function() {
-		var visitCount = store.get("v") || 0;
+		var visitCount = s._geValue("v") || 0;
 		s._saveValue("v", ++visitCount);
 	};
 
 	s.getVisitCount = function() {
-		return store.get("v") || 0;
+		return s._geValue("v") || 0;
 	};
 
 	s._saveValue = function(key, value) {
-		store.set(key, value);
+		if (store.enabled) {
+			store.set(key, value);
+		} else {
+			s._values[key] = value;
+		}
 		s.dispatchEvent(new DataEvent("change", {type:key, value:value}));
+	};
+
+	s._geValue = function(id) {
+		if (store.enabled) {
+			return store.get(id);
+		} else {
+			return s._values[id];
+		}
 	};
 
 	scope.Settings = s;
