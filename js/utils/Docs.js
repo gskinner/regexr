@@ -111,6 +111,8 @@ Docs.forToken = function(token) {
 	}
 
 	var type=token.type, clss=token.clss, ids=Docs.ids, id=type, tip;
+	
+	if(id === "nothing") return;
 
 	var node = ids[id];
 	if (node) {

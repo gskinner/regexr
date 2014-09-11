@@ -20,20 +20,23 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
- */
+	*/
 (function() {
 	"use strict";
 
 	var SubstLexer = function() {};
 	var p = SubstLexer.prototype;
 
-	SubstLexer.SUBST_TYPES = {
-		"$" : null,
-		"&" : "subst_match",
-		"`" : "subst_pre",
-		"'" : "subst_post"
+	SubstLexer.WORDS = {
+		match: "subst_match",
+		group: "subst_num",
+		offset: "subst_offset",
+		string: "subst_string",
+
+		"function": "subst_keyword",
+		"return": "subst_keyword"
 	};
-	
+
 	p.string = null;
 	p.token = null;
 	p.errors = null;
@@ -42,22 +45,17 @@ SOFTWARE.
 	p.parse = function(str, capGroups) {
 		this.string = str;
 		this.errors = [];
-		
+
 		var prev = this.token = null;
 		for (var i=0, l=str.length; i<l; i+=token.l) {
 			var c=str[i], token = {prev:prev, i:i, l:1, js:true};
 
-			if (this.substMode && c == "$" && i+1<l) {
-				this.parseSubst(str, token, capGroups);
-			} else if (c == "\\") {
+			if(c.match(/\w/))
+				this.parseVar(str, token, capGroups);
+			else if (c == "\\")
 				this.parseEsc(str, token, false);
-			}
-
-			if (!token.type) {
-				token.type = "js_char";
-				token.code = c.charCodeAt(0);
-			}
-
+			else
+				token.type = "nothing";
 
 			if (prev) { prev.next = token; }
 			if (!this.token) { this.token = token; }
@@ -68,27 +66,34 @@ SOFTWARE.
 
 		return this.token;
 	};
-	
-	p.parseSubst = function(str, token, capGroups) {
-		var match = str.substr(token.i+1).match(/^([$&`']|\d\d?)/);
-		if (!match) { return; }
-		var d = match[0];
-		
-		token.type = SubstLexer.SUBST_TYPES[d];
 
-		if (token.type === undefined) {
-			var group = parseInt(d), numGroups = capGroups.length;
-			if (d.length > 1 && group > numGroups) { d=d[0]; group=parseInt(d); }
-			if (group > 0 && group <= numGroups) {
-				token.type = "subst_num";
-				token.group = capGroups[group-1];
-				token.l += d.length-1;
+	p.parseVar = function(str, token, capGroups){
+		var d = str.substr(token.i).match(/^[a-z]+/);
+		if(!d) return;
+		else d = d[0];
+
+		if(SubstLexer.WORDS[d]){
+			if(d == "group"){
+				var group = parseInt(str.substring(token.i + 5, token.i + 7));
+				if(group && group <= capGroups.length){
+					token.group = capGroups[group - 1];
+					token.l += d > 9? 2 : 1;
+				} else return;
 			}
+			token.type = SubstLexer.WORDS[d];
+		} else {
+			d = str.substr(token.i).match(/^\w+/);
+			if(!d) return;
+			else d = d[0];
+
+			if(window[d])
+				token.type = "subst_method";
 		}
-		if (token.type !== undefined) { token.clss = "subst"; token.l++; }
+		if(!token.type) token.err = "variable";
+		token.l += d.length - 1;
 	};
-	
+
 	p.parseEsc = RegExLexer.prototype.parseEsc;
-	
+
 	window.SubstLexer = SubstLexer;
 })();

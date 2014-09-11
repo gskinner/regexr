@@ -27,9 +27,16 @@
 		height: $editor-height;
 		position: relative;
 	}
+	
+	.editor.expr{
+		height: $editor-1l-height;
+	}
+	
+	.editor.subst{
+		height: 3.75em;
+	}
 
 	.editor.expr, .editor.subst {
-		height: $editor-1l-height;
 		padding-bottom: $editor-1l-pad-bottom;
 
 		.CodeMirror-hscrollbar {

@@ -29,7 +29,7 @@ SOFTWARE.
 	var p = DocView.prototype;
 
 	DocView.DEFAULT_EXPRESSION = "/([A-Z])\\w+/g";
-	DocView.DEFAULT_SUBSTITUTION = "\\n# $&:\\n\\t";
+	DocView.DEFAULT_SUBSTITUTION = "function(match, group1, offset, string)\n\treturn \"\\n# \" + match + \"\\n\"";
 	DocView.VALID_FLAGS = "igm";
 
 	p.isMac = false; // for keyboard shortcuts.
@@ -129,7 +129,7 @@ SOFTWARE.
 		substTitle.addEventListener("mousedown", $.bind(this, this.onSubstClick));
 
 		var substEditor = $.el(".editor.subst", el);
-		var substCM = this.substCM = this.getCM(substEditor, {maxLength:500, singleLine:true}, "100%", "auto");
+		var substCM = this.substCM = this.getCM(substEditor, {maxLength:500}, "100%", "auto");
 		substCM.on("change", $.bind(this, this.deferUpdate));
 		this.substHighlighter = new ExpressionHighlighter(substCM);
 		this.substHover = new ExpressionHover(substCM, this.substHighlighter);
@@ -254,7 +254,9 @@ SOFTWARE.
 	};
 
 	p.setSubstitution = function(str) {
-		this.substCM.setValue(str);
+		var substCM = this.substCM;
+		substCM.setValue(str);
+		substCM.getDoc().markText({line:0,ch:0},{line:1,ch:8},{className:"exp-decorator", readOnly:true, atomic:true, inclusiveLeft:true});
 		this.deferUpdate();
 		return this;
 	};
@@ -431,16 +433,18 @@ SOFTWARE.
 
 	p.updateSubst = function(source, regex) {
 		if (!this.substEnabled) { return; }
-		var str = this.substCM.getValue();
-		var token = this.substLexer.parse(str, this.exprLexer.captureGroups);
+		var replace;
+		try {
+			replace = new Function("match", "group1", "offset", "string", this.substCM.getValue().substr(41));
+		} catch(e){
+			console.error("Something is in the function wrong.", this.substCM.getValue().substr(41));
+		}
+		var token = this.substLexer.parse(this.substCM.getValue(), this.exprLexer.captureGroups);
 
 		this.substHighlighter.draw(token);
 		this.substHover.token = token;
 		if (!this.error && this.substLexer.errors.length === 0) {
-			try {  str = eval('"'+str.replace(/"/g,'\\"')+'"'); } catch (e) {
-				console.error("UNCAUGHT js string error", e);
-			}
-			source = source.replace(regex, str);
+			source = source.replace(regex, replace);
 		}
 		this.substResCM.setValue(source);
 	};
