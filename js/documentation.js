@@ -414,6 +414,12 @@ var library = {
 				label: "javascript method",
 				desc: "",
 				token: ""
+				},
+				{
+				id:"string",
+				label: "javascript string",
+				desc: "",
+				token: ""
 				}
 			]
 			},
@@ -567,7 +573,8 @@ var errors = {
 	lookbehind:"Lookbehind is not supported in Javascript.",
 	fwdslash:"Unescaped forward slash.",
 	esccharbad:"Invalid escape sequence.",
-	variable:"Unknown variable."
+	variable:"Unknown variable.",
+	javascript:"Javascript error."
 
 	// infinite is handled in the Help section.
 };

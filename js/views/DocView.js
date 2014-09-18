@@ -433,16 +433,17 @@ SOFTWARE.
 
 	p.updateSubst = function(source, regex) {
 		if (!this.substEnabled) { return; }
+		var token = this.substLexer.parse(this.substCM.getValue(), this.exprLexer.captureGroups);
+		this.substHighlighter.draw(token);
+		this.substHover.token = token;
+
 		var replace;
 		try {
 			replace = new Function("match", "group1", "offset", "string", this.substCM.getValue().substr(41));
 		} catch(e){
-			console.error("Something is in the function wrong.", this.substCM.getValue().substr(41));
+			return;
 		}
-		var token = this.substLexer.parse(this.substCM.getValue(), this.exprLexer.captureGroups);
 
-		this.substHighlighter.draw(token);
-		this.substHover.token = token;
 		if (!this.error && this.substLexer.errors.length === 0) {
 			source = source.replace(regex, replace);
 		}

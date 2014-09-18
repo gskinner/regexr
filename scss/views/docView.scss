@@ -195,7 +195,7 @@
 	color: #090;
 }
 
-.exp-charclass, .exp-set, .exp-subst {
+.exp-charclass, .exp-set, .exp-subst, .exp-string-set:not(.exp-esc) {
 	color: #D70;
 }
 
@@ -207,7 +207,7 @@
 
 .exp-group-3 { background: rgba(0, 205, 0, 0.40); }
 
-.exp-group-set {
+.exp-group-set, .exp-string-set {
 	background: rgba(255, 255, 0, 0.3);
 }
 

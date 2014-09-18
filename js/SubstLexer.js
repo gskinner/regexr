@@ -46,16 +46,40 @@ SOFTWARE.
 		this.string = str;
 		this.errors = [];
 
-		var prev = this.token = null;
+		var funcerr = {i: -1};
+		try {
+			var func = new Function("match", "group1", "offset", "string", str.substr(41));
+		} catch(e){
+			funcerr = {i: 40 + e.columnNumber, msg: e.message};
+		}
+
+		var prev = this.token = null, string = null;
 		for (var i=0, l=str.length; i<l; i+=token.l) {
 			var c=str[i], token = {prev:prev, i:i, l:1, js:true};
 
-			if(c.match(/\w/))
-				this.parseVar(str, token, capGroups);
-			else if (c == "\\")
-				this.parseEsc(str, token, false);
-			else
-				token.type = "nothing";
+			if(funcerr.i === i){
+				token.err = "javascript";
+			} else if(string){
+				if((c == '"' || c == "'")){
+					token.type = "string";
+					token.open = string;
+					string.close = token;
+					string = null;
+				} else if (c == "\\")
+					this.parseEsc(str, token, string);
+				else {
+					token.type = "char";
+					token.code = c.charCodeAt(0);
+				}
+			} else {
+				if(c == '"' || c == "'"){
+					token.type = token.clss = "string";
+					string = token;
+				} else if(c.match(/\w/))
+					this.parseVar(str, token, capGroups);
+				else
+					token.type = "nothing";
+			}
 
 			if (prev) { prev.next = token; }
 			if (!this.token) { this.token = token; }
