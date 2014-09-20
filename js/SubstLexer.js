@@ -43,18 +43,23 @@ SOFTWARE.
 	p.substMode = true;
 
 	p.parse = function(str, capGroups) {
+		var i, l;
 		this.string = str;
 		this.errors = [];
 
 		var funcerr = {i: -1};
 		try {
-			var func = new Function("match", "group1", "offset", "string", str.substr(41));
+			var args = ["match"];
+			for(i = 0, l = capGroups.length; i < l; ++i)
+				args.push("group" + (i + 1));
+			args.push("offset", "string", str.substr(33 + 8 * capGroups.length));
+			var func = Function.constructor.apply(void 0, args);
 		} catch(e){
 			funcerr = {i: 40 + e.columnNumber, msg: e.message};
 		}
 
-		var prev = this.token = null, string = null;
-		for (var i=0, l=str.length; i<l; i+=token.l) {
+		var prev = this.token = null, string = null, d;
+		for (i=0, l=str.length; i<l; i+=token.l) {
 			var c=str[i], token = {prev:prev, i:i, l:1, js:true};
 
 			if(funcerr.i === i){
@@ -77,7 +82,10 @@ SOFTWARE.
 					string = token;
 				} else if(c.match(/\w/))
 					this.parseVar(str, token, capGroups);
-				else
+				else if(c === "." && (d = str.substr(token.i).match(/^\.\w+/)) !== null){
+					token.type = "subst_method";
+					token.l = d[0].length;
+				}	else
 					token.type = "nothing";
 			}
 

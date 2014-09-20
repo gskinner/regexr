@@ -29,7 +29,7 @@ SOFTWARE.
 	var p = DocView.prototype;
 
 	DocView.DEFAULT_EXPRESSION = "/([A-Z])\\w+/g";
-	DocView.DEFAULT_SUBSTITUTION = "function(match, group1, offset, string)\n\treturn \"\\n# \" + match + \"\\n\"";
+	DocView.DEFAULT_SUBSTITUTION = "\"\\n# \" + match + \":\\n\\t\"";
 	DocView.VALID_FLAGS = "igm";
 
 	p.isMac = false; // for keyboard shortcuts.
@@ -66,6 +66,7 @@ SOFTWARE.
 	// state:
 	p.matches = null;
 	p.error = null;
+	p.captureGroups = null;
 	p.hoverMatch = null;
 	p.exprLexer = null;
 	p.substLexer = null;
@@ -171,7 +172,6 @@ SOFTWARE.
 		this.deferUpdate();
 	};
 
-
 // public methods:
 	p.populateAll = function(pattern, flags, content, substitution) {
 		this.setPattern(pattern);
@@ -254,10 +254,15 @@ SOFTWARE.
 	};
 
 	p.setSubstitution = function(str) {
-		var substCM = this.substCM;
-		substCM.setValue(str);
+		var substCM = this.substCM, str;
+		var val = "function(match";
+		for(var i = 0, l = this.captureGroups; i < l; ++i)
+			val += ", group" + (i + 1);
+		val += ", offset, string)\n\treturn\t";
+		if(str) val += str;
+		else val += DocView.DEFAULT_SUBSTITUTION;
+		substCM.setValue(val);
 		substCM.getDoc().markText({line:0,ch:0},{line:1,ch:8},{className:"exp-decorator", readOnly:true, atomic:true, inclusiveLeft:true});
-		this.deferUpdate();
 		return this;
 	};
 
@@ -403,6 +408,11 @@ SOFTWARE.
 		this.expressionHighlighter.draw(this.exprLexer.parse(expr));
 		this.expressionHover.token = this.exprLexer.token;
 
+  if(this.captureGroups !== this.exprLexer.captureGroups.length){
+			this.captureGroups = this.exprLexer.captureGroups.length;
+			this.updateSubstFuncArgs();
+		}
+
 		// this is only ok if we are very confident we will not have false errors.
 		// used primarily to handle fwdslash errors.
 		if (this.exprLexer.errors.length) { this.error = "ERROR"; }
@@ -433,13 +443,18 @@ SOFTWARE.
 
 	p.updateSubst = function(source, regex) {
 		if (!this.substEnabled) { return; }
-		var token = this.substLexer.parse(this.substCM.getValue(), this.exprLexer.captureGroups);
+		var token = this.substLexer.parse(this.getSubstitution(), this.exprLexer.captureGroups);
 		this.substHighlighter.draw(token);
 		this.substHover.token = token;
 
+		var args = ["match"];
+		for(i = 0, l = this.exprLexer.captureGroups.length; i < l; ++i)
+			args.push("group" + (i + 1));
+		args.push("offset", "string", this.substCM.getValue().substr(33 + 8 * l));
+
 		var replace;
 		try {
-			replace = new Function("match", "group1", "offset", "string", this.substCM.getValue().substr(41));
+			replace = Function.constructor.apply(void 0, args);
 		} catch(e){
 			return;
 		}
@@ -448,6 +463,10 @@ SOFTWARE.
 			source = source.replace(regex, replace);
 		}
 		this.substResCM.setValue(source);
+	};
+
+	p.updateSubstFuncArgs = function(){
+		this.setSubstitution(this.substCM.getValue().match(/[^\t]+$/));
 	};
 
 	p.drawSourceHighlights = function() {
