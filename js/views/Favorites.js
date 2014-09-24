@@ -256,12 +256,16 @@ SOFTWARE.
 		} else if (type == "source") {
 			this.docView.setText(data.content);
 		} else if (type == "subst") {
-			this.docView.setSubstitution(data.replace);
-			this.docView.showSubstitution();
+			if(!data.replacetype || data.replacetype == 1)
+				this.docView.setSubstitution(data.replace);
+			else
+				this.docView.setSubstitutionFunc(data.replace);
+
+			this.docView.showSubstitution(data.replacetype || 1);
 		} else if (type == "all") {
 			if (ExpressionModel.id != data.id) {
 				ExpressionModel.setID(data.id);
-				this.docView.populateAll(expression, flags, data.content, data.replace);
+				this.docView.populateAll(expression, flags, data.content, data.replace, data.replacetype || (data.replace? 1 : 0));
 				ServerModel.trackVisit(data.id);
 			}
 		}

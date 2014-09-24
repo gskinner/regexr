@@ -27,16 +27,9 @@
 		height: $editor-height;
 		position: relative;
 	}
-	
-	.editor.expr{
-		height: $editor-1l-height;
-	}
-	
-	.editor.subst{
-		height: 3.75em;
-	}
 
 	.editor.expr, .editor.subst {
+		height: $editor-1l-height;
 		padding-bottom: $editor-1l-pad-bottom;
 
 		.CodeMirror-hscrollbar {
@@ -108,7 +101,7 @@
 	}
 }
 
-.editor.subst {
+.editor.subst, .editor.substfunc {
 	font-weight: bold;
 	border-bottom: dotted $subst-border $title-bg;
 }
@@ -118,7 +111,7 @@
 		color: lighten($color, 40%);
 	}
 
-	.editor.subst, .editor.substres {
+	.editor.subst, .editor.substres, .button.subst {
 		display:none;
 	}
 
@@ -134,6 +127,26 @@
 .editor.source, .editor.substres {
 	@include calc("height", "100%/2 - #{3*$title-h-pad + 2*$editor-h-pad + 4*$pad}/2 - #{$subst-border}");
 }
+
+.editor.substfunc {
+	height: #{1.5 * $editor-1l-height};
+	display: none;
+}
+
+.subst-func {
+	.editor.substfunc {
+		display: block;
+	}
+
+	.editor.subst {
+		display: none;
+	}
+
+	.editor.substres {
+		@include calc("height", "100%/2 - #{3*$title-h-pad + 2*$editor-h-pad + 4*$pad + 1.5 * $editor-1l-height}/2 - #{$subst-border}");
+	}
+}
+
 
 /* Syntax highlighting */
 .exp-decorator {

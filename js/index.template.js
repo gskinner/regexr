@@ -74,7 +74,7 @@ SOFTWARE.
 		cheatsheet.style.display = "none";
 		Docs.getItem("cheatsheet").desc = cheatsheet.innerHTML;
 
-		docView.setExpression(DocView.DEFAULT_EXPRESSION).setSubstitution(DocView.DEFAULT_SUBSTITUTION);
+		docView.setExpression(DocView.DEFAULT_EXPRESSION).setSubstitution(DocView.DEFAULT_SUBSTITUTION).setSubstitutionFunc(DocView.DEFAULT_SUBSTITUTIONFUNC);
 		docView.resetHistory();
 
 		var libView = new LibView($.el("#libview"), Docs.content.library);

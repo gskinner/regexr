@@ -29,7 +29,8 @@ SOFTWARE.
 	var p = DocView.prototype;
 
 	DocView.DEFAULT_EXPRESSION = "/([A-Z])\\w+/g";
-	DocView.DEFAULT_SUBSTITUTION = "\"\\n# \" + match + \":\\n\\t\"";
+	DocView.DEFAULT_SUBSTITUTION = "\\n# $&:\\n\\t";
+	DocView.DEFAULT_SUBSTITUTIONFUNC = "\"\\n# \" + match + \":\\n\\t\"";
 	DocView.VALID_FLAGS = "igm";
 
 	p.isMac = false; // for keyboard shortcuts.
@@ -55,10 +56,18 @@ SOFTWARE.
 	p.substHighlighter = null;
 	p.substHover = null;
 	p.substCM = null;
+
+	p.substfuncHighlighter = null;
+	p.substfuncHover = null;
+	p.substfuncCM = null;
+
 	p.substResCM = null;
 
 	p.flagsTooltip = null;
 	p.flagsMenu = null;
+
+	p.substTooltip = null;
+	p.substMenu = null;
 
 	p.shareTooltip = null;
 	p.saveTooltip = null;
@@ -70,7 +79,8 @@ SOFTWARE.
 	p.hoverMatch = null;
 	p.exprLexer = null;
 	p.substLexer = null;
-	p.substEnabled = false;
+	p.substfuncLexer = null;
+	p.substType = 0; //0: off, 1: normal, 2: function
 
 	// timers:
 	p.timeoutIDs = null;
@@ -90,6 +100,7 @@ SOFTWARE.
 		this.timeoutIDs = {};
 		this.exprLexer = new RegExLexer();
 		this.substLexer = new SubstLexer();
+		this.substfuncLexer = new SubstFuncLexer();
 		this.isMac = Utils.isMac();
 		this.themeColor = window.getComputedStyle($.el(".regexr-logo")).color;
 
@@ -130,10 +141,16 @@ SOFTWARE.
 		substTitle.addEventListener("mousedown", $.bind(this, this.onSubstClick));
 
 		var substEditor = $.el(".editor.subst", el);
-		var substCM = this.substCM = this.getCM(substEditor, {maxLength:500}, "100%", "auto");
+		var substCM = this.substCM = this.getCM(substEditor, {maxLength:500, singleLine:true}, "100%", "auto");
 		substCM.on("change", $.bind(this, this.deferUpdate));
 		this.substHighlighter = new ExpressionHighlighter(substCM);
 		this.substHover = new ExpressionHover(substCM, this.substHighlighter);
+
+		var substfuncEditor = $.el(".editor.substfunc", el);
+		var substfuncCM = this.substfuncCM = this.getCM(substfuncEditor, {maxLength:500}, "100%", "auto");
+		substfuncCM.on("change", $.bind(this, this.deferUpdate));
+		this.substfuncHighlighter = new ExpressionHighlighter(substfuncCM);
+		this.substfuncHover = new ExpressionHover(substfuncCM, this.substfuncHighlighter);
 
 		var substResEditor = $.el(".editor.substres", el);
 		this.substResCM = this.getCM(substResEditor, {readOnly:true, lineWrapping: true});
@@ -157,6 +174,12 @@ SOFTWARE.
 		var saveBtn = $.el(".button.save");
 		this.saveTooltip = Tooltip.add(saveBtn, $.el(".menu.save"), {mode:"press", controller:this.saveMenu, className:"save"});
 
+		// Subst
+		this.substMenu = new SubstMenu($.el(".menu.subst"), this);
+		this.substMenu.on("change", this.onSubstMenuChange, this);
+		var substBtn = $.el(".button.subst");
+		this.substTooltip = Tooltip.add(substBtn, $.el(".menu.subst", el), {mode:"press"});
+
 		window.addEventListener("resize", $.bind(this, this.deferResize));
 		this.deferResize(); // deferring this resolves some issues at certain sizes.
 		this.setupUndo();
@@ -173,16 +196,19 @@ SOFTWARE.
 	};
 
 // public methods:
-	p.populateAll = function(pattern, flags, content, substitution) {
+	p.populateAll = function(pattern, flags, content, substitution, substtype) {
 		this.setPattern(pattern);
 		this.setFlags(flags);
 		this.setText(content);
 
 		if (substitution) {
-			this.setSubstitution(substitution);
-			this.showSubstitution();
+			if(substtype == 1)
+				this.setSubstitution(substitution);
+			else
+				this.setSubstitutionFunc(substitution);
+			this.showSubstitution(substtype);
 		} else {
-			this.showSubstitution(false);
+			this.showSubstitution(0);
 		}
 
 		ExpressionModel.saveState();
@@ -254,20 +280,28 @@ SOFTWARE.
 	};
 
 	p.setSubstitution = function(str) {
-		var substCM = this.substCM, str;
+		this.substCM.setValue(str);
+		this.deferUpdate();
+		return this;
+	};
+
+	p.setSubstitutionFunc = function(str) {
+		var substfuncCM = this.substfuncCM, str;
 		var val = "function(match";
 		for(var i = 0, l = this.captureGroups; i < l; ++i)
 			val += ", group" + (i + 1);
 		val += ", offset, string)\n\treturn\t";
-		if(str) val += str;
-		else val += DocView.DEFAULT_SUBSTITUTION;
-		substCM.setValue(val);
-		substCM.getDoc().markText({line:0,ch:0},{line:1,ch:8},{className:"exp-decorator", readOnly:true, atomic:true, inclusiveLeft:true});
+		substfuncCM.setValue(val + str);
+		substfuncCM.getDoc().markText({line:0,ch:0},{line:1,ch:8},{className:"exp-decorator", readOnly:true, atomic:true, inclusiveLeft:true});
 		return this;
 	};
 
 	p.getSubstitution = function() {
 		return this.substCM.getValue();
+	};
+
+	p.getSubstitutionFunc = function() {
+		return this.substfuncCM.getValue();
 	};
 
 	p.insertExpression = function(str) {
@@ -283,14 +317,20 @@ SOFTWARE.
 	};
 
 	p.showSubstitution = function(value) {
-		value = value === undefined ? true : value;
-		if (this.substEnabled == value) { return; }
-		this.substEnabled = value;
+		value = value === undefined ? this.substMenu.subst : value;
+		this.substType = value;
 		if (value) {
 			$.removeClass(this.element, "subst-disabled");
 		} else {
 			$.addClass(this.element, "subst-disabled");
 		}
+
+		if(value === 2){
+			$.addClass(this.element, "subst-func");
+		} else {
+			$.removeClass(this.element, "subst-func");
+		}
+
 		this.deferUpdate();
 		this.resize();
 		this.substCM.refresh();
@@ -313,7 +353,7 @@ SOFTWARE.
 	// undo/redo:
 	p.setupUndo = function() {
 		this.history = [];
-		var srcCM = this.sourceCM, expCM = this.expressionCM, substCM = this.substCM, _this = this;
+		var srcCM = this.sourceCM, expCM = this.expressionCM, substCM = this.substCM, substfuncCM = this.substfuncCM, _this = this;
 		// Note: this is dependent on CodeMirror emitting the historyAdded event from addToHistory()
 		// like so: if (!last) { signal(doc, "historyAdded"); }
 		srcCM.getDoc().on("historyAdded", function() { _this.addHistory(srcCM); });
@@ -322,6 +362,8 @@ SOFTWARE.
 		expCM.setOption("undoDepth", this.maxHistoryDepth);
 		substCM.getDoc().on("historyAdded", function() { _this.addHistory(substCM); });
 		substCM.setOption("undoDepth", this.maxHistoryDepth);
+		substfuncCM.getDoc().on("historyAdded", function() { _this.addHistory(substfuncCM); });
+		substfuncCM.setOption("undoDepth", this.maxHistoryDepth);
 		window.addEventListener("keydown", $.bind(this, this.handleKeyDown));
 	};
 
@@ -408,7 +450,7 @@ SOFTWARE.
 		this.expressionHighlighter.draw(this.exprLexer.parse(expr));
 		this.expressionHover.token = this.exprLexer.token;
 
-  if(this.captureGroups !== this.exprLexer.captureGroups.length){
+		if(this.captureGroups !== this.exprLexer.captureGroups.length){
 			this.captureGroups = this.exprLexer.captureGroups.length;
 			this.updateSubstFuncArgs();
 		}
@@ -442,31 +484,45 @@ SOFTWARE.
 	};
 
 	p.updateSubst = function(source, regex) {
-		if (!this.substEnabled) { return; }
-		var token = this.substLexer.parse(this.getSubstitution(), this.exprLexer.captureGroups);
-		this.substHighlighter.draw(token);
-		this.substHover.token = token;
+		if (!this.substType) { return; }
+		if(this.substType === 1){
+			var str = this.substCM.getValue();
+			var token = this.substLexer.parse(str, this.exprLexer.captureGroups);
 
-		var args = ["match"];
-		for(i = 0, l = this.exprLexer.captureGroups.length; i < l; ++i)
-			args.push("group" + (i + 1));
-		args.push("offset", "string", this.substCM.getValue().substr(33 + 8 * l));
+			this.substHighlighter.draw(token);
+			this.substHover.token = token;
+			if (!this.error && this.substLexer.errors.length === 0) {
+				try {  str = eval('"'+str.replace(/"/g,'\\"')+'"'); } catch (e) {
+					console.error("UNCAUGHT js string error", e);
+				}
+				source = source.replace(regex, str);
+			}
+		} else {
+			var token = this.substfuncLexer.parse(this.getSubstitutionFunc(), this.exprLexer.captureGroups);
+			this.substfuncHighlighter.draw(token);
+			this.substfuncHover.token = token;
 
-		var replace;
-		try {
-			replace = Function.constructor.apply(void 0, args);
-		} catch(e){
-			return;
-		}
+			var args = ["match"];
+			for(i = 0, l = this.exprLexer.captureGroups.length; i < l; ++i)
+				args.push("group" + (i + 1));
+			args.push("offset", "string", this.substfuncCM.getValue().substr(33 + 8 * l));
 
-		if (!this.error && this.substLexer.errors.length === 0) {
-			source = source.replace(regex, replace);
+			var replace;
+			try {
+				replace = Function.constructor.apply(void 0, args);
+			} catch(e){
+				return;
+			}
+
+			if (!this.error && this.substfuncLexer.errors.length === 0) {
+				source = source.replace(regex, replace);
+			}
 		}
 		this.substResCM.setValue(source);
 	};
 
 	p.updateSubstFuncArgs = function(){
-		this.setSubstitution(this.substCM.getValue().match(/[^\t]+$/));
+		this.setSubstitutionFunc(this.substfuncCM.getValue().match(/[^\t]+$/));
 	};
 
 	p.drawSourceHighlights = function() {
@@ -491,12 +547,21 @@ SOFTWARE.
 	};
 
 	p.onSubstClick = function(evt) {
-		Tracking.event("substitution", !this.substEnabled?"show":"hide");
-		this.showSubstitution(!this.substEnabled);
+		Tracking.event("substitution", this.substType === 0?"show":"hide");
+		this.showSubstitution(this.substType === 0? this.substMenu.subst : 0);
 	};
 
 	p.onFlagsMenuChange = function(evt) {
 		this.setFlags(this.flagsMenu.getFlags());
+	};
+
+	p.onSubstMenuChange = function(evt) {
+		if(this.substMenu.active)
+			this.substType = this.substMenu.subst;
+		else
+			this.substTooltip.hide();
+
+		this.showSubstitution(this.substMenu.active? this.substMenu.subst : 0);
 	};
 
 	p.handleExpressionCMChange = function(cm, change) {

@@ -44,13 +44,14 @@ SOFTWARE.
 	 * @param token (Optional) save token users to update (users can update patterns within 24 hours of a save).
 	 * @returns {*}
 	 */
-	s.savePattern = function(tags, name, pattern, content, replace, description, author, isPublic, id, token) {
+	s.savePattern = function(tags, name, pattern, content, replace, replacetype, description, author, isPublic, id, token) {
 		return s._createPromise("savePattern", {
 			tags:tags,
 			name:name,
 			pattern:pattern,
 			content:content,
 			replace:replace,
+			replacetype:replacetype,
 			description:description,
 			author:author,
 			isPublic:isPublic,
