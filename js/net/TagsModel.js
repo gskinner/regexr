@@ -27,10 +27,19 @@ SOFTWARE.
 	var s = {};
 	s.activePromise = null;
 	s.existing = null;
+	s.cache = {};
+
+	s._term = "";
 
 	s.search = function(term, existing) {
 		if (s.activePromise) {
 			s.activePromise.cancelled = true;
+		}
+
+		s._term = term.toLocaleLowerCase();
+
+		if (s.cache[s._term]) {
+			return Promise.resolve(s.cache[s._term]);
 		}
 
 		s.existing = {};
@@ -54,6 +63,8 @@ SOFTWARE.
 			}
 			cleanData.push(data[i].name);
 		}
+
+		s.cache[s._term] = cleanData;
 
 		return Promise.resolve(cleanData);
 	};
