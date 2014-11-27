@@ -176,7 +176,7 @@ var library = {
 				label:"beginning",
 				desc:"Matches the beginning of the string, or the beginning of a line if the multiline flag (<code>m</code>) is enabled.",
 				ext:" This matches a position, not a character.",
-				 example:["^\\w+","she sells seashells"],
+					example:["^\\w+","she sells seashells"],
 				token:"^"
 				},
 				{
@@ -245,7 +245,7 @@ var library = {
 			label: "Groups & Lookaround",
 			id:"groups",
 			desc: "Groups allow you to combine a sequence of tokens to operate on them together. Capture groups can be referenced by a backreference and accessed separately in the results."+
-				 "<hr/>Lookaround lets you match a group without including it in the result.",
+					"<hr/>Lookaround lets you match a group without including it in the result.",
 			kids: [
 				{
 				id:"group",
@@ -387,9 +387,39 @@ var library = {
 				token:"$$$$"
 				},
 				{
+				id:"subst_offset",
+				label: "offset",
+				desc:"The offset of the matched string as integer",
+				token:"offset"
+				},
+				{
+				id:"subst_string",
+				label: "string",
+				desc:"The whole string",
+				token:"string"
+				},
+				{
 				label: "escaped characters",
 				token: "\\n",
 				desc: "Escaped characters compatible with the JS string format, such as <code>\\n</code>, <code>\\t</code>, <code>\\x09</code>, & <code>\\u0009</code> are supported in the substitution string."
+				},
+				{
+				id:"subst_keyword",
+				label: "javascript keyword",
+				desc: "",
+				token: ""
+				},
+				{
+				id:"subst_method",
+				label: "javascript method",
+				desc: "",
+				token: ""
+				},
+				{
+				id:"string",
+				label: "javascript string",
+				desc: "",
+				token: ""
 				}
 			]
 			},
@@ -542,7 +572,9 @@ var errors = {
 	rangerev:"Range values reversed. Start char is greater than end char.",
 	lookbehind:"Lookbehind is not supported in Javascript.",
 	fwdslash:"Unescaped forward slash.",
-	esccharbad:"Invalid escape sequence."
+	esccharbad:"Invalid escape sequence.",
+	variable:"Unknown variable.",
+	javascript:"Javascript error."
 
 	// infinite is handled in the Help section.
 };

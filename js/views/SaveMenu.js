@@ -160,9 +160,14 @@
 		var pattern = this.docsView.getExpression();
 		var content = this.docsView.getText();
 		var replace = null;
+		var replacetype = null;
 
 		if (this.docsView.substEnabled) {
-			replace = this.docsView.getSubstitution();
+			replacetype = this.docsView.substType;
+			if(replacetype == 1)
+				replace = this.docsView.getSubstitution();
+			else
+				replace = this.docsView.getSubstitutionFunc();
 		}
 
 		this.enableElements(this.saveElements, false);
@@ -170,7 +175,7 @@
 
 		var isPublic = $.hasClass(this.publicChk, "checked");
 
-		ExpressionModel.savePattern(tags, name, pattern, content, replace, description, author, isPublic, id, token).then(
+		ExpressionModel.savePattern(tags, name, pattern, content, replace, replacetype, description, author, isPublic, id, token).then(
 			$.bind(this, this.handleSaveSuccess),
 			$.bind(this, this.handleSaveFail)
 		);

@@ -33,9 +33,9 @@ SOFTWARE.
 	s._lastSaveTags = null;
 	s._saveState = null;
 
-	s.savePattern = function(tags, name, pattern, content, replace, description, author, isPublic, id, token) {
+	s.savePattern = function(tags, name, pattern, content, replace, replacetype, description, author, isPublic, id, token) {
 		s._lastSaveTags = tags;
-		return ServerModel.savePattern(tags, name, pattern, content, replace, description, author, isPublic, id, token).then(
+		return ServerModel.savePattern(tags, name, pattern, content, replace, replacetype, description, author, isPublic, id, token).then(
 				$.bind(s, s.handleSaveSuccess),
 				$.bind(s, s.handleSaveFail)
 		);

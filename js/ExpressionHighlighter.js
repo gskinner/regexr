@@ -33,7 +33,8 @@ SOFTWARE.
 		set: "exp-group-set",
 		setnot: "exp-group-set",
 		group: "exp-group-%depth%",
-		lookaround: "exp-group-%depth%"
+		lookaround: "exp-group-%depth%",
+		string: "exp-string-set"
 	};
 
 	p.cm = null;
@@ -111,6 +112,7 @@ SOFTWARE.
 	};
 
 	p._drawSelect = function(token, style) {
+		if(token.type === "nothing") return;
 		var endToken = token.close || token;
 		if (token.set) {
 			endToken = token.set[token.set.length-1];

@@ -6,7 +6,7 @@
 	<script>
 		if(self !== top) { top.location = self.location; }
 	</script>
-
+	<meta charset="utf-8" />
 	<meta name="description" content="Regular expression tester with syntax highlighting, contextual help, video tutorial, reference, and searchable community patterns." />
 
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
@@ -67,9 +67,11 @@
 	<script src="js/views/FlagsMenu.js"></script>
 	<script src="js/views/ShareMenu.js"></script>
 	<script src="js/views/SaveMenu.js"></script>
+	<script src="js/views/SubstMenu.js"></script>
 	<script src="js/utils/Docs.js"></script>
 	<script src="js/RegExLexer.js"></script>
 	<script src="js/SubstLexer.js"></script>
+	<script src="js/SubstFuncLexer.js"></script>
 	<script src="js/net/ServerModel.js"></script>
 	<script src="js/net/ExpressionModel.js"></script>
 	<script src="js/net/CommunityModel.js"></script>
@@ -211,6 +213,7 @@
 			<li class="button share" data-icon="&#xE309;">share</li> <!-- share: E309, new win: E152  -->
 			<li class="button save" data-icon="&#xE073;">save</li> <!-- file: E359, bookmark: E073-->
 			<li class="button flags" data-icon="&#xE267;">flags</li>
+			<li class="button subst" data-icon="&#xE267;">subst</li>
 		</ul>
 	</div>
 	<div class="editor expr"><div class="results"></div></div>
@@ -244,6 +247,7 @@ http://regexr.com/foo.html?q=bar
 		</ul>
 	</div>
 	<div class="editor subst"></div>
+	<div class="editor substfunc"></div>
 
 	<div class="editor substres"></div>
 
@@ -341,6 +345,15 @@ http://regexr.com/foo.html?q=bar
 		<div class="no-changes hidden">
 			No changes since last save.
 		</div>
+	</div>
+
+	<div class="menu subst">
+		<header>
+			Substitution Type
+		</header>
+		<hr/>
+		<a class="check"> string</a><br/>
+		<a class="check checked"> function</a><br/>
 	</div>
 </div>
 

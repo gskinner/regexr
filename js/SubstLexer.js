@@ -33,7 +33,7 @@ SOFTWARE.
 		"`" : "subst_pre",
 		"'" : "subst_post"
 	};
-	
+
 	p.string = null;
 	p.token = null;
 	p.errors = null;
@@ -42,7 +42,7 @@ SOFTWARE.
 	p.parse = function(str, capGroups) {
 		this.string = str;
 		this.errors = [];
-		
+
 		var prev = this.token = null;
 		for (var i=0, l=str.length; i<l; i+=token.l) {
 			var c=str[i], token = {prev:prev, i:i, l:1, js:true};
@@ -68,12 +68,12 @@ SOFTWARE.
 
 		return this.token;
 	};
-	
+
 	p.parseSubst = function(str, token, capGroups) {
 		var match = str.substr(token.i+1).match(/^([$&`']|\d\d?)/);
 		if (!match) { return; }
 		var d = match[0];
-		
+
 		token.type = SubstLexer.SUBST_TYPES[d];
 
 		if (token.type === undefined) {
@@ -87,8 +87,8 @@ SOFTWARE.
 		}
 		if (token.type !== undefined) { token.clss = "subst"; token.l++; }
 	};
-	
+
 	p.parseEsc = RegExLexer.prototype.parseEsc;
-	
+
 	window.SubstLexer = SubstLexer;
 })();
