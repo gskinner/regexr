@@ -91,13 +91,13 @@ Docs.getItem = function(id) {
 
 Docs.forMatch = function(match) {
 	if (!match) { return null; }
-	var str =	"<b>match: </b>"+TextUtils.htmlSafe(TextUtils.shorten(match[0],50))+
+	var str =	"<b>match: </b>"+TextUtils.htmlSafe(TextUtils.shorten(match[0],200))+
 		"<br/><b>range: </b>"+match.index+"-"+match.end;
 	var l = match.length;
 	if (l > 1) { str += "<hr/>"; }
 	for (var i=1; i<l; i++) {
 		if (i > 1) { str += "<br/>"; }
-		str += "<b>group #"+i+": </b>"+TextUtils.htmlSafe(TextUtils.shorten(match[i],20));
+		str += "<b>group #"+i+": </b>"+TextUtils.htmlSafe(TextUtils.shorten(match[i],196));
 	}
 	return str;
 };
