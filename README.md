@@ -30,14 +30,8 @@ After node is setup, install the other dependencies. You may want to familiarize
 	# Install all the dependencies from package.json
 	npm install
 
-### Setup
-#### Compile sass
-The only requirement for development is to compile the sass files. This can be achieved manually via ```grunt sass;```
-or for development you can watch for changes use ```grunt watchSass;```
-You can also use any third-party sass compiler. Examples are; Using a WebStorm watcher or CodeKits built compiler.
-
-#### Other setup
-There is no other setup required, grunt build mainly prepares the source for deployment.
+### Development
+Run ```grunt;``` to start a local dev server. grunt will also watch for changes in the local sass and javascript files.
 
 ### Building
 To prepare the site for a deploy run:
@@ -51,6 +45,7 @@ This command will:
 * Compile and minify the sass
 * Inject js/index.template.js into the index.html file
 * Minify the index.html file
+
 
 # Code Style
 If you would like to contribute back to RegExr.com please send us pull requests.

@@ -1,19 +1,21 @@
 var path = require("path");
 var uglify = require("uglify-js");
 
-var folderMount = function folderMount(connect, point) {
-	return connect.static(path.resolve(point));
-};
-
 module.exports = function (grunt) {
-
 	/*
 	Load all the tasks we need
+	*/
+
+	/*
+	*************************************
+	**** About: grunt-yui-compressor ****
+	*************************************
 	Usually we use uglifyJS for code minification.
 	However uglify breaks the Unicode characters Codemirror uses in its RegEx expressions,
 	whereas yui does not.
 	 */
 	grunt.loadNpmTasks("grunt-yui-compressor");
+	grunt.loadNpmTasks("grunt-contrib-watch");
 	grunt.loadNpmTasks("grunt-contrib-uglify");
 	grunt.loadNpmTasks("grunt-contrib-sass");
 	grunt.loadNpmTasks("grunt-contrib-connect");
@@ -21,8 +23,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks("grunt-contrib-htmlmin");
 	grunt.loadNpmTasks("grunt-contrib-copy");
 	grunt.loadNpmTasks("grunt-contrib-concat");
-	grunt.loadTasks("tasks/");
-
+	grunt.loadNpmTasks('grunt-browser-sync');
 
 	grunt.initConfig({
 		pkg: grunt.file.readJSON("package.json"),
@@ -76,19 +77,23 @@ module.exports = function (grunt) {
 			}
 		},
 
-		watchSass: {
-			run: {
-				options: {
-					compass: true,
-					// In prep-tasks, we change the style for a build, to nested;
-					style: "nested", // Can be nested, compact, compressed, expanded
-					"line-numbers": true,
-					precision: 2,
+		browserSync: {
+			bsFiles: {
+				src: ["css/*.css", "js/**/.js", "index.html"]
+			},
+			options: {
+				server: {
+					baseDir: "./"
 				},
-				files: {
-					"css/regexr.css":"scss/regexr.scss"
-				}
+				watchTask: true
 			}
+		},
+
+		watch: {
+			sass: {
+				files: ['scss/**/*.scss'],
+				tasks: ['sass'],
+			},
 		},
 
 		cssmin: {
@@ -124,9 +129,9 @@ module.exports = function (grunt) {
 				options: {
 					hostname: "*",
 					keepalive:true,
-					middleware: function (connect, options) {
-						return [folderMount(connect, grunt.config.get("deployFolder"))]
-					}
+					useAvailablePort: true,
+					open: true,
+					base: './build/'
 				}
 			}
 		},
@@ -163,6 +168,12 @@ module.exports = function (grunt) {
 		grunt.file.write(grunt.config.get("deployFolder")+"index.html.tmp", output);
 	});
 
+	grunt.registerTask("default", [
+		"sass",
+		"browserSync",
+		"watch",
+	]);
+
 	grunt.registerTask("build", [
 		"clean:build",
 		"sass",
@@ -192,7 +203,7 @@ module.exports = function (grunt) {
 				}
 			});
 		}
-		
+
 		if (missing.length) {
 			// \x07 == beep sound in the terminal.
 			grunt.log.warn("\x07Missing ", missing.length + " scripts.\n\t" + missing.join("\n\t"));
