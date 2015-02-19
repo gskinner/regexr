@@ -261,6 +261,7 @@ SOFTWARE.
 		} else if (type == "all") {
 			if (ExpressionModel.id != data.id) {
 				ExpressionModel.setID(data.id);
+				this.docView.setState(data.state == null || data.state == ""?{}:JSON.parse(data.state));
 				this.docView.populateAll(expression, flags, data.content, data.replace);
 				ServerModel.trackVisit(data.id);
 			}

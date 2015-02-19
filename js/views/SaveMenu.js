@@ -160,6 +160,7 @@
 		var pattern = this.docsView.getExpression();
 		var content = this.docsView.getText();
 		var replace = null;
+		var state = this.docsView.getState();
 
 		if (this.docsView.substEnabled) {
 			replace = this.docsView.getSubstitution();
@@ -170,7 +171,7 @@
 
 		var isPublic = $.hasClass(this.publicChk, "checked");
 
-		ExpressionModel.savePattern(tags, name, pattern, content, replace, description, author, isPublic, id, token).then(
+		ExpressionModel.savePattern(tags, name, pattern, content, replace, description, author, isPublic, id, token, state).then(
 			$.bind(this, this.handleSaveSuccess),
 			$.bind(this, this.handleSaveFail)
 		);

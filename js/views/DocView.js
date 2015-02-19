@@ -70,6 +70,7 @@ SOFTWARE.
 	p.exprLexer = null;
 	p.substLexer = null;
 	p.substEnabled = false;
+	p._state = null;
 
 	// timers:
 	p.timeoutIDs = null;
@@ -91,6 +92,9 @@ SOFTWARE.
 		this.substLexer = new SubstLexer();
 		this.isMac = Utils.isMac();
 		this.themeColor = window.getComputedStyle($.el(".regexr-logo")).color;
+
+		// Set the default state.
+		this.setState();
 
 		Docs.content.library.desc = $.el(".lib .content").innerHTML;
 
@@ -178,13 +182,21 @@ SOFTWARE.
 		this.setFlags(flags);
 		this.setText(content);
 
-		if (substitution) {
-			this.setSubstitution(substitution);
+		if (!this._state.substEnabled && (substitution == null || substitution == "")) {
+			substitution = DocView.DEFAULT_SUBSTITUTION;
+		}
+
+		this.setSubstitution(substitution);
+
+		if (
+			substitution != null &&
+			this._state.substEnabled || // Newer saves will have a flag saved.
+			substitution != DocView.DEFAULT_SUBSTITUTION // Fallback for old patterns that don't have a saved flag.
+		) {
 			this.showSubstitution();
 		} else {
 			this.showSubstitution(false);
 		}
-
 		ExpressionModel.saveState();
 	};
 
@@ -207,6 +219,10 @@ SOFTWARE.
 
 	p.getPattern = function() {
 		return this.decomposeExpression(this.expressionCM.getValue()).pattern;
+	};
+
+	p.getState = function() {
+
 	};
 
 	p.setFlags = function(flags) {
@@ -288,6 +304,26 @@ SOFTWARE.
 		this.resize();
 		this.substCM.refresh();
 		this.sourceCM.refresh();
+	};
+
+	p.setState = function(value) {
+		value = value == null || value == ""?{}:value;
+
+		this._state = {};
+		this._state.substEnabled = value.substEnabled == null?false:value.substEnabled;
+
+		this.showSubstitution(this._state.substEnabled);
+	};
+
+	/**
+	 * Arbitrary values we save with the expression.
+	 * Things like substEnabled, or tools.
+	 *
+	 */
+	p.getState = function(value) {
+		return {
+			substEnabled: this.substEnabled
+		};
 	};
 
 	p.showSave = function() {

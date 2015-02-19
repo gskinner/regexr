@@ -44,7 +44,7 @@ SOFTWARE.
 	 * @param token (Optional) save token users to update (users can update patterns within 24 hours of a save).
 	 * @returns {*}
 	 */
-	s.savePattern = function(tags, name, pattern, content, replace, description, author, isPublic, id, token) {
+	s.savePattern = function(tags, name, pattern, content, replace, description, author, isPublic, id, token, state) {
 		return s._createPromise("savePattern", {
 			tags:tags,
 			name:name,
@@ -55,7 +55,8 @@ SOFTWARE.
 			author:author,
 			isPublic:isPublic,
 			id:id,
-			token: token
+			token: token,
+			state: JSON.stringify(state)
 		});
 	};
 
@@ -151,9 +152,12 @@ SOFTWARE.
 				params.push(n+"="+encodeURIComponent(postData[n]));
 			}
 			xhr.send(params.join("&"));
+		}).catch(function(error) {
+			DEBUG && console.error(error.stack);
+			throw error;
 		});
 
-		return p;
+		return p
 	};
 
 	scope.ServerModel = s;

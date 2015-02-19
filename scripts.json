@@ -5,7 +5,7 @@
 		"js/documentation.js"
 	],
 	"uglify": [
-		"js/third-party/promise-0.1.1.js",
+		"js/third-party/es6-promise-2.0.1.js",
 		"js/third-party/classList.js",
 		"js/third-party/ZeroClipboard.js",
 		"js/third-party/store.js",

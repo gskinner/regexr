@@ -43,6 +43,8 @@ SOFTWARE.
 			return;
 		}
 
+		ES6Promise.polyfill();
+
 		BrowserHistory.init();
 		BrowserHistory.on("change", this.handleHistoryChange, this);
 
@@ -69,7 +71,7 @@ SOFTWARE.
 		docView.setText(); // need to do this as well as the defer below, to keep the history clean.
 		$.defer(docView, docView.setText); // this fixes an issue with CodeMirror returning bad char positions at specific widths.
 		def.style.display = "none";
-		
+
 		var cheatsheet = $.el("#cheatsheet");
 		cheatsheet.style.display = "none";
 		Docs.getItem("cheatsheet").desc = cheatsheet.innerHTML;
@@ -145,6 +147,7 @@ SOFTWARE.
 			ServerModel.getPatternByID(id).then(function (data) {
 				ExpressionModel.setLastSave(data);
 				var pattern = $.parsePattern(data.pattern);
+				_this.docView.setState(JSON.parse(data.state));
 				_this.docView.populateAll(pattern.ex, pattern.flags, data.content, data.replace);
 			}, function () {
 				BrowserHistory.go();
