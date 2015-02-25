@@ -56,6 +56,7 @@ SOFTWARE.
 	};
 
 	s.handleTagsLoad = function (data) {
+		data = data || [];
 		var cleanData = [];
 		for (var i=0;i<data.length;i++) {
 			if (s.existing[data[i].name.toLocaleLowerCase()]) {
