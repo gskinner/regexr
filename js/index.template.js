@@ -147,7 +147,7 @@ SOFTWARE.
 			ServerModel.getPatternByID(id).then(function (data) {
 				ExpressionModel.setLastSave(data);
 				var pattern = $.parsePattern(data.pattern);
-				_this.docView.setState(JSON.parse(data.state));
+				_this.docView.setState(data.state != null && data.state != ""?JSON.parse(data.state):{});
 				_this.docView.populateAll(pattern.ex, pattern.flags, data.content, data.replace);
 			}, function () {
 				BrowserHistory.go();
