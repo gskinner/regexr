@@ -24,7 +24,7 @@ var library = {
 			{
 			label:"RegEx engine",
 			desc:"While the core feature set of regular expressions is fairly consistent, different implementations (ex. Perl vs Java) may have different features or behaviours."+
-				"<p>RegExr uses your browser's RegExp engine for matching, and its syntax highlighting and documentation reflect the Javascript RegExp standard.</p>"
+				"<p>RegExr uses your browser's RegExp engine for matching, and its syntax highlighting and documentation reflect the JavaScript RegExp standard.</p>"
 			},
 			{
 			id:"infinite",
