@@ -4,7 +4,7 @@ onmessage = function (evt) {
 	var str = evt.data.str;
 	var error = null;
 	var matches = [];
-	var match, index;
+	var match;
 
 	// Let the callee know we're loaded (for IE 10);
 	postMessage("onload");
@@ -18,11 +18,13 @@ onmessage = function (evt) {
 	while (!error) {
 		match = regex.exec(str);
 		if (!match) { break; }
-		if (regex.global && index === regex.lastIndex) {
-			error = "infinite";
-			break;
+		if (regex.global && match[0].length === 0) {
+			regex.lastIndex++;
+			if(regex.lastIndex > str.length) {
+				break;
+			}
 		}
-		match.end = (index = match.index + match[0].length) - 1;
+		match.end = match.index + match[0].length - 1;
 		match.input = null;
 		matches.push(match);
 		if (!regex.global) { break; } // or it will become infinite.

@@ -7,7 +7,6 @@
 		var matches = [];
 		var error = null;
 		var match = null;
-		var index = null;
 
 		if (!regex) {
 			callback(error, matches);
@@ -41,11 +40,13 @@
 			while (!error) {
 				match = regex.exec(str);
 				if (!match) { break; }
-				if (regex.global && index === regex.lastIndex) {
-					error = "infinite";
-					break;
+				if (regex.global && match[0].length === 0) {
+					regex.lastIndex++;
+					if(regex.lastIndex > str.length) {
+						break;
+					}
 				}
-				match.end = (index = match.index + match[0].length) - 1;
+				match.end = match.index + match[0].length - 1;
 				match.input = null;
 				matches.push(match);
 				if (!regex.global) { break; } // or it will become infinite.
