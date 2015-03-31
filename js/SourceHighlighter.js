@@ -71,7 +71,11 @@ SOFTWARE.
 			var endRect = cm.charCoords(endPos, "local");
 			
 			if (startRect.bottom == endRect.bottom) {
-				this.drawHighlight(ctx, startRect.left, startRect.top, endRect.right, endRect.bottom, scroll.top);
+				if(startRect.left == endRect.right) {
+					this.drawHighlight(ctx, startRect.left - 2, startRect.top, endRect.right + 1, endRect.bottom, scroll.top);
+				} else {
+					this.drawHighlight(ctx, startRect.left, startRect.top, endRect.right, endRect.bottom, scroll.top);
+				}
 			} else {
 				var lw = cm.getScrollInfo().width;
 				var lh = cm.defaultTextHeight();
