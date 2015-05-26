@@ -539,7 +539,7 @@ var errors = {
 	esccharopen:"Dangling backslash.",
 	quantrev:"Quantifier minimum is greater than maximum.",
 	rangerev:"Range values reversed. Start char is greater than end char.",
-	lookbehind:"Lookbehind is not supported in Javascript.",
+	lookbehind:"Lookbehind is not supported in JavaScript.",
 	fwdslash:"Unescaped forward slash.",
 	esccharbad:"Invalid escape sequence."
 
