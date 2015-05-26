@@ -1,63 +1,66 @@
 /*
-The MIT License (MIT)
+ The MIT License (MIT)
 
-Copyright (c) 2014 gskinner.com, inc.
+ Copyright (c) 2014 gskinner.com, inc.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
  */
-var Utils = {}, $ = Utils;
+
+var TransitionEvents = require('../events/TransitionEvents');
+
+var Utils = {};
 
 Utils.timeoutIDs = {};
 
-Utils.el = function(query, element) {
-	return (element||document.body).querySelector(query);
+Utils.el = function (query, element) {
+	return (element || document.body).querySelector(query);
 };
 
-Utils.els = function(query, element) {
-	return (element||document.body).querySelectorAll(query);
+Utils.els = function (query, element) {
+	return (element || document.body).querySelectorAll(query);
 };
 
-Utils.removeClass = function(element, className) {
+Utils.removeClass = function (element, className) {
 	var names = className.split(" ");
-	for (var i=0; i<names.length; i++) {
+	for (var i = 0; i < names.length; i++) {
 		element.classList.remove(names[i]);
 	}
 	return element;
 };
 
-Utils.addClass = function(element, className) {
+Utils.addClass = function (element, className) {
 	Utils.removeClass(element, className);
 
 	var names = className.split(" ");
-	for (var i=0; i<names.length; i++) {
+	for (var i = 0; i < names.length; i++) {
 		element.classList.add(names[i]);
 	}
 
 	return element;
 };
 
-Utils.swapClass = function(element, oldClass, newClass) {
+Utils.swapClass = function (element, oldClass, newClass) {
 	Utils.removeClass(element, oldClass);
 	Utils.addClass(element, newClass);
 };
 
-Utils.remove = function(el) {
+Utils.remove = function (el) {
 	if (el.remove) {
 		el.remove();
 	} else {
@@ -65,13 +68,13 @@ Utils.remove = function(el) {
 	}
 };
 
-Utils.animate = function(element, defaultClass, transitionClass) {
-	return new Promise(function(resolve, reject) {
+Utils.animate = function (element, defaultClass, transitionClass) {
+	return new Promise(function (resolve, reject) {
 		Utils.addClass(element, defaultClass);
 		// Always delay 1 tick, so the transition gets applied.
-		setTimeout(function() {
+		setTimeout(function () {
 			var events = new TransitionEvents(element);
-			events.on(TransitionEvents.TRANSISTION_END, function(event) {
+			events.on(TransitionEvents.TRANSISTION_END, function (event) {
 				events.removeAllEventListeners(TransitionEvents.TRANSISTION_END);
 
 				// Transition events bubble, so only resolve when its the transition we initiated.
@@ -84,10 +87,10 @@ Utils.animate = function(element, defaultClass, transitionClass) {
 	});
 };
 
-Utils.addCopyListener = function(el, callback) {
+Utils.addCopyListener = function (el, callback) {
 	var ctrlIsDown = false;
 
-	var keyDownHandler =  function(event) {
+	var keyDownHandler = function (event) {
 		if (event.which == 91 || event.metaKey || event.keyName == "Meta") {
 			ctrlIsDown = true;
 		}
@@ -97,8 +100,8 @@ Utils.addCopyListener = function(el, callback) {
 		}
 	};
 
-	var keyUpHandler = function(event) {
-		if (event.which == 91 || event.metaKey || event.keyName == "Meta")  {
+	var keyUpHandler = function (event) {
+		if (event.which == 91 || event.metaKey || event.keyName == "Meta") {
 			el.removeEventListener("keydown", keyDownHandler);
 			el.removeEventListener("keyup", keyUpHandler);
 
@@ -110,83 +113,89 @@ Utils.addCopyListener = function(el, callback) {
 	el.addEventListener("keyup", keyUpHandler);
 };
 
-Utils.hasClass = function(element, className) {
-	var regex = new RegExp("\\b\\s?"+className+"\\b","g");
+Utils.hasClass = function (element, className) {
+	var regex = new RegExp("\\b\\s?" + className + "\\b", "g");
 	return !!element.className.match(regex);
 };
 
-Utils.fillTags = function(str, data, functs) {
+Utils.fillTags = function (str, data, functs) {
 	var match, val, f;
 	while (match = str.match(/{{[\w.()]+}}/)) {
-		val = match[0].substring(2,match[0].length-2);
+		val = match[0].substring(2, match[0].length - 2);
 		var match2 = val.match(/\([\w.]*\)/);
 		if (match2) {
-			f = val.substr(0,match2.index);
-			val = match2[0].substring(1,match2[0].length-1);
-		} else { f = null; }
+			f = val.substr(0, match2.index);
+			val = match2[0].substring(1, match2[0].length - 1);
+		} else {
+			f = null;
+		}
 		var o = data;
 		var arr = val.split(".");
-		for (var i=0; i<arr.length; i++) {
+		for (var i = 0; i < arr.length; i++) {
 			var prop = arr[i];
-			if (prop) { o = o[prop]; }
+			if (prop) {
+				o = o[prop];
+			}
 		}
 		val = o;
-		if (f) { val = functs[f](val); }
+		if (f) {
+			val = functs[f](val);
+		}
 		str = str.replace(match[0], val);
 	}
 	return str;
 };
 
-Utils.bind = function(o, f) {
-	return function() {
+Utils.bind = function (o, f) {
+	return function () {
 		return f.apply(o, Array.prototype.slice.call(arguments));
 	}
 };
 
-Utils.deferF = function(o, f, id, t) {
-	t = isNaN(t) || t==null ? 1 : t;
+Utils.deferF = function (o, f, id, t) {
+	t = isNaN(t) || t == null ? 1 : t;
 	var ids = Utils.timeoutIDs;
-	return function() {
+	return function () {
 		clearTimeout(ids[id]);
 		ids[id] = setTimeout(Utils.bind(o, f), t);
 	}
 };
 
-Utils.clearDefer = function(id) {
+Utils.clearDefer = function (id) {
 	var ids = Utils.timeoutIDs;
 	clearTimeout(ids[id]);
 	delete(ids[id]);
 };
 
-Utils.defer = function(o, f, id, t) {
+Utils.defer = function (o, f, id, t) {
 	Utils.deferF(o, f, id, t)();
 };
 
 Utils.populateSelector = function (selector, items) {
 	var options = [];
 
-	for (var i=0;i<items.length;i++) {
+	for (var i = 0; i < items.length; i++) {
 		var data = items[i];
 
 		var label = data.label || data;
 		var value = data.value || data;
 
 		if (data.selected) {
-			options.push("<option selected id='"+value+"'>"+label+"</option>");
+			options.push("<option selected id='" + value + "'>" + label + "</option>");
 		} else {
-			options.push("<option id='"+value+"'>"+label+"</option>");
+			options.push("<option id='" + value + "'>" + label + "</option>");
 		}
 	}
 
 	selector.innerHTML = options.join('');
 };
 
-Utils.isSupported = function() {
+Utils.isSupported = function () {
 	// This should catch all the not supported browsers.
 	return $.isCanvasSupported() && $.isCalcSupported();
 };
 
-Utils.partialSupport = function() {
+Utils.partialSupport = function () {
 	// If we're not all supported just say no.
 	if (!Utils.isSupported()) {
 		return false;
@@ -210,22 +219,22 @@ Utils.isCanvasSupported = function () {
 	return !!(elem.getContext && elem.getContext("2d"));
 };
 
-Utils.isIE =  function() {
+Utils.isIE = function () {
 	var result = /MSIE/ig.test(navigator.userAgent);
 	return result;
 };
 
-Utils.isFirefox =  function() {
+Utils.isFirefox = function () {
 	var result = /Firefox/ig.test(navigator.userAgent);
 	return result;
 };
 
-Utils.isAndroid = function() {
+Utils.isAndroid = function () {
 	var result = /android/ig.test(navigator.userAgent);
 	return result;
 };
 
-Utils.iosType = function() {
+Utils.iosType = function () {
 	var type = null;
 	var nav = window.navigator;
 	var isIDevice = "platform" in nav;
@@ -256,54 +265,58 @@ Utils.checkCalc = function (prefix) {
 	return !!el.style.length;
 };
 
-Utils.parsePattern = function(ex) {
+Utils.parsePattern = function (ex) {
 	var match = ex.match(/\/(.+)(?:\/)([igm]+)?$/);
 
 	if (match) {
-		return {ex:match[1], flags:match[2] || ""}
+		return {ex: match[1], flags: match[2] || ""}
 	} else {
-		return {ex:ex, flags:""}
+		return {ex: ex, flags: ""}
 	}
 };
 
-Utils.createID = function(id) {
-	if (id < 0) { return null; }
-	return ((Number(id)+1000000)*3).toString(32);
+Utils.createID = function (id) {
+	if (id < 0) {
+		return null;
+	}
+	return ((Number(id) + 1000000) * 3).toString(32);
 };
 
-Utils.idToNumber = function(id) {
+Utils.idToNumber = function (id) {
 	return parseInt(id, 32) / 3 - 1000000;
 }
 
-Utils.isIDValid = function(id) {
+Utils.isIDValid = function (id) {
 	var val = Utils.idToNumber(id);
 	return val % 1 === 0;
 };
 
-Utils.createURL = function(id) {
+Utils.createURL = function (id) {
 	return "http://regexr.com/" + id;
 };
 
-Utils.isMac = function() {
+Utils.isMac = function () {
 	return !!(navigator.userAgent.match(/Mac\sOS/i))
 };
 
-Utils.getCtrlKey = function() {
+Utils.getCtrlKey = function () {
 	return Utils.isMac() ? "Cmd" : "Ctrl";
 };
 
 /*
-	Remove al children from a element.
-	When using .innerHTML = ""; IE fails when adding new dom elements via appendChild();
+ Remove al children from a element.
+ When using .innerHTML = ""; IE fails when adding new dom elements via appendChild();
  */
-Utils.empty = function(el) {
+Utils.empty = function (el) {
 	while (el.firstChild) {
 		el.removeChild(el.firstChild);
 	}
 };
 
-Utils.html = function(value, parent) {
+Utils.html = function (value, parent) {
 	var dom = document.createElement("div");
 	dom.innerHTML = value;
-	return parent !== true?dom.firstChild:dom;
+	return parent !== true ? dom.firstChild : dom;
 };
+
+module.exports = Utils;

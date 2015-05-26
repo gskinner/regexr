@@ -1,17 +1,15 @@
-(function (scope) {
-	"use strict";
+var Event = require('./Event');
 
-	var DataEvent = function (type, data) {
-		this.init(type, data);
-	};
-	var p = DataEvent.prototype = Object.create(createjs.Event.prototype);
-	DataEvent.prototype.constructor = DataEvent;
+var DataEvent = function (type, data) {
+	this.init(type, data);
+};
+var p = DataEvent.prototype = Object.create(Event.prototype);
+DataEvent.prototype.constructor = DataEvent;
 
-	p.init = function (type, data) {
-		this.data = data;
-		this.initialize(type);
-	};
+p.init = function (type, data) {
+	this.data = data;
+	this.initialize(type);
+};
 
-	scope.DataEvent = DataEvent;
+module.exports = DataEvent;
 
-}(window));

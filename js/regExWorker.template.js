@@ -1,5 +1,5 @@
 onmessage = function (evt) {
-	"use strict";
+
 	var regex = evt.data.regex;
 	var str = evt.data.str;
 	var error = null;

@@ -3,9 +3,14 @@
 <head>
 	<title>RegExr: Learn, Build, & Test RegEx</title>
 
+	<!-- No frames allowed -->
 	<script>
 		if(self !== top) { top.location = self.location; }
 	</script>
+
+	<link rel="shortcut icon" href="regexrFavicon.ico"/>
+
+	<meta name=viewport content="width=device-width, initial-scale=1">
 
 	<meta name="description" content="Regular expression tester with syntax highlighting, contextual help, video tutorial, reference, and searchable community patterns." />
 
@@ -16,65 +21,13 @@
 	<meta name="application-name" content="RegExr"/>
 	<meta name="msapplication-TileColor" content="#44A4E0"/>
 	<meta name="msapplication-TileImage" content="assets/windows8/mediumtile.png" />
-
 	<meta name="msapplication-square70x70logo" content="assets/windows8/smalltile.png"/>
 	<meta name="msapplication-square150x150logo" content="assets/windows8/mediumtile.png"/>
 	<meta name="msapplication-wide310x150logo" content="assets/windows8/widetile.png"/>
 	<meta name="msapplication-square310x310logo" content="assets/windows8/largetile.png"/>
 
-	<link rel="shortcut icon" href="regexrFavicon.ico"/>
-
-	<!-- Only use these tags during a build. -->
-	<!-- <% if (build) { %> -->
-	<script src="js/regExWorker.template.js?no=<%=noCache %>"></script>
 	<script src="js/scripts.min.js?no=<%=noCache %>"></script>
-	<!-- <% } else { %> -->
-	<!--
-		Remove these tags during a build.
-		** If you add anything here, also add it to scripts.json **
-	-->
-	<script src="js/third-party/codemirror.js"></script>
-	<script src="js/utils/Utils.js"></script>
-	<script src="js/documentation.js"></script>
-	<script src="js/third-party/es6-promise-2.0.1.js"></script>
-	<script src="js/third-party/ZeroClipboard.js"></script>
-	<script src="js/third-party/classList.js"></script>
-	<script src="js/third-party/store.js"></script>
-	<script src="js/third-party/placeholders.min.js"></script>
-	<script src="js/third-party/history.adapter.native.js"></script>
-	<script src="js/third-party/history.js"></script>
-	<script src="js/RegExJS.js"></script>
-	<script src="js/events/Event.js"></script>
-	<script src="js/events/EventDispatcher.js"></script>
-	<script src="js/Tracking.js"></script>
-	<script src="js/BrowserHistory.js"></script>
-	<script src="js/events/DataEvent.js"></script>
-	<script src="js/events/TransitionEvents.js"></script>
-	<script src="js/Settings.js"></script>
-	<script src="js/controls/Rating.js"></script>
-	<script src="js/controls/TagInput.js"></script>
-	<script src="js/utils/CMUtils.js"></script>
-	<script src="js/controls/Tooltip.js"></script>
-	<script src="js/utils/TextUtils.js"></script>
-	<script src="js/SourceHighlighter.js"></script>
-	<script src="js/ExpressionHighlighter.js"></script>
-	<script src="js/ExpressionHover.js"></script>
-	<script src="js/views/Favorites.js"></script>
-	<script src="js/views/Community.js"></script>
-	<script src="js/views/DocView.js"></script>
-	<script src="js/views/LibView.js"></script>
-	<script src="js/controls/List.js"></script>
-	<script src="js/views/FlagsMenu.js"></script>
-	<script src="js/views/ShareMenu.js"></script>
-	<script src="js/views/SaveMenu.js"></script>
-	<script src="js/utils/Docs.js"></script>
-	<script src="js/RegExLexer.js"></script>
-	<script src="js/SubstLexer.js"></script>
-	<script src="js/net/ServerModel.js"></script>
-	<script src="js/net/ExpressionModel.js"></script>
-	<script src="js/net/CommunityModel.js"></script>
-	<script src="js/net/TagsModel.js"></script>
-	<!-- <% } %> -->
+	<script src="js/regExWorker.template.js?no=<%=noCache %>"></script>
 
 	<link rel="stylesheet" href="css/regexr.css?no=<%=noCache %>">
 	<script src="//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js"></script>
@@ -387,27 +340,22 @@ To fix showing the "Not supported" screen in IE 7 (and other old browsers).
 Since our initial load can cause errors, we just catch them and show the overlay if they happen.
 -->
 <script>
+	var el;
 	if (!$.isSupported()) {
-		var el = document.querySelector(".not-supported");
+		el = document.querySelector(".not-supported");
 		$.removeClass(el, "hidden");
-		if (ZeroClipboard.detectFlashSupport()) {
+		if (!ZeroClipboard.state().flash.disabled) {
 			var flash = document.getElementsByClassName('flash')[0];
 			flash.className = "";
 		}
 	} else if($.partialSupport()) {
-		var el = document.querySelector(".not-supported-mobile");
+		el = document.querySelector(".not-supported-mobile");
 		$.removeClass(el, "hidden");
 		$.el("#closeOverlay").addEventListener("click", function() {
 			$.addClass(el, "hidden");
 		});
 	}
 </script>
-<!-- <% if (build) { %> -->
-	<script>
-		// injected on build:<%=index %>
-	</script>
-<!-- <% } else { %> -->
-	<script src="js/index.template.js"></script>
-<!-- <% } %> -->
+<script src="js/index.template.js" inline></script>
 </body>
 </html>

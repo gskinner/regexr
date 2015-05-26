@@ -1,4 +1,3 @@
-(function() {
 var library = {
 	id:"Library",
 
@@ -570,6 +569,4 @@ for (i=0; i<kids.length; i++) {
 }
 //*/
 
-window.documentation = {library:library, misc:misc, errors:errors};
-
-})();
+module.exports = {library:library, misc:misc, errors:errors};
