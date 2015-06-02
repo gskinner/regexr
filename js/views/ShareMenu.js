@@ -26,7 +26,7 @@ var Tracking = require('../Tracking');
 var TextUtils = require('../utils/TextUtils');
 var Utils = require('../utils/Utils');
 var ExpressionModel = require('../net/ExpressionModel');
-var ZeroClipboard = require('ZeroClipboard');
+var ZeroClipboard = require('zeroclipboard');
 
 var ShareMenu = function (element, docsView) {
 	this.initialize(element, docsView);
