@@ -187,11 +187,11 @@ p.onListChange = function (evt) {
 		var parent = item.parent;
 		var parentPath = [];
 		while (parent && parent.label) {
-			parentPath.push(parent.label);
+			parentPath.unshift(parent.label);
 			parent = parent.parent;
 		}
 		var parent = parentPath.length ? parentPath.join("/") + "/" : "";
-		Tracking.page(parent + item.label || item.id);
+		Tracking.page(parent + (item.label || item.id));
 	}
 };
 
