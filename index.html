@@ -8,7 +8,10 @@
 		if(self !== top) { top.location = self.location; }
 	</script>
 
-	<link rel="shortcut icon" href="regexrFavicon.ico"/>
+	<link rel="canonical" href="http://regexr.com/">
+
+	<link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon" />
+	<link rel="shortcut icon" href="/assets/favicon.png" type="image/png" />
 
 	<meta name=viewport content="width=device-width, initial-scale=1, user-scalable=yes">
 
@@ -24,6 +27,24 @@
 	<meta name="msapplication-square150x150logo" content="assets/windows8/mediumtile.png"/>
 	<meta name="msapplication-wide310x150logo" content="assets/windows8/widetile.png"/>
 	<meta name="msapplication-square310x310logo" content="assets/windows8/largetile.png"/>
+
+	<!-- Apple Touch icon (funnily enough also used by Android) -->
+	<link rel="apple-touch-icon" sizes="152x152" href="assets/apple/apple-touch-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="assets/apple/apple-touch-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="assets/apple/apple-touch-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="assets/apple/apple-touch-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="assets/apple/apple-touch-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="assets/apple/apple-touch-icon-72x72.png">
+	<link rel="apple-touch-icon" href="assets/apple/apple-touch-icon.png">
+
+	<!-- OG Tags for Facebook sharing -->
+	<meta property="og:image" content="http://regexr.com/assets/og.png"/>
+	<meta property="og:image:width" content="1200"/>
+	<meta property="og:image:height" content="630"/>
+    <meta property="og:title" content="RegExr: Learn, Build, & Test RegEx"/>
+    <meta property="og:description" content="RegExr is an online tool to learn, build, & test Regular Expressions (RegEx / RegExp)."/>
+    <meta property="og:url" content="http://regexr.com/"/>
+    <meta property="og:site_name" content="RegExr.com"/>
 
 	<script src="js/scripts.min.js?no=<%=noCache %>"></script>
 	<script src="js/regExWorker.template.js?no=<%=noCache %>"></script>
