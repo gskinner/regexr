@@ -1,2 +1,47 @@
+# Force all line endings to be \n
 * text eol=lf
+
+############################################################
+# git can corrupt binary files if they're not set to binary.
+############################################################
+
+# Apple office documents are actually folders, so treat them as binary.
+*.numbers binary
+*.pages binary
+*.keynote binary
+
+# Image files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
 *.ico binary
+
+# Movie and audio files
+*.mov binary
+*.mp4 binary
+*.mp3 binary
+*.flv binary
+*.ogg binary
+
+# Compression formats
+*.gz binary
+*.bz2 binary
+*.7z binary
+*.zip binary
+
+# Web fonts
+*.ttf binary
+*.eot binary
+*.woff binary
+*.otf binary
+
+# Other
+*.fla binary
+*.swf binary
+*.pdf binary
+
+############################################################
+# End binary settings
+############################################################
