@@ -184,19 +184,22 @@
 
 })();
 
-WebFont.load({
-	google: {
-		families: ["Source Code Pro:400,700", "Cabin:400,700"],
-		fontinactive: function (family, fvd) {
-			WebFont.load({
-				custom: {
-					families: ["Source Code Pro:400,700", "Cabin:400,700"],
-					urls: ["css/fontFallback.css"]
-				}
-			});
-		}
-	},
-	active: function () {
-		window.regexr = new window.RegExr();
-	}
-});
+if (window["WebFont"] != null) {
+    WebFont.load({
+        google: {
+            families: ["Source Code Pro:400,700", "Cabin:400,700"],
+            fontinactive: function (family, fvd) {
+                WebFont.load({
+                    custom: {
+                        families: ["Source Code Pro:400,700", "Cabin:400,700"]
+                    }
+                });
+            }
+        },
+        active: function () {
+            window.regexr = new window.RegExr();
+        }
+    });
+} else {
+    window.regexr = new window.RegExr();
+}
