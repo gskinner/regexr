@@ -199,7 +199,7 @@ p.position = function (rect) {
 	if (elY + elH + 10 > window.innerHeight) {
 		elY = rect.top - elH - window.pageYOffset - tipH;
 		tipScaleY = -1;
-		tipY = rect.top - tipH;
+		tipY = rect.top - window.pageYOffset - tipH;
 	}
 	el.style.left = elX + "px"; // TODO: window.innerWidth doesn't account for scrollbar
 	el.style.top = elY + "px";
