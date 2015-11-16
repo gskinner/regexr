@@ -100,7 +100,7 @@ Docs.forMatch = function (match) {
 	if (!match) {
 		return null;
 	}
-	var str = "<b>match: </b>" + TextUtils.htmlSafe(TextUtils.shorten(match[0], 50)) +
+	var str = "<b>match: </b>" + TextUtils.htmlSafe(TextUtils.shorten(match[0], 150)) +
 			"<br/><b>range: </b>" + match.index + "-" + match.end;
 	var l = match.length;
 	if (l > 1) {
@@ -110,7 +110,7 @@ Docs.forMatch = function (match) {
 		if (i > 1) {
 			str += "<br/>";
 		}
-		str += "<b>group #" + i + ": </b>" + TextUtils.htmlSafe(TextUtils.shorten(match[i], 20));
+		str += "<b>group #" + i + ": </b>" + TextUtils.htmlSafe(TextUtils.shorten(match[i], 40));
 	}
 	return str;
 };

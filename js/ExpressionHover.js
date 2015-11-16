@@ -43,7 +43,7 @@ p.initialize = function (cm, highlighter) {
 	this.highlighter = highlighter;
 	this.offset = highlighter.offset;
 
-	this.tooltip = Tooltip.add(cm.display.lineDiv);
+	this.tooltip = Tooltip.add(cm.display.lineDiv, null, {className:"expr"});
 	this.tooltip.on("mousemove", this.onMouseMove, this);
 	this.tooltip.on("mouseout", this.onMouseOut, this);
 

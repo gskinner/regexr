@@ -1,12 +1,13 @@
 .tooltip {
 	font-size: 0.875rem;
 	font-family: $monospace;
-	max-width: 20em;
+	max-width: 30em;
 	background: rgba(30, 30, 30, .95);
 	color: lighten($grey, 25%);
 	padding: $pad;
 	border-radius: 3px;
 	word-wrap: break-word;
+
 
 	hr {
 		height: 0;
@@ -28,6 +29,10 @@
 	&.save {
 		max-width: 11.6rem;
 	}
+
+    &.expr {
+      max-width: 20rem;
+    }
 }
 
 .tooltip-tip {
