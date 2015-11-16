@@ -319,4 +319,9 @@ Utils.html = function (value, parent) {
 	return parent !== true ? dom.firstChild : dom;
 };
 
+Utils.htmlDecode = function(value) {
+    var el = Utils.html(value);
+    return el.nodeValue;
+};
+
 module.exports = Utils;

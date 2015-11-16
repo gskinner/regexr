@@ -26,6 +26,7 @@ var Favorites = require('./Favorites');
 var Community = require('./Community');
 var Tracking = require('../Tracking');
 var Docs = require('../utils/Docs');
+var Utils = require('../utils/Utils');
 var List = require('../controls/List');
 
 var LibView = function (element, docs) {
@@ -173,7 +174,8 @@ p.onListChange = function (evt) {
 		}
 
 		if (target == "expr") {
-			this.docView.insertExpression(item.token);
+            // Decode the token, fix for https://github.com/gskinner/regexr/issues/72
+			this.docView.insertExpression(Utils.htmlDecode(item.token));
 		}
 		else if (target == "flags") {
 			this.docView.showFlags();
