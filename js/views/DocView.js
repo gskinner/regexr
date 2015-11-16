@@ -130,6 +130,7 @@ p.buildUI = function (el) {
 	expCM.on("change", $.bind(this, this.deferUpdate));
 	expCM.on("mousedown", $.bind(this, this.expressionClick));
 	expCM.on("change", $.bind(this, this.handleExpressionCMChange));
+    expCM.on("keydown", $.bind(this, this.handleExpressionCMKeyDown));
 
 	this.expressionHighlighter = new ExpressionHighlighter(expCM);
 	this.expressionHover = new ExpressionHover(expCM, this.expressionHighlighter);
@@ -610,6 +611,15 @@ p.onSubstClick = function (evt) {
 
 p.onFlagsMenuChange = function (evt) {
 	this.setFlags(this.flagsMenu.getFlags());
+};
+
+p.handleExpressionCMKeyDown = function (cm, event) {
+    // Ctrl or Command + D by default, will delete the expression and the flags field, Re: https://github.com/gskinner/regexr/issues/74
+    // So we just manually reset to nothing here.
+    if ((event.ctrlKey || event.metaKey) && event.keyCode == 68) {
+        event.preventDefault();
+        this.setExpression('//'+this.getFlags());
+    }
 };
 
 p.handleExpressionCMChange = function (cm, change) {
