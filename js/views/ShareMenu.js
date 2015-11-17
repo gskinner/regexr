@@ -217,8 +217,13 @@ p.show = function () {
 		Utils.addClass(this.saveView, "hidden");
 		Utils.addClass(this.shareLinkView, "visible");
 
-		this.shareLink.focus();
-		this.shareLink.select();
+        // This was failing in Edge, with this error: "Could not complete the operation due to error 800a025e."
+        try {
+            this.shareLink.focus();
+            this.shareLink.select();
+        } catch (err) {
+
+        }
 	}
 };
 
