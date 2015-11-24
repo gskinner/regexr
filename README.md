@@ -6,7 +6,7 @@ This is the source for [RegExr.com](http://regexr.com/)
 RegExr is a HTML/JS based tool for creating, testing, and learning about Regular Expressions.
 
 # Build
-## RegExr uses [Grunt](http://gruntjs.com/) to manage the build process.
+## RegExr uses [Gulp](http://gulpjs.com/) to manage the build process.
 
 ## To use
 
@@ -15,7 +15,7 @@ The example commands shown are for use with the OSX Terminal.
 
 ### Install dependencies
 
-Node (0.10.24 or greater is required):
+Node (v4.2.2 or greater is required):
 
 	# check the version via the command line
 	node -v
@@ -25,18 +25,18 @@ If your Node install is out of date, get the latest from [NodeJS.org](http://nod
 After node is setup, install the other dependencies. You may want to familiarize yourself with the Node Packager Manager (NPM) before proceeding.
 
 	# Install the grunt command line utility globally
-	sudo npm install grunt-cli -g
+	sudo npm install gulp -g
 
 	# Install all the dependencies from package.json
 	npm install
 
 ### Development
-Run ```grunt;``` to start a local dev server. grunt will also watch for changes in the local sass and javascript files.
+Run ```gulp;``` to start a local develpoment server. gulp will also watch for changes in the local sass, javascript and static files.
 
 ### Building
 To prepare the site for a deploy run:
 
-	grunt build;
+	gulp build;
 
 This command will:
 
