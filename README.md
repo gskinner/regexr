@@ -24,7 +24,7 @@ If your Node install is out of date, get the latest from [NodeJS.org](http://nod
 
 After node is setup, install the other dependencies. You may want to familiarize yourself with the Node Packager Manager (NPM) before proceeding.
 
-	# Install the grunt command line utility globally
+	# Install the gulp command line utility globally
 	sudo npm install gulp -g
 
 	# Install all the dependencies from package.json
