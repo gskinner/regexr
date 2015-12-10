@@ -48,7 +48,7 @@ p.initialize = function (element, docsView) {
 
 	this.showSaveLink.onclick = $.bind(this, this.handleSaveClick);
 
-	this.saveView = $.el("#saveView", this.element);
+	this.saveView = $.el("#savePrompt", this.element);
 	this.shareLinkView = $.el("#shareLinkView", this.element);
 	this.copyJavascript = $.el("#copyJavascript", this.element);
 
