@@ -22,8 +22,7 @@ var staticAssets = [
     "./assets/**",
     "./php/!(cache)**",
     "*.ico",
-    ".htaccess",
-    "js/*.template.js"
+    ".htaccess"
 ];
 
 function compileJs(watch) {
@@ -69,6 +68,15 @@ gulp.task('browser-sync', function () {
         });
 });
 
+gulp.task('watch-js-templates', function() {
+	var assets = "js/*.template.js";
+	return gulp.watch(assets).on('change', function () {
+		gulp.src(assets, {base: './js'})
+			.pipe(gulp.dest('build/js/'));
+		browserSync.reload();
+	});
+});
+
 gulp.task('watch-assets', function () {
     return gulp.src(staticAssets, {base: './'})
         .pipe(watch(staticAssets))
@@ -79,6 +87,7 @@ gulp.task('watch-assets', function () {
 gulp.task('watch-sass', function () {
     gulp.watch("./scss/**/*.scss", ['sass']);
 });
+
 gulp.task('copy-assets', function () {
     return gulp.src(staticAssets, {base: './'})
         .pipe(gulp.dest('build/'));
@@ -164,7 +173,7 @@ gulp.task('default', function (done) {
     runSequence(
         ['sass', 'watch-js', 'watch-sass'],
         'copy-assets',
-        ['watch-assets', 'browser-sync'],
+        ['watch-assets', 'watch-js-templates', 'browser-sync'],
         done
     );
 });
