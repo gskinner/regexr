@@ -157,11 +157,13 @@
 			RegExrShared.BrowserHistory.go();
 		}
 	};
-
+	
 	p.showVideo = function (value) {
 		var func = null;
 		var el = $.el(".video");
 		if (value !== false) {
+			var iframe = $.el("iframe", el);
+			if (!iframe.src) { iframe.src =  "//www.youtube.com/embed/fOH62XXGdLs?enablejsapi=1"; }
 			$.removeClass(el, "hidden");
 			el.addEventListener("click", this.handleVideoCloseProxy);
 			func = "playVideo";
