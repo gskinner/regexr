@@ -30,4 +30,4 @@ onmessage = function (evt) {
 
 	postMessage({error: error, matches: matches});
 	self.close();
-}
+};

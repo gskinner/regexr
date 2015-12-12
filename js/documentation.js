@@ -63,9 +63,9 @@ var library = {
 			},
 			{
 			label:"Library panel",
-			desc:"The <b>Library</b> includes help content and a reference that includes info on all regular expression tokens and flags."+
+			desc:"The <b>Library</b> (this panel) includes <b>help</b> content and a <b>reference</b> that includes info on all regular expression tokens and flags."+
 				"<p>Tap a selected item in the reference to insert it into your <b>Expression</b>. Click the <span class='icon'>&#xE212;</span> beside an example to load it.</p>"+
-				"<p>The library also includes example patterns, searchable community submissions, and your saved favourites.</p>"
+				"<p>The library also includes <b>example</b> patterns, searchable <b>community</b> submissions, and your saved <b>favourites</b>.</p>"
 			}
 		]
 		},
