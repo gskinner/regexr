@@ -23,6 +23,7 @@
  */
 
 var CMUtils = require('../utils/CMUtils');
+var TextUtils = require('../utils/TextUtils');
 var ExpressionHighlighter = require('../ExpressionHighlighter');
 var ExpressionHover = require('../ExpressionHover');
 var ExpressionModel = require('../net/ExpressionModel');
@@ -37,7 +38,7 @@ var Tracking = require('../Tracking');
 var RegExLexer = require('../RegExLexer');
 var BrowserHistory = require('../BrowserHistory');
 var SubstLexer = require('../SubstLexer');
-var Utils = require('../utils/Utils');
+
 var Docs = require('../utils/Docs');
 var CodeMirror = require('codemirror');
 
@@ -70,10 +71,11 @@ p.expressionHover = null;
 p.sourceHighlighter = null;
 p.sourceTooltip = null;
 
-p.substHighlighter = null;
-p.substHover = null;
-p.substCM = null;
-p.substResCM = null;
+p.toolsHighlighter = null;
+p.toolsHover = null;
+p.toolsCM = null;
+p.toolsResCM = null;
+p.toolsResults = null;
 
 p.flagsTooltip = null;
 p.flagsMenu = null;
@@ -86,8 +88,9 @@ p.matches = null;
 p.error = null;
 p.hoverMatch = null;
 p.exprLexer = null;
-p.substLexer = null;
-p.substEnabled = false;
+p.toolsLexer = null;
+p.tool = null;
+p.toolEnabled = false;
 p._state = null;
 
 // timers:
@@ -106,18 +109,18 @@ p.initialize = function (element) {
 	this.matches = [];
 	this.timeoutIDs = {};
 	this.exprLexer = new RegExLexer();
-	this.substLexer = new SubstLexer();
-	this.isMac = Utils.isMac();
+	this.toolsLexer = new SubstLexer();
+	this.isMac = $.isMac();
 	this.themeColor = window.getComputedStyle($.el(".regexr-logo")).color;
-
-	// Set the default state.
-	this.setState();
 
 	Docs.content.library.desc = $.el(".lib .content").innerHTML;
 
 	window.onbeforeunload = $.bind(this, this.handleUnload);
 
 	this.buildUI(element);
+
+	// Set the default state.
+	this.setState();
 };
 
 p.buildUI = function (el) {
@@ -142,6 +145,7 @@ p.buildUI = function (el) {
 	var srcCM = this.sourceCM = this.getCM(sourceEditor, {lineWrapping: true});
 	srcCM.on("change", $.bind(this, this.deferUpdate));
 	srcCM.on("scroll", $.bind(this, this.drawSourceHighlights));
+	srcCM.on("cursorActivity", $.bind(this, this.handleSrcCursorActivity))
 
 	this.sourceCanvas = $.el(".source canvas", el);
 	this.sourceMeasure = $.el(".source .measure", el);
@@ -151,23 +155,25 @@ p.buildUI = function (el) {
 	this.sourceTooltip.on("mouseout", this.sourceMouseOut, this);
 	this.sourceHighlighter = new SourceHighlighter(srcCM, this.sourceCanvas, this.themeColor);
 
-	var substTitle = $.el(".title.subst", el);
-	substTitle.addEventListener("mousedown", $.bind(this, this.onSubstClick));
+	var toolsTitle = $.el(".title.tools", el);
+	toolsTitle.addEventListener("mousedown", $.bind(this, this.onToolsClick));
 
-	var substEditor = $.el(".editor.subst", el);
-	var substCM = this.substCM = this.getCM(substEditor, {
+	var toolsEditor = $.el(".tools.editor.in", el);
+	var toolsCM = this.toolsCM = this.getCM(toolsEditor, {
 		maxLength: 500,
 		singleLine: true
 	}, "100%", "auto");
-	substCM.on("change", $.bind(this, this.deferUpdate));
-	this.substHighlighter = new ExpressionHighlighter(substCM);
-	this.substHover = new ExpressionHover(substCM, this.substHighlighter);
+	toolsCM.on("change", $.bind(this, this.deferUpdate));
+	this.toolsHighlighter = new ExpressionHighlighter(toolsCM);
+	this.toolsHover = new ExpressionHover(toolsCM, this.toolsHighlighter);
 
-	var substResEditor = $.el(".editor.substres", el);
-	this.substResCM = this.getCM(substResEditor, {
+	var toolsResEditor = $.el(".tools.editor.out", el);
+	this.toolsResCM = this.getCM(toolsResEditor, {
 		readOnly: true,
 		lineWrapping: true
 	});
+	
+	this.toolsResults = $.el(".tools.results");
 
 	// Flags
 	var flagsBtn = $.el(".button.flags", el);
@@ -232,7 +238,7 @@ p.populateAll = function (pattern, flags, content, substitution) {
 	this.setFlags(flags);
 	this.setText(content);
 
-	if (!this._state.substEnabled && (substitution == null || substitution == "")) {
+	if (!this._state.toolsEnabled && (substitution == null || substitution == "")) {
 		substitution = DocView.DEFAULT_SUBSTITUTION;
 	}
 
@@ -240,7 +246,7 @@ p.populateAll = function (pattern, flags, content, substitution) {
 
 	if (
 			substitution != null &&
-			this._state.substEnabled || // Newer saves will have a flag saved.
+			this._state.toolsEnabled || // Newer saves will have a flag saved.
 			substitution != DocView.DEFAULT_SUBSTITUTION // Fallback for old patterns that don't have a saved flag.
 	) {
 		this.showSubstitution();
@@ -269,10 +275,6 @@ p.setPattern = function (pattern) {
 
 p.getPattern = function () {
 	return this.decomposeExpression(this.expressionCM.getValue()).pattern;
-};
-
-p.getState = function () {
-
 };
 
 p.setFlags = function (flags) {
@@ -329,13 +331,15 @@ p.getText = function () {
 };
 
 p.setSubstitution = function (str) {
-	this.substCM.setValue(str);
+	// TODO: setTool
+	this.toolsCM.setValue(str);
 	this.deferUpdate();
 	return this;
 };
 
 p.getSubstitution = function () {
-	return this.substCM.getValue();
+	// TODO: ??
+	return this.toolsCM.getValue();
 };
 
 p.insertExpression = function (str) {
@@ -345,46 +349,63 @@ p.insertExpression = function (str) {
 };
 
 p.insertSubstitution = function (str) {
-	this.substCM.replaceSelection(str, "end");
+	// TODO: setTool
+	this.toolsCM.replaceSelection(str, "end");
 	this.deferUpdate(); // unlikely to be chained, so no real need to defer a full update.
 	return this;
 };
 
-p.showSubstitution = function (value) {
-	value = value === undefined ? true : value;
-	if (this.substEnabled == value) {
-		return;
-	}
-	this.substEnabled = value;
+p.showTool = function (value) {
+	if (this.toolEnabled == value) { return; }
+	this.toolEnabled = value;
 	if (value) {
-		$.removeClass(this.element, "subst-disabled");
+		$.removeClass(this.element, "tools-disabled");
 	} else {
-		$.addClass(this.element, "subst-disabled");
+		$.addClass(this.element, "tools-disabled");
 	}
 	this.deferUpdate();
 	this.resize();
-	this.substCM.refresh();
+	this.toolsCM.refresh();
 	this.sourceCM.refresh();
 };
 
+p.setTool = function(tool) {
+	if (tool == this.tool) { return; }
+	var el;
+	if (this.tool) {
+		el = $.el(".tools.title .button."+this.tool);
+		$.removeClass(el,"active");
+	}
+	this.tool = tool;
+	el = $.el(".tools.title .button."+this.tool);
+	$.addClass(el,"active");
+	
+	if (tool == "details") {
+		$.addClass(this.element, "tools-results");
+	} else {
+		$.removeClass(this.element, "tools-results");
+	}
+	
+	this.updateTool();
+}
+
 p.setState = function (value) {
-	value = value == null || value == "" ? {} : value;
-
-	this._state = {};
-	this._state.substEnabled = value.substEnabled == null ? false : value.substEnabled;
-
-	this.showSubstitution(this._state.substEnabled);
+	value = value || {};
+	var tool = value.toolsEnabled ? "subst" : value.tool;
+	
+	this._state = {tool:tool};
+	this.showTool(!!tool);
+	this.setTool(tool||"subst");
 };
 
 /**
  * Arbitrary values we save with the expression.
- * Things like substEnabled, or tools.
+ * Things like toolsEnabled, or tools.
  *
  */
 p.getState = function (value) {
-	return {
-		substEnabled: this.substEnabled
-	};
+	var tool = this.toolEnabled ? this.tool : null;
+	return { tool:tool };
 };
 
 p.showSave = function () {
@@ -403,7 +424,7 @@ p.showFlags = function () {
 // undo/redo:
 p.setupUndo = function () {
 	this.history = [];
-	var srcCM = this.sourceCM, expCM = this.expressionCM, substCM = this.substCM, _this = this;
+	var srcCM = this.sourceCM, expCM = this.expressionCM, toolsCM = this.toolsCM, _this = this;
 	// Note: this is dependent on CodeMirror emitting the historyAdded event from addToHistory()
 	// like so: if (!last) { signal(doc, "historyAdded"); }
 	srcCM.getDoc().on("historyAdded", function () {
@@ -414,10 +435,10 @@ p.setupUndo = function () {
 		_this.addHistory(expCM);
 	});
 	expCM.setOption("undoDepth", this.maxHistoryDepth);
-	substCM.getDoc().on("historyAdded", function () {
-		_this.addHistory(substCM);
+	toolsCM.getDoc().on("historyAdded", function () {
+		_this.addHistory(toolsCM);
 	});
-	substCM.setOption("undoDepth", this.maxHistoryDepth);
+	toolsCM.setOption("undoDepth", this.maxHistoryDepth);
 	window.addEventListener("keydown", $.bind(this, this.handleKeyDown));
 };
 
@@ -474,16 +495,7 @@ p.sourceMouseMove = function (evt) {
 	this.hoverMatch = null;
 
 	if (matches.length && (index = CMUtils.getCharIndexAt(cm, evt.clientX, evt.clientY + window.pageYOffset)) != null) {
-		for (var i = 0, l = matches.length; i < l; i++) {
-			var match = matches[i];
-			if (match.end < index) {
-				continue;
-			}
-			if (match.index > index) {
-				break;
-			}
-			this.hoverMatch = match;
-		}
+		this.hoverMatch = this.getMatchAt(index);
 	}
 	if (oldMatch != this.hoverMatch) {
 		this.drawSourceHighlights();
@@ -521,27 +533,22 @@ p.resize = function () {
 p.update = function () {
 	this.error = null;
 
-	var regex, matches = this.matches;
+	var matches = this.matches;
 	var str = this.sourceCM.getValue();
 	var expr = this.expressionCM.getValue();
-	var o = this.decomposeExpression(expr);
-	var g = o.flags.indexOf("g") != -1;
+	var regex = this.getRegEx();
 	this.expressionHighlighter.draw(this.exprLexer.parse(expr));
 	this.expressionHover.token = this.exprLexer.token;
-
+	matches.length = 0;
+	
 	// this is only ok if we are very confident we will not have false errors.
 	// used primarily to handle fwdslash errors.
-	if (this.exprLexer.errors.length) {
+	if (this.exprLexer.errors.length || !regex) {
 		this.error = "ERROR";
+		this.updateTool();
+		this.updateResults();
+		return;
 	}
-
-	try {
-		regex = new RegExp(o.pattern, o.flags);
-	}
-	catch (e) {
-		this.error = "ERROR";
-	}
-	matches.length = 0;
 
 	var _this = this;
 	RegExJS.match(regex, str, function (error, matches) {
@@ -559,28 +566,90 @@ p.update = function () {
 			BrowserHistory.go($.createID(ExpressionModel.id));
 		}
 
-		_this.updateSubst(str, regex);
+		_this.updateTool(str, regex);
 	});
 };
 
-p.updateSubst = function (source, regex) {
-	if (!this.substEnabled) {
-		return;
-	}
-	var str = this.substCM.getValue();
-	var token = this.substLexer.parse(str, this.exprLexer.captureGroups);
+p.getRegEx = function(global) {
+	var regex, o = this.decomposeExpression(this.expressionCM.getValue());
+	
+	if (global === true && o.flags.indexOf("g") === -1) { o.flags += "g"; }
+	else if (global === false) { o.flags = o.flags.replace("g",""); }
+	
+	try {
+		regex = new RegExp(o.pattern, o.flags);
+	} catch (e) {}
+	return regex;
+}
 
-	this.substHighlighter.draw(token);
-	this.substHover.token = token;
-	if (!this.error && this.substLexer.errors.length === 0) {
-		try {
-			str = eval('"' + str.replace(/"/g, '\\"') + '"');
-		} catch (e) {
-			console.error("UNCAUGHT js string error", e);
+p.updateTool = function (source, regex) {
+	if (!this.toolEnabled) { return; }
+	source = source||this.sourceCM.getValue();
+	var result = "";
+	if (this.error) {
+		// nothing, empty result
+	} else if (this.tool == "subst" || this.tool == "matches") {
+		var str = this.toolsCM.getValue();
+		var token = this.toolsLexer.parse(str, this.exprLexer.captureGroups);
+	
+		this.toolsHighlighter.draw(token);
+		this.toolsHover.token = token;
+		if (this.toolsLexer.errors.length === 0) {
+			try {
+				str = eval('"' + str.replace(/"/g, '\\"') + '"');
+			} catch (e) {
+				console.error("UNCAUGHT js string error", e);
+			}
+			if (this.tool == "subst") {
+				result = source.replace(regex || this.getRegEx(), str);
+			} else {
+				var repl, ref, regex = this.getRegEx(false);
+				if (str.search(/\$[&1-9`']/) === -1) { str = "$&"+str; }
+				while (true) {
+					ref = source.replace(regex, "\b");
+					var index = ref.indexOf("\b");
+					if (index === -1) { break; }
+					repl = source.replace(regex, str);
+					result += repl.substr(index, repl.length-ref.length+1);
+					source = ref.substr(index+1);
+				}
+			}
 		}
-		source = source.replace(regex, str);
+		this.toolsResCM.setValue(result);
+	} else if (this.tool == "details") {
+		var cm = this.sourceCM, match=this.getMatchAt(cm.indexFromPos(cm.getCursor()), true);
+		
+		if (match) {
+			result += "<h1><b>Match #"+match.num+"</b>"+ 
+				"  <b>Length:</b> "+(match.end-match.index+1)+ 
+				"  <b>Range:</b> "+match.index+"-"+match.end+"</h1>"+
+				"<p>"+TextUtils.htmlSafe(match[0])+"</p>";
+				
+			for (var i=1; i<match.length; i++) {
+				result += "<h1><b>Group #"+i+"</b>"+
+					"  <b>Length:</b> "+match[i].length+"</h1>"+
+					"<p>"+TextUtils.htmlSafe(match[i])+"</p>";
+			}
+		} else {
+			result += "<h1><b>no match selected</b></h1>";
+			result = "<i>click a match above for details</i>";
+		}
+		$.el(".content",this.toolsResults).innerHTML = "<code><pre>"+result+"</code></pre>";
 	}
-	this.substResCM.setValue(source);
+};
+
+p.getMatchAt = function(index, inclusive) {
+	var match, matches=this.matches,offset=(inclusive ? -1 : 0);
+	for (var i = 0, l = matches.length; i < l; i++) {
+		match = matches[i];
+		if (match.end < index + offset) {
+			continue;
+		}
+		if (match.index > index) {
+			break;
+		}
+		return match;
+	}
 };
 
 p.drawSourceHighlights = function () {
@@ -588,6 +657,7 @@ p.drawSourceHighlights = function () {
 };
 
 p.updateResults = function () {
+	console.log(">", this.error);
 	var str = "no match", div = this.exprResults, tip = null, l = this.matches.length;
 	$.removeClass(div, "error");
 	$.removeClass(div, "nomatch");
@@ -604,9 +674,17 @@ p.updateResults = function () {
 	div.innerHTML = str;
 };
 
-p.onSubstClick = function (evt) {
-	Tracking.event("substitution", !this.substEnabled ? "show" : "hide");
-	this.showSubstitution(!this.substEnabled);
+p.onToolsClick = function (evt) {
+	var el = $.el(".tools.title .buttonbar.left");
+	if (!el.contains(evt.target) && this.toolEnabled) {
+		// click on the bar, not a tool.
+		this.showTool(false);
+		return;
+	}
+	if (!this.toolEnabled) { this.showTool(true); }
+	Tracking.event("substitution", !this.toolEnabled ? "show" : "hide"); // TODO: update.
+	var tool = evt.target.dataset.tool;
+	if (tool) { this.setTool(tool); }
 };
 
 p.onFlagsMenuChange = function (evt) {
@@ -614,12 +692,12 @@ p.onFlagsMenuChange = function (evt) {
 };
 
 p.handleExpressionCMKeyDown = function (cm, event) {
-    // Ctrl or Command + D by default, will delete the expression and the flags field, Re: https://github.com/gskinner/regexr/issues/74
-    // So we just manually reset to nothing here.
-    if ((event.ctrlKey || event.metaKey) && event.keyCode == 68) {
-        event.preventDefault();
-        this.setExpression('//'+this.getFlags());
-    }
+	// Ctrl or Command + D by default, will delete the expression and the flags field, Re: https://github.com/gskinner/regexr/issues/74
+	// So we just manually reset to nothing here.
+	if ((event.ctrlKey || event.metaKey) && event.keyCode == 68) {
+		event.preventDefault();
+		this.setExpression('//'+this.getFlags());
+	}
 };
 
 p.handleExpressionCMChange = function (cm, change) {
@@ -631,6 +709,10 @@ p.handleExpressionCMChange = function (cm, change) {
 		return;
 	}
 	this.setExpression(str);
+};
+
+p.handleSrcCursorActivity = function(cm) {
+	if (this.tool === "details") { this.updateTool(); }
 };
 
 p.updateFlagsMenu = function () {
@@ -655,7 +737,7 @@ p.deferResize = function () {
 };
 
 p.getCM = function (target, opts, width, height) {
-	var cmdKey = Utils.getCtrlKey();
+	var cmdKey = $.getCtrlKey();
 	var keys = {};
 	keys[cmdKey + "-Z"] = keys[cmdKey + "-Y"] = keys["Shift-" + cmdKey + "-Z"] = function () {
 		return false;

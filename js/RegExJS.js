@@ -44,6 +44,7 @@ s.match = function (regex, str, callback) {
 				error = "infinite";
 				break;
 			}
+			match.num = matches.length;
 			match.end = (index = match.index + match[0].length) - 1;
 			match.input = null;
 			matches.push(match);

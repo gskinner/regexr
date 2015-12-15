@@ -53,6 +53,11 @@ p.initialize = function (element, docs) {
 
 	this.buildUI(element);
 	this.showItem(this.docs = docs);
+	
+	var _this = this;
+	window.showLib = function(id) {
+		_this.show(id);
+	}
 };
 
 // public:

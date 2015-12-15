@@ -167,7 +167,7 @@
 	</div>
 </div>
 
-<div class="doc subst-disabled" id="docview">
+<div class="doc tools-disabled" id="docview">
 	<div class="title expr">
 		Expression
 		<ul class="buttonbar">
@@ -200,15 +200,22 @@ http://regexr.com/foo.html?q=bar
 		</textarea>
 	</div>
 
-	<div class="title subst">
-		Substitution
-		<ul class="buttonbar">
-			<li class="button nolabel" data-icon="&#xE192;" data-alticon="&#xE191;"></li>
+	<div class="title tools">
+		<span>Tools</span>
+		<ul class="buttonbar right">
+			<li class="button nolabel expand" data-icon="&#xE192;" data-alticon="&#xE191;"></li>
+		</ul>
+		<ul class="buttonbar left">
+			<li class="button subst active" data-tool="subst">Substitution</li>
+			<li class="button matches" data-tool="matches">Matches</li>
+			<li class="button details" data-tool="details">Details</li>
+			<li class="button graph" data-tool="graph">Graph</li>
 		</ul>
 	</div>
-	<div class="editor subst"></div>
-
-	<div class="editor substres"></div>
+	
+	<div class="tools editor in"></div>
+	<div class="tools editor out"></div>
+	<div class="tools results hidden"><div class="content"></div></div>
 
 	<div class="menu flags">
 		<header>

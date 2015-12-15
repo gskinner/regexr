@@ -24,17 +24,16 @@
 	.editor {
 		padding: $pad;
 		background: $editor-bg;
-		height: $editor-height;
 		position: relative;
 	}
 
-	.editor.expr, .editor.subst {
+	.editor.expr, .editor.tools.in {
 		height: $editor-1l-height;
 		padding-bottom: $editor-1l-pad-bottom;
 
 		.CodeMirror-hscrollbar {
 			@include vendor-prefix(transform, scale(1, 0.5) translate(0, -0.375rem));
-            min-height: 0!important;
+			min-height: 0!important;
 		}
 	}
 }
@@ -85,48 +84,132 @@
 	background: $editor-bg;
 }
 
-/*  SUBST UI */
-.title.subst {
+/*  TOOLS UI */
+.title.tools {
 	cursor: pointer;
+	position: relative;
 }
 
-.title.subst:hover .button {
-	color: $hover-color;
+.tools .buttonbar.left {
+	float: none;
+	display: inline-block;
+	opacity: 0.999; /* this is a hack to prevent the space between buttons from being mouse transparent */
+	color: lighten($color, 25%);
+	margin-left: 1em;
+	
+	li {
+		padding: 0.2em;
+		padding-left: 0.5em;
+		padding-right: 0.5em;
+		margin: 0;
+	}
+	
+	li.active {
+		background: lighten($title-bg, 8%);
+		color: $color;
+		border-radius: 2px;
+	}
 }
 
-.editor.substres {
-	background: $editor-substres-bg;
+.tools .buttonbar.right {
+	display: block;
+	text-align: right;
+	right: 0;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	position: absolute;
+	
+	padding: $pad;
+	
+	&:hover .expand {
+		color: $hover-color;
+	}
+}
+
+.tools.editor.out {
+	background: $editor-toolsres-bg;
 
 	.CodeMirror {
 		color: lighten($color, 34%);
 	}
 }
 
-.editor.subst {
+.tools.editor.in {
 	font-weight: bold;
-	border-bottom: dotted $subst-border $title-bg;
+	border-bottom: dotted $tools-border $title-bg;
 }
 
-.subst-disabled {
-	.title.subst {
-		color: lighten($color, 40%);
+
+.tools-disabled {
+	.title.tools > * {
+		opacity: 0.6;
+	}
+	
+	.title:hover .button.expand {
+		color: $hover-color;
 	}
 
-	.editor.subst, .editor.substres {
+	.tools.editor, .tools.results {
 		display:none;
 	}
 
-	.subst .button:before {
+	.tools .button:before {
 		content: attr(data-alticon);
 	}
 }
 
-.subst-disabled .editor.source {
+.tools-results .tools.editor {
+	display: none;
+}
+
+:not(.tools-disabled) .tools-results .tools.results {
+	display: block;
+}
+
+.tools-disabled .editor.source {
 	@include calc("height", "100% - #{3*$title-h-pad + 1*$editor-h-pad + 2*$pad}");
 }
 
-.editor.source, .editor.substres {
-	@include calc("height", "100%/2 - #{3*$title-h-pad + 2*$editor-h-pad + 4*$pad}/2 - #{$subst-border}");
+.editor.source, .tools.editor.out {
+	@include calc("height", "100%/2 - #{3*$title-h-pad + 2*$editor-h-pad + 4*$pad}/2 - #{$tools-border}");
+}
+
+.tools.results {
+	background: green;
+	background: $editor-bg;
+	padding: $pad;
+	color: lighten($color, 30%);
+	@include calc("height", "100%/2 - #{3*$title-h-pad + 2*$editor-h-pad + 4*$pad}/2 + #{$editor-1l-height+$pad}");
+	
+	.content {
+		position: relative;
+		overflow: auto;
+		height: 100%;
+		padding: 0.25em;
+	
+		h1 {
+			font-size: 1em;
+			margin: 0;
+			padding: 0.5em;
+			padding-left: $pad;
+			padding-right: $pad;
+			font-weight: normal;
+			background: $editor-toolsres-bg;
+			color: $color;
+		}
+
+		i {
+			display: block;
+			padding: $pad;
+			color: lighten($color, 66%);
+		}
+
+		p {
+			padding: $pad;
+			margin: 0;
+		}
+	}
 }
 
 /* Syntax highlighting */

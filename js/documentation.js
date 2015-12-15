@@ -55,11 +55,33 @@ var library = {
 				"<p>Lighter colored caps at the start or end of a line indicate the match continues between lines.</p>"
 			},
 			{
-			label:"Substitution panel",
-			desc:"Click the <b>Substitution</b> title bar below the <b>Text</b> panel to show or hide the <b>Substitution</b> panel."+
-				"<p>Matches in the <b>Text</b> panel are replaced by the substitution string & displayed as you type.</p>"+
-				"<p>Escaped characters compatible with the JS string format are supported, such as <code>\\n</code>, <code>\\t</code> & <code>\\u0009</code>.</p>"+
-				"<p>Roll over tokens in the substitution string for information.</p>"
+			label:"Tools panel",
+			desc:"Click the <b>Tools</b> title bar below the <b>Text</b> panel to show or hide the <b>Tools</b> panel."+
+				"<p>Tools provide different ways of working with or investigating your results.</p>",
+			kids: [
+				{
+				label:"Substitution",
+				desc:"The <b>Substitution</b> tool replaces matches with a specified string or pattern."+
+					"<p>Matches in the <b>Text</b> panel are replaced by the substitution string & displayed as you type.</p>"+
+					"<p><a href='javascript:showLib(\"subst\")'>Substitution tokens</a> (ex. <code>$&</code> or <code>$1</code>) and escaped characters compatible with the JS string format are supported, such as <code>\\n</code>, <code>\\t</code> & <code>\\u0009</code>.</p>"+
+					"<p>Roll over tokens for information.</p>",
+				},
+				{
+				label:"Matches",
+				desc:"The <b>Matches</b> tool lists all found matches."+
+					"<p>You can specify either a deliminator (ex. <code>,</code> or <code>\\n</code>), or use <a href='javascript:showLib(\"subst\")'>substitution tokens</a> (ex. <code>$&</code> or <code>$1</code>) to generate more advanced reports.</p>"+
+					"<p>Escaped characters compatible with the JS string format are supported, such as <code>\\n</code>, <code>\\t</code> & <code>\\u0009</code>.</p>"+
+					"<p>Roll over tokens for information.</p>",
+				},
+				{
+				label:"Details",
+				desc:""
+				},
+				{
+				label:"Graph",
+				desc:""
+				}
+			]
 			},
 			{
 			label:"Library panel",
@@ -352,7 +374,8 @@ var library = {
 			{
 			label: "Substitution",
 			desc: "These tokens are used in a substitution string to insert different parts of the match.",
-			target:"subst",
+			target: "subst",
+			id:"subst",
 			kids: [
 				{
 				id:"subst_match",

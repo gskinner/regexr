@@ -31,8 +31,8 @@ $editor-h-pad: $editor-height + $pad*2;
 $editor-1l-pad-bottom: 0rem;
 $editor-1l-height: $editor-height + $pad - $editor-1l-pad-bottom;
 
-$subst-border: 1px;
-$editor-substres-bg: darken($editor-bg, 3%);
+$tools-border: 1px;
+$editor-toolsres-bg: darken($editor-bg, 3%);
 
 $lib-bg: darken($grey, 34%);
 $lib-title-bg: darken($grey, 38%);
