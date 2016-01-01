@@ -145,7 +145,7 @@
 		padding: 0.5em;
 		margin-top: 0.75em;
 		display: block;
-		border: dotted 1px rgba(0,0,0,0.2);
+		border: dotted 1px rgba(90,90,90,0.5);
 		color: rgba(0,0,0,0.66);
 	}
 	
@@ -155,7 +155,7 @@
 	
 	div.related {
 		margin-top: 0;
-		background: rgba(0,0,0,0.07);
+		background: rgba(0,0,0,0.1);
 		border-top: none;
 	}
 	
@@ -177,6 +177,20 @@
 		padding: 0;
 		border: none;
 	}
+	
+	/*
+	Expression backgrounds need to be transparent so the selection shows through, but it looks wrong for the graph
+	This could probably be calculated via SCSS instead.
+	*/
+	.exp-group-0 { background: tint($group-color, 89%); }
+	
+	.exp-group-1 { background: tint($group-color, 78%); }
+	
+	.exp-group-2 { background: tint($group-color, 67%); }
+	
+	.exp-group-3 { background: tint($group-color, 56%); }
+	
+	.exp-group-set { background: tint($set-color, 70%); }
 }
 
 
@@ -323,13 +337,13 @@
 	color: #D70;
 }
 
-.exp-group-0 { background: rgba(210, 245, 210, 1); }
+.exp-group-0 { background: rgba($group-color, 0.11); }
 
-.exp-group-1 { background: rgba(190, 240, 190, 1); }
+.exp-group-1 { background: rgba($group-color, 0.22); }
 
-.exp-group-2 { background: rgba(165, 235, 165, 1); }
+.exp-group-2 { background: rgba($group-color, 0.33); }
 
-.exp-group-3 { background: rgba(145, 230, 145, 1); }
+.exp-group-3 { background: rgba($group-color, 0.44); }
 
-.exp-group-set { background: rgba(255, 255, 160, 1); }
+.exp-group-set { background: rgba($set-color, 0.3); }
 
