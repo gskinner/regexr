@@ -40,6 +40,7 @@ var BrowserHistory = require('../BrowserHistory');
 var SubstLexer = require('../SubstLexer');
 
 var Docs = require('../utils/Docs');
+var Graph = require('../utils/Graph');
 var CodeMirror = require('codemirror');
 
 var DocView = function (element) {
@@ -380,7 +381,7 @@ p.setTool = function(tool) {
 	el = $.el(".tools.title .button."+this.tool);
 	$.addClass(el,"active");
 	
-	if (tool == "details") {
+	if (tool == "details" || tool == "graph") {
 		$.addClass(this.element, "tools-results");
 	} else {
 		$.removeClass(this.element, "tools-results");
@@ -466,8 +467,7 @@ p.addHistory = function (o) {
 	stack.push(o);
 	if (stack.length > this.maxHistoryDepth) {
 		stack.shift();
-	}
-	else {
+	} else {
 		this.historyIndex++;
 	}
 };
@@ -631,10 +631,13 @@ p.updateTool = function (source, regex) {
 					"<p>"+TextUtils.htmlSafe(match[i])+"</p>";
 			}
 		} else {
-			result += "<h1><b>no match selected</b></h1>";
-			result = "<i>click a match above for details</i>";
+			result = "<i>click a <span class='match'>match</span> above for details</i>";
 		}
 		$.el(".content",this.toolsResults).innerHTML = "<code><pre>"+result+"</code></pre>";
+	} else if (this.tool == "graph") {
+		var token = this.exprLexer.token, expr = this.expressionCM.getValue();
+		result = Graph.forExpression(expr, token);
+		$.empty($.el(".content",this.toolsResults)).appendChild(result);
 	}
 };
 
@@ -657,7 +660,6 @@ p.drawSourceHighlights = function () {
 };
 
 p.updateResults = function () {
-	console.log(">", this.error);
 	var str = "no match", div = this.exprResults, tip = null, l = this.matches.length;
 	$.removeClass(div, "error");
 	$.removeClass(div, "nomatch");
