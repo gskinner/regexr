@@ -304,13 +304,14 @@ Utils.getCtrlKey = function () {
 };
 
 /*
- Remove al children from a element.
+ Remove all children from a element.
  When using .innerHTML = ""; IE fails when adding new dom elements via appendChild();
  */
 Utils.empty = function (el) {
 	while (el.firstChild) {
 		el.removeChild(el.firstChild);
 	}
+	return el;
 };
 
 Utils.html = function (value, parent) {
@@ -320,8 +321,15 @@ Utils.html = function (value, parent) {
 };
 
 Utils.htmlDecode = function(value) {
-    var el = Utils.html(value);
-    return el.nodeValue;
+	var el = Utils.html(value);
+	return el.nodeValue;
+};
+
+Utils.div = function(content, className) {
+	var div = document.createElement("div");
+	if (content) { div.innerHTML = content; }
+	if (className) { div.className = className; }
+	return div;
 };
 
 module.exports = Utils;
