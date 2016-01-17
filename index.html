@@ -206,16 +206,17 @@ http://regexr.com/foo.html?q=bar
 			<li class="button nolabel expand" data-icon="&#xE192;" data-alticon="&#xE191;"></li>
 		</ul>
 		<ul class="buttonbar left">
-			<li class="button subst active" data-tool="subst">Replace</li>
-			<li class="button matches" data-tool="matches">List</li>
+			<li class="button replace active" data-tool="replace">Replace</li>
+			<li class="button list" data-tool="list">List</li>
 			<li class="button details" data-tool="details">Details</li>
 			<li class="button graph" data-tool="graph">Graph</li>
 		</ul>
 	</div>
 	
-	<div class="tools editor in"></div>
+	<div class="tools editor replace"></div>
+	<div class="tools editor list"></div>
 	<div class="tools editor out"></div>
-	<div class="tools results hidden"><div class="content"></div></div>
+	<div class="tools results"><div class="content"></div></div>
 
 	<div class="menu flags">
 		<header>
@@ -251,7 +252,8 @@ http://regexr.com/foo.html?q=bar
 		<a id="copyJavascript">Javascript</a>
 		<div id="copyMessageView" class="hidden">
 			<hr />
-			<code id="copyTxt"></code><br/>
+			<code id="copyTxt"></code>
+			<input type="button" class="copyBtn"/><br/>
 			Copied to clipboard.
 		</div>
 

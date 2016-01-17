@@ -32,7 +32,6 @@ var SourceHighlighter = require('../SourceHighlighter');
 var FlagsMenu = require('../views/FlagsMenu');
 var ShareMenu = require('../views/ShareMenu');
 var SaveMenu = require('../views/SaveMenu');
-var TagInput = require('../controls/TagInput');
 var RegExJS = require('../RegExJS');
 var Tracking = require('../Tracking');
 var RegExLexer = require('../RegExLexer');
@@ -49,7 +48,8 @@ var DocView = function (element) {
 var p = DocView.prototype;
 
 DocView.DEFAULT_EXPRESSION = "/([A-Z])\\w+/g";
-DocView.DEFAULT_SUBSTITUTION = "\\n# $&:\\n\\t";
+DocView.DEFAULT_REPLACE = "\\n# $&:\\n\\t";
+DocView.DEFAULT_LIST = "$1,";
 DocView.VALID_FLAGS = "igm";
 
 p.isMac = false; // for keyboard shortcuts.
@@ -72,10 +72,9 @@ p.expressionHover = null;
 p.sourceHighlighter = null;
 p.sourceTooltip = null;
 
-p.toolsHighlighter = null;
-p.toolsHover = null;
-p.toolsCM = null;
-p.toolsResCM = null;
+p.replaceCM = null;
+p.listCM = null;
+p.toolsOutCM = null;
 p.toolsResults = null;
 
 p.flagsTooltip = null;
@@ -91,8 +90,9 @@ p.hoverMatch = null;
 p.exprLexer = null;
 p.toolsLexer = null;
 p.tool = null;
-p.toolEnabled = false;
-p._state = null;
+p.oldTool = null; // used for undo/redo
+p.toolsEnabled = false;
+p.toolData = null;
 
 // timers:
 p.timeoutIDs = null;
@@ -117,7 +117,8 @@ p.initialize = function (element) {
 	Docs.content.library.desc = $.el(".lib .content").innerHTML;
 
 	window.onbeforeunload = $.bind(this, this.handleUnload);
-
+	
+	this.toolData = {replace:DocView.DEFAULT_REPLACE, list:DocView.DEFAULT_LIST};
 	this.buildUI(element);
 
 	// Set the default state.
@@ -126,7 +127,7 @@ p.initialize = function (element) {
 
 p.buildUI = function (el) {
 	var expressionEditor = $.el(".editor.expr", el);
-	var expCM = this.expressionCM = this.getCM(expressionEditor, {
+	var expCM = this.expressionCM = this.createCM(expressionEditor, {
 		autofocus: true,
 		maxLength: 2500,
 		singleLine: true
@@ -143,7 +144,7 @@ p.buildUI = function (el) {
 	this.exprResultsTooltip = Tooltip.add(this.exprResults);
 
 	var sourceEditor = $.el(".editor.source", el);
-	var srcCM = this.sourceCM = this.getCM(sourceEditor, {lineWrapping: true});
+	var srcCM = this.sourceCM = this.createCM(sourceEditor, {lineWrapping: true});
 	srcCM.on("change", $.bind(this, this.deferUpdate));
 	srcCM.on("scroll", $.bind(this, this.drawSourceHighlights));
 	srcCM.on("cursorActivity", $.bind(this, this.handleSrcCursorActivity))
@@ -159,17 +160,11 @@ p.buildUI = function (el) {
 	var toolsTitle = $.el(".title.tools", el);
 	toolsTitle.addEventListener("mousedown", $.bind(this, this.onToolsClick));
 
-	var toolsEditor = $.el(".tools.editor.in", el);
-	var toolsCM = this.toolsCM = this.getCM(toolsEditor, {
-		maxLength: 500,
-		singleLine: true
-	}, "100%", "auto");
-	toolsCM.on("change", $.bind(this, this.deferUpdate));
-	this.toolsHighlighter = new ExpressionHighlighter(toolsCM);
-	this.toolsHover = new ExpressionHover(toolsCM, this.toolsHighlighter);
+	this.replaceCM = this.createToolCM($.el(".tools.editor.replace", el));
+	this.listCM = this.createToolCM($.el(".tools.editor.list", el));
 
 	var toolsResEditor = $.el(".tools.editor.out", el);
-	this.toolsResCM = this.getCM(toolsResEditor, {
+	this.toolsOutCM = this.createCM(toolsResEditor, {
 		readOnly: true,
 		lineWrapping: true
 	});
@@ -234,36 +229,27 @@ p.setInitialExpression = function () {
 };
 
 // public methods:
-p.populateAll = function (pattern, flags, content, substitution) {
+p.populateAll = function (pattern, flags, content, state) {
 	this.setPattern(pattern);
 	this.setFlags(flags);
 	this.setText(content);
-
-	if (!this._state.toolsEnabled && (substitution == null || substitution == "")) {
-		substitution = DocView.DEFAULT_SUBSTITUTION;
-	}
-
-	this.setSubstitution(substitution);
-
-	if (
-			substitution != null &&
-			this._state.toolsEnabled || // Newer saves will have a flag saved.
-			substitution != DocView.DEFAULT_SUBSTITUTION // Fallback for old patterns that don't have a saved flag.
-	) {
-		this.showSubstitution();
-	} else {
-		this.showSubstitution(false);
-	}
+	this.setState(state);
 	ExpressionModel.saveState();
 };
 
 p.setExpression = function (expression) {
-	var o = this.decomposeExpression(expression);
+	var o = this.decomposeExpression(expression || DocView.DEFAULT_EXPRESSION);
 	return this.setPattern(o.pattern).setFlags(o.flags);
 };
 
 p.getExpression = function () {
 	return this.expressionCM.getValue();
+};
+
+p.insertExpression = function (str) {
+	this.expressionCM.replaceSelection(str, "end");
+	this.deferUpdate();
+	return this;
 };
 
 p.setPattern = function (pattern) {
@@ -330,10 +316,10 @@ p.setText = function (text) {
 p.getText = function () {
 	return this.sourceCM.getValue();
 };
-
+/*
 p.setSubstitution = function (str) {
 	// TODO: setTool
-	this.toolsCM.setValue(str);
+	this.toolsCM.setValue(str || DocView.DEFAULT_REPLACE);
 	this.deferUpdate();
 	return this;
 };
@@ -342,13 +328,7 @@ p.getSubstitution = function () {
 	// TODO: ??
 	return this.toolsCM.getValue();
 };
-
-p.insertExpression = function (str) {
-	this.expressionCM.replaceSelection(str, "end");
-	this.deferUpdate();
-	return this;
-};
-
+*/
 p.insertSubstitution = function (str) {
 	// TODO: setTool
 	this.toolsCM.replaceSelection(str, "end");
@@ -356,9 +336,9 @@ p.insertSubstitution = function (str) {
 	return this;
 };
 
-p.showTool = function (value) {
-	if (this.toolEnabled == value) { return; }
-	this.toolEnabled = value;
+p.showTools = function (value) {
+	if (this.toolsEnabled == value) { return; }
+	this.toolsEnabled = value;
 	if (value) {
 		$.removeClass(this.element, "tools-disabled");
 	} else {
@@ -366,8 +346,10 @@ p.showTool = function (value) {
 	}
 	this.deferUpdate();
 	this.resize();
-	this.toolsCM.refresh();
-	this.sourceCM.refresh();
+	
+	// TODO: is this needed?:
+	//this.toolsCM.refresh();
+	//this.sourceCM.refresh();
 };
 
 p.setTool = function(tool) {
@@ -381,22 +363,26 @@ p.setTool = function(tool) {
 	el = $.el(".tools.title .button."+this.tool);
 	$.addClass(el,"active");
 	
-	if (tool == "details" || tool == "graph") {
-		$.addClass(this.element, "tools-results");
-	} else {
-		$.removeClass(this.element, "tools-results");
-	}
+	$.removeClass(this.element, /tool-/);
+	$.addClass(this.element, "tool-"+tool);
 	
 	this.updateTool();
 }
 
 p.setState = function (value) {
 	value = value || {};
-	var tool = value.toolsEnabled ? "subst" : value.tool;
-	
-	this._state = {tool:tool};
-	this.showTool(!!tool);
-	this.setTool(tool||"subst");
+	this.showTools(!!value.tool);
+	this.setTool(value.tool||"replace");
+	this.setToolValue(value.toolValue || DocView.DEFAULT_REPLACE);
+};
+
+p.setToolValue = function(value) {
+	var toolCM = this.getToolCM();
+	if (toolCM) { toolCM.setValue(value); }
+};
+
+p.getToolCM = function() {
+	return this.tool === "replace" ? this.replaceCM : this.tool === "list" ? this.listCM : null;
 };
 
 /**
@@ -405,8 +391,12 @@ p.setState = function (value) {
  *
  */
 p.getState = function (value) {
-	var tool = this.toolEnabled ? this.tool : null;
-	return { tool:tool };
+	var state = {};
+	state.tool = this.toolsEnabled ? this.tool : null;
+	if (state.tool == "replace" || state.tool == "list") {
+		state.toolValue = this.toolsCM.getValue();
+	}
+	return state;
 };
 
 p.showSave = function () {
@@ -424,41 +414,23 @@ p.showFlags = function () {
 // private:
 // undo/redo:
 p.setupUndo = function () {
+	// NOTE: undo / redo is set up for the replace / list CMs in createToolCM.
+	
 	this.history = [];
-	var srcCM = this.sourceCM, expCM = this.expressionCM, toolsCM = this.toolsCM, _this = this;
+	var srcCM = this.sourceCM, expCM = this.expressionCM, _this = this;
 	// Note: this is dependent on CodeMirror emitting the historyAdded event from addToHistory()
 	// like so: if (!last) { signal(doc, "historyAdded"); }
 	srcCM.getDoc().on("historyAdded", function () {
 		_this.addHistory(srcCM);
 	});
 	srcCM.setOption("undoDepth", this.maxHistoryDepth);
+	
 	expCM.getDoc().on("historyAdded", function () {
 		_this.addHistory(expCM);
 	});
 	expCM.setOption("undoDepth", this.maxHistoryDepth);
-	toolsCM.getDoc().on("historyAdded", function () {
-		_this.addHistory(toolsCM);
-	});
-	toolsCM.setOption("undoDepth", this.maxHistoryDepth);
+	
 	window.addEventListener("keydown", $.bind(this, this.handleKeyDown));
-};
-
-p.handleKeyDown = function (evt) {
-	var cmd = this.isMac ? evt.metaKey : evt.ctrlKey;
-	if (cmd && ((evt.shiftKey && evt.which == 90) || evt.which == 89)) {
-		this.redo();
-		evt.preventDefault();
-	}
-	else if (cmd && evt.which == 90) {
-		this.undo();
-		evt.preventDefault();
-	}
-};
-
-p.handleUnload = function (evt) {
-	if (ExpressionModel.isDirty()) {
-		return "You have unsaved edits, are you sure you wish to leave this page?";
-	}
 };
 
 p.addHistory = function (o) {
@@ -470,6 +442,21 @@ p.addHistory = function (o) {
 	} else {
 		this.historyIndex++;
 	}
+};
+
+p.addToolsHistory = function() {
+	var _this = this, oldTool = this.oldTool, tool = this.tool;
+	this.addHistory({
+		undo: function() {
+			_this.setTool(oldTool);
+			_this.toolsCM.undo();
+		},
+		redo: function() {
+			_this.setTool(tool);
+			_this.toolsCM.redo();
+		}
+	});
+	this.oldTool = tool;
 };
 
 p.resetHistory = function () {
@@ -488,6 +475,24 @@ p.redo = function () {
 		return;
 	}
 	this.history[this.historyIndex++].redo();
+};
+
+p.handleKeyDown = function (evt) {
+	var cmd = this.isMac ? evt.metaKey : evt.ctrlKey;
+	if (cmd && ((evt.shiftKey && evt.which == 90) || evt.which == 89)) {
+		this.redo();
+		evt.preventDefault();
+	}
+	else if (cmd && evt.which == 90) {
+		this.undo();
+		evt.preventDefault();
+	}
+};
+
+p.handleUnload = function (evt) {
+	if (ExpressionModel.isDirty()) {
+		return "You have unsaved edits, are you sure you wish to leave this page?";
+	}
 };
 
 p.sourceMouseMove = function (evt) {
@@ -583,24 +588,28 @@ p.getRegEx = function(global) {
 }
 
 p.updateTool = function (source, regex) {
-	if (!this.toolEnabled) { return; }
+	if (!this.toolsEnabled) { return; }
 	source = source||this.sourceCM.getValue();
-	var result = "";
+	var result = "", toolsCM = this.getToolCM();
 	if (this.error) {
 		// nothing, empty result
-	} else if (this.tool == "subst" || this.tool == "matches") {
-		var str = this.toolsCM.getValue();
+	} else if (toolsCM) {
+		console.log("TOOL", this.tool)
+		var str = toolsCM.getValue();
+		
 		var token = this.toolsLexer.parse(str, this.exprLexer.captureGroups);
-	
-		this.toolsHighlighter.draw(token);
-		this.toolsHover.token = token;
+		
+		toolsCM.highlighter.cm = toolsCM;
+		toolsCM.highlighter.draw(token);
+		toolsCM.hover.token = token;
+		
 		if (this.toolsLexer.errors.length === 0) {
 			try {
 				str = eval('"' + str.replace(/"/g, '\\"') + '"');
 			} catch (e) {
 				console.error("UNCAUGHT js string error", e);
 			}
-			if (this.tool == "subst") {
+			if (this.tool == "replace") {
 				result = source.replace(regex || this.getRegEx(), str);
 			} else {
 				var repl, ref, regex = this.getRegEx(false);
@@ -615,7 +624,7 @@ p.updateTool = function (source, regex) {
 				}
 			}
 		}
-		this.toolsResCM.setValue(result);
+		this.toolsOutCM.setValue(result);
 	} else if (this.tool == "details") {
 		var cm = this.sourceCM, match=this.getMatchAt(cm.indexFromPos(cm.getCursor()), true);
 		
@@ -678,15 +687,18 @@ p.updateResults = function () {
 
 p.onToolsClick = function (evt) {
 	var el = $.el(".tools.title .buttonbar.left");
-	if (!el.contains(evt.target) && this.toolEnabled) {
+	if (!el.contains(evt.target) && this.toolsEnabled) {
 		// click on the bar, not a tool.
-		this.showTool(false);
+		this.showTools(false);
 		return;
 	}
-	if (!this.toolEnabled) { this.showTool(true); }
-	Tracking.event("substitution", !this.toolEnabled ? "show" : "hide"); // TODO: update.
+	if (!this.toolsEnabled) { this.showTools(true); }
 	var tool = evt.target.dataset.tool;
-	if (tool) { this.setTool(tool); }
+	if (tool) {
+		this.oldTool = this.tool;
+		this.setTool(tool);
+	}
+	Tracking.event("tools", !this.toolsEnabled ? "show" : "hide"); // TODO: update.
 };
 
 p.onFlagsMenuChange = function (evt) {
@@ -738,7 +750,7 @@ p.deferResize = function () {
 	$.defer(this, this.resize, "resize", 500);
 };
 
-p.getCM = function (target, opts, width, height) {
+p.createCM = function (target, opts, width, height) {
 	var cmdKey = $.getCtrlKey();
 	var keys = {};
 	keys[cmdKey + "-Z"] = keys[cmdKey + "-Y"] = keys["Shift-" + cmdKey + "-Z"] = function () {
@@ -764,6 +776,27 @@ p.getCM = function (target, opts, width, height) {
 	if (cm.getOption("singleLine")) {
 		cm.on("beforeChange", CMUtils.enforceSingleLine);
 	}
+	return cm;
+};
+
+p.createToolCM = function(target, content) {
+	var cm = this.createCM(target, {
+		maxLength: 500,
+		singleLine: true
+	}, "100%", "auto");
+	cm.setValue(content || "Hello!");
+	cm.on("change", $.bind(this, this.deferUpdate));
+	
+	cm.highlighter = new ExpressionHighlighter(cm);
+	cm.hover = new ExpressionHover(cm, cm.highlighter);
+	
+	// undo / redo:
+	var _this = this;
+	cm.getDoc().on("historyAdded", function () {
+		_this.addToolsHistory();
+	});
+	cm.setOption("undoDepth", this.maxHistoryDepth);
+	
 	return cm;
 };
 

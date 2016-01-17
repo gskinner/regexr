@@ -27,7 +27,7 @@
 		position: relative;
 	}
 
-	.editor.expr, .editor.tools.in {
+	.editor.expr, .editor.tools.replace, .editor.tools.list {
 		height: $editor-1l-height;
 		padding-bottom: $editor-1l-pad-bottom;
 
@@ -42,7 +42,7 @@
 .title.expr {
 	background: $theme-color;
 }
-.editor.expr {
+.editor.expr, .editor.list, .editor.replace {
 	font-weight: bold;
 }
 
@@ -129,15 +129,11 @@
 
 .tools.editor.out {
 	background: $editor-toolsres-bg;
+	border-top: dotted $tools-border $title-bg;
 
 	.CodeMirror {
 		color: lighten($color, 34%);
 	}
-}
-
-.tools.editor.in {
-	font-weight: bold;
-	border-bottom: dotted $tools-border $title-bg;
 }
 
 .tools .graph {
@@ -145,7 +141,7 @@
 		padding: 0.5em;
 		margin-top: 0.75em;
 		display: block;
-		border: dotted 1px rgba(90,90,90,0.5);
+		border: solid 1px rgba(50,50,50,0.15);
 		color: rgba(0,0,0,0.66);
 	}
 	
@@ -153,9 +149,9 @@
 		margin-top: 0;
 	}
 	
-	div.related {
+	.related {
 		margin-top: 0;
-		background: rgba(0,0,0,0.1);
+		background: rgba(90,90,90,0.12);
 		border-top: none;
 	}
 	
@@ -179,8 +175,7 @@
 	}
 	
 	/*
-	Expression backgrounds need to be transparent so the selection shows through, but it looks wrong for the graph
-	This could probably be calculated via SCSS instead.
+	Expression backgrounds need to be transparent so the selection shows through, but it looks wrong for the graph.
 	*/
 	.exp-group-0 { background: tint($group-color, 89%); }
 	
@@ -203,21 +198,25 @@
 		color: $hover-color;
 	}
 
-	.tools.editor, .tools.results {
-		display:none;
-	}
-
 	.tools .button:before {
 		content: attr(data-alticon);
 	}
 }
 
-.tools-results .tools.editor {
+.tools.editor, .tools.results {
 	display: none;
 }
 
-:not(.tools-disabled) .tools-results .tools.results {
-	display: block;
+:not(.tools-disabled) {
+	.tool-replace .editor.replace, .tool-replace .editor.out {
+		display: block;
+	}
+	.tool-list .editor.list, .tool-list .editor.out {
+		display: block;
+	}
+	.tool-details .tools.results, .tool-graph .tools.results {
+		display: block;
+	}
 }
 
 .tools-disabled .editor.source {
