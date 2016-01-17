@@ -119,7 +119,7 @@ p.initialize = function (element) {
 	this.buildUI(element);
 
 	// Set the default state.
-	this.setState();
+	this.setTool("replace");
 };
 
 p.buildUI = function (el) {
@@ -313,22 +313,12 @@ p.setText = function (text) {
 p.getText = function () {
 	return this.sourceCM.getValue();
 };
-/*
-p.setSubstitution = function (str) {
-	// TODO: setTool
-	this.toolsCM.setValue(str || DocView.DEFAULT_REPLACE);
-	this.deferUpdate();
-	return this;
-};
 
-p.getSubstitution = function () {
-	// TODO: ??
-	return this.toolsCM.getValue();
-};
-*/
 p.insertSubstitution = function (str) {
-	// TODO: setTool
-	this.toolsCM.replaceSelection(str, "end");
+	var cm = this.getToolCM();
+	if (!cm) { this.setTool("replace"); cm = this.replaceCM; }
+	this.showTools(true);
+	cm.replaceSelection(str, "end");
 	this.deferUpdate(); // unlikely to be chained, so no real need to defer a full update.
 	return this;
 };
@@ -344,7 +334,7 @@ p.showTools = function (value) {
 	this.deferUpdate();
 	this.resize();
 	
-	// TODO: is this needed?:
+	// TODO: is this needed? Doesn't seem to be:
 	//this.toolsCM.refresh();
 	//this.sourceCM.refresh();
 };
@@ -364,13 +354,20 @@ p.setTool = function(tool) {
 	$.addClass(this.element, "tool-"+tool);
 	
 	this.updateTool();
-}
+};
+
+p.showTool = function(tool, value) {
+	if (!tool) {
+		this.showTools(false);
+		return;
+	}
+	this.setTool(tool);
+	if (value != null) { this.setToolValue(value); }
+	this.showTools(true);
+};
 
 p.setState = function (value) {
-	value = value || {};
-	this.showTools(!!value.tool);
-	this.setTool(value.tool||"replace");
-	this.setToolValue(value.toolValue || DocView.DEFAULT_REPLACE);
+	this.showTool(value&&value.tool, value&&value.toolValue);
 };
 
 p.setToolValue = function(value) {
@@ -382,17 +379,10 @@ p.getToolCM = function() {
 	return this.tool === "replace" ? this.replaceCM : this.tool === "list" ? this.listCM : null;
 };
 
-/**
- * Arbitrary values we save with the expression.
- * Things like toolsEnabled, or tools.
- *
- */
-p.getState = function (value) {
-	var state = {};
-	state.tool = this.toolsEnabled ? this.tool : null;
-	if (state.tool == "replace" || state.tool == "list") {
-		state.toolValue = this.toolsCM.getValue();
-	}
+p.getState = function () {
+	var state = {}, cm = this.getToolCM();
+	if (this.toolsEnabled) { state.tool = this.tool; }
+	if (cm) { state.toolValue = cm.getValue(); }
 	return state;
 };
 
@@ -445,13 +435,11 @@ p.addToolsHistory = function() {
 	var _this = this, tool = this.tool, cm = this.getToolCM();
 	this.addHistory({
 		undo: function() {
-			_this.setTool(tool);
-			_this.showTools(true);
+			_this.showTool(tool);
 			cm.undo();
 		},
 		redo: function() {
-			_this.setTool(tool);
-			_this.showTools(true);
+			_this.showTool(tool);
 			cm.redo();
 		}
 	});
@@ -544,7 +532,7 @@ p.update = function () {
 	this.expressionHover.token = this.exprLexer.token;
 	matches.length = 0;
 	
-	// this is only ok if we are very confident we will not have false errors.
+	// this is only ok if we are very confident we will not have false errors in the lexer.
 	// used primarily to handle fwdslash errors.
 	if (this.exprLexer.errors.length || !regex) {
 		this.error = "ERROR";
@@ -689,11 +677,9 @@ p.onToolsClick = function (evt) {
 		this.showTools(false);
 		return;
 	}
-	if (!this.toolsEnabled) { this.showTools(true); }
+	this.showTools(true);
 	var tool = evt.target.dataset.tool;
-	if (tool) {
-		this.setTool(tool);
-	}
+	if (tool) { this.setTool(tool); }
 	Tracking.event("tools", !this.toolsEnabled ? "show" : "hide"); // TODO: update.
 };
 

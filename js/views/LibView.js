@@ -187,7 +187,6 @@ p.onListChange = function (evt) {
 		} // alternately: .toggleFlag(item.token);
 		else if (target == "subst") {
 			this.docView.insertSubstitution(item.token.replace(/\$\$/g, "$"));
-			this.docView.showSubstitution();
 		}
 	} else {
 		this.showItem(item, true);
