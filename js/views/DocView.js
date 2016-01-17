@@ -49,7 +49,7 @@ var p = DocView.prototype;
 
 DocView.DEFAULT_EXPRESSION = "/([A-Z])\\w+/g";
 DocView.DEFAULT_REPLACE = "\\n# $&:\\n\\t";
-DocView.DEFAULT_LIST = "$1,";
+DocView.DEFAULT_LIST = "$1 - $&\\n";
 DocView.VALID_FLAGS = "igm";
 
 p.isMac = false; // for keyboard shortcuts.
@@ -92,7 +92,6 @@ p.toolsLexer = null;
 p.tool = null;
 p.oldTool = null; // used for undo/redo
 p.toolsEnabled = false;
-p.toolData = null;
 
 // timers:
 p.timeoutIDs = null;
@@ -115,10 +114,8 @@ p.initialize = function (element) {
 	this.themeColor = window.getComputedStyle($.el(".regexr-logo")).color;
 
 	Docs.content.library.desc = $.el(".lib .content").innerHTML;
-
 	window.onbeforeunload = $.bind(this, this.handleUnload);
 	
-	this.toolData = {replace:DocView.DEFAULT_REPLACE, list:DocView.DEFAULT_LIST};
 	this.buildUI(element);
 
 	// Set the default state.
@@ -160,8 +157,8 @@ p.buildUI = function (el) {
 	var toolsTitle = $.el(".title.tools", el);
 	toolsTitle.addEventListener("mousedown", $.bind(this, this.onToolsClick));
 
-	this.replaceCM = this.createToolCM($.el(".tools.editor.replace", el));
-	this.listCM = this.createToolCM($.el(".tools.editor.list", el));
+	this.replaceCM = this.createToolCM($.el(".tools.editor.replace", el), DocView.DEFAULT_REPLACE);
+	this.listCM = this.createToolCM($.el(".tools.editor.list", el), DocView.DEFAULT_LIST);
 
 	var toolsResEditor = $.el(".tools.editor.out", el);
 	this.toolsOutCM = this.createCM(toolsResEditor, {
@@ -413,9 +410,7 @@ p.showFlags = function () {
 
 // private:
 // undo/redo:
-p.setupUndo = function () {
-	// NOTE: undo / redo is set up for the replace / list CMs in createToolCM.
-	
+p.setupUndo = function() {
 	this.history = [];
 	var srcCM = this.sourceCM, expCM = this.expressionCM, _this = this;
 	// Note: this is dependent on CodeMirror emitting the historyAdded event from addToHistory()
@@ -429,6 +424,8 @@ p.setupUndo = function () {
 		_this.addHistory(expCM);
 	});
 	expCM.setOption("undoDepth", this.maxHistoryDepth);
+	
+	// NOTE: undo / redo is set up for the replace / list CMs in createToolCM.
 	
 	window.addEventListener("keydown", $.bind(this, this.handleKeyDown));
 };
@@ -445,18 +442,19 @@ p.addHistory = function (o) {
 };
 
 p.addToolsHistory = function() {
-	var _this = this, oldTool = this.oldTool, tool = this.tool;
+	var _this = this, tool = this.tool, cm = this.getToolCM();
 	this.addHistory({
 		undo: function() {
-			_this.setTool(oldTool);
-			_this.toolsCM.undo();
+			_this.setTool(tool);
+			_this.showTools(true);
+			cm.undo();
 		},
 		redo: function() {
 			_this.setTool(tool);
-			_this.toolsCM.redo();
+			_this.showTools(true);
+			cm.redo();
 		}
 	});
-	this.oldTool = tool;
 };
 
 p.resetHistory = function () {
@@ -594,7 +592,6 @@ p.updateTool = function (source, regex) {
 	if (this.error) {
 		// nothing, empty result
 	} else if (toolsCM) {
-		console.log("TOOL", this.tool)
 		var str = toolsCM.getValue();
 		
 		var token = this.toolsLexer.parse(str, this.exprLexer.captureGroups);
@@ -695,7 +692,6 @@ p.onToolsClick = function (evt) {
 	if (!this.toolsEnabled) { this.showTools(true); }
 	var tool = evt.target.dataset.tool;
 	if (tool) {
-		this.oldTool = this.tool;
 		this.setTool(tool);
 	}
 	Tracking.event("tools", !this.toolsEnabled ? "show" : "hide"); // TODO: update.
@@ -784,7 +780,7 @@ p.createToolCM = function(target, content) {
 		maxLength: 500,
 		singleLine: true
 	}, "100%", "auto");
-	cm.setValue(content || "Hello!");
+	cm.setValue(content || "");
 	cm.on("change", $.bind(this, this.deferUpdate));
 	
 	cm.highlighter = new ExpressionHighlighter(cm);
