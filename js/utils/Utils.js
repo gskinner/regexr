@@ -37,9 +37,12 @@ Utils.els = function (query, element) {
 };
 
 Utils.removeClass = function (element, className) {
-	var names = className.split(" ");
-	for (var i = 0; i < names.length; i++) {
-		element.classList.remove(names[i]);
+	if (className instanceof RegExp) {
+		var arr = element.className.split(" "), re=className;
+		element.className = arr.filter(function(s) { return !re.test(s); }).join(" ");
+	} else {
+		var list = element.classList;
+		list.remove.apply(list, className.split(" "));
 	}
 	return element;
 };
