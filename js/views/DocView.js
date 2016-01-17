@@ -649,7 +649,7 @@ p.getMatchAt = function(index, inclusive) {
 };
 
 p.drawSourceHighlights = function () {
-	this.sourceHighlighter.draw(this.matches, this.hoverMatch);
+	this.sourceHighlighter.draw(this.error ? null : this.matches, this.hoverMatch);
 };
 
 p.updateResults = function () {

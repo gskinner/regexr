@@ -42,7 +42,7 @@ p.initialize = function (cm, canvas, fill) {
 
 p.draw = function (matches, activeMatch) {
 	this.clear();
-	if (this.error || !matches.length) {
+	if (!matches || !matches.length) {
 		return;
 	}
 
