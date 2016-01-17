@@ -65,6 +65,9 @@ Graph.forExpression = function(expr, token) {
 			el = el.parentNode;
 		}
 		
+		if (token.err) {
+			$.addClass(div, "error");
+		}
 	}
 	
 	return result;

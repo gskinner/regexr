@@ -576,19 +576,18 @@ p.getRegEx = function(global) {
 p.updateTool = function (source, regex) {
 	if (!this.toolsEnabled) { return; }
 	source = source||this.sourceCM.getValue();
-	var result = "", toolsCM = this.getToolCM();
-	if (this.error) {
-		// nothing, empty result
-	} else if (toolsCM) {
+	var result = "", toolsCM = this.getToolCM(), err = this.error;
+	if (toolsCM) {
 		var str = toolsCM.getValue();
 		
 		var token = this.toolsLexer.parse(str, this.exprLexer.captureGroups);
-		
 		toolsCM.highlighter.cm = toolsCM;
 		toolsCM.highlighter.draw(token);
 		toolsCM.hover.token = token;
 		
-		if (this.toolsLexer.errors.length === 0) {
+		if (err) {
+			result = "EXPRESSION ERROR";
+		} else if (this.toolsLexer.errors.length === 0) {
 			try {
 				str = eval('"' + str.replace(/"/g, '\\"') + '"');
 			} catch (e) {

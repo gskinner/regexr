@@ -129,10 +129,10 @@
 
 .tools.editor.out {
 	background: $editor-toolsres-bg;
-	border-top: dotted $tools-border $title-bg;
+	border-top: solid $tools-border tint($title-bg, 33%);
 
 	.CodeMirror {
-		color: lighten($color, 34%);
+		color: tint($color, 33%);
 	}
 }
 
@@ -141,7 +141,7 @@
 		padding: 0.5em;
 		margin-top: 0.75em;
 		display: block;
-		border: solid 1px rgba(50,50,50,0.15);
+		border: solid 1px rgba($title-bg,0.5);
 		color: rgba(0,0,0,0.66);
 	}
 	
@@ -151,8 +151,17 @@
 	
 	.related {
 		margin-top: 0;
-		background: rgba(90,90,90,0.12);
+		background: rgba($title-bg,0.33);
 		border-top: none;
+	}
+	
+	.error {
+		background: #FCC;
+		border-bottom: solid 2px red;
+		
+		.error-title {
+			font-weight: bold;
+		}
 	}
 	
 	div div {
