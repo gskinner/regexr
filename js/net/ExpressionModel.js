@@ -61,10 +61,13 @@ s.isDirty = function () {
 };
 
 s.getState = function () {
+	// TODO: the state changes whenever the selected tool changes
+	// TODO: you may edit the toolValue, then change tools & not register as dirty.
+	// TODO: may be easier to just use "change" events, even if can provide false positives.
 	var state =
 			s.docView.getExpression() +
-			s.docView.getText()/* +
-			s.docView.getSubstitution();*/
+			s.docView.getText() +
+			JSON.stringify(s.docView.getState());
 	return state;
 };
 
