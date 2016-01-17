@@ -63,8 +63,8 @@ s.isDirty = function () {
 s.getState = function () {
 	var state =
 			s.docView.getExpression() +
-			s.docView.getText() +
-			s.docView.getSubstitution();
+			s.docView.getText()/* +
+			s.docView.getSubstitution();*/
 	return state;
 };
 
