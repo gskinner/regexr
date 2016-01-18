@@ -649,7 +649,7 @@ p.getMatchAt = function(index, inclusive) {
 };
 
 p.drawSourceHighlights = function () {
-	this.sourceHighlighter.draw(this.error ? null : this.matches, this.hoverMatch);
+	this.sourceHighlighter.draw(this.error == "ERROR" ? null : this.matches, this.hoverMatch);
 };
 
 p.updateResults = function () {
@@ -660,6 +660,7 @@ p.updateResults = function () {
 		str = this.error;
 		$.addClass(div, "error");
 		tip = Docs.forErrorResult(str, this.exprLexer.errors);
+		this.drawSourceHighlights();
 	} else if (l > 0) {
 		str = l + " match" + (l == 1 ? "" : "es");
 	} else {
