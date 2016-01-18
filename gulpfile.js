@@ -79,9 +79,7 @@ gulp.task('copy-js-templates', function () {
 });
 
 gulp.task('watch-assets', function () {
-	return gulp.src(staticAssets, {base: './'})
-		.pipe(watch(staticAssets))
-		.pipe(gulp.dest('build/'));
+	return gulp.watch(staticAssets, ['copy-assets'])
 });
 
 gulp.task('watch-sass', function () {
