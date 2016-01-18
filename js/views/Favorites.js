@@ -57,9 +57,9 @@ p.init = function (element, content) {
 	this.previewWrap = $.el(".preview-wrap", this.contentTemplate);
 	this.preview = $.el(".preview", this.contentTemplate);
 
-	this.substitutionWrap = $.el(".substitution-wrap", this.contentTemplate);
-	this.substitutionTitle = $.el(".substitution-title", this.contentTemplate);
-	this.substitution = $.el(".substitution", this.contentTemplate);
+	this.toolWrap = $.el(".tool-wrap", this.contentTemplate);
+	this.toolTitle = $.el(".tool-title", this.contentTemplate);
+	this.tool = $.el(".tool", this.contentTemplate);
 
 	this.favoriteBtn = $.el(".favorite", this.contentTemplate);
 	this.favoriteBtn.addEventListener("mouseover", $.bind(this, this.handleFavoriteOver));
@@ -70,9 +70,9 @@ p.init = function (element, content) {
 	this.element.appendChild(this.spinner);
 
 	this.list = new List(
-			$.el(".community-list", this.element),
-			$.el(".community-list .item.renderer", this.element),
-			this
+		$.el(".community-list", this.element),
+		$.el(".community-list .item.renderer", this.element),
+		this
 	);
 
 	this._settingsChangeProxy = $.bind(this, this.handleSettingsChange);
@@ -266,12 +266,11 @@ p.insertContent = function (type) {
 	} else if (type == "source") {
 		this.docView.setText(data.content);
 	} else if (type == "subst") {
-		this.docView.setSubstitution(data.replace);
-		this.docView.showSubstitution();
+		this.docView.showTool(data.state.tool, data.state.toolValue);
 	} else if (type == "all") {
 		if (ExpressionModel.id != data.id) {
 			ExpressionModel.setID(data.id);
-			this.docView.setState(data.state == null || data.state == "" ? {} : JSON.parse(data.state));
+			this.docView.setState(data.state == null || data.state == "" ? {} : data.state);
 			this.docView.populateAll(expression, flags, data.content, data.replace);
 			ServerModel.trackVisit(data.id);
 		}
@@ -333,11 +332,25 @@ p.onListChange = function (evt) {
 
 	this.updateFavorite(data.id);
 
-	if (data.replace) {
-		this.substitution.innerHTML = TextUtils.htmlSafe(data.replace);
-		$.removeClass(this.substitutionWrap, "hidden");
+	if (data.state) {
+		// TODO: Pull into a strings file.
+		// Also update index.html
+		var toolText = "";
+		switch(data.state.tool) {
+			case "replace":
+				toolText = "Replace"; break;
+			case "list":
+				toolText = "List"; break;
+			case "details":
+				toolText = "Details"; break;
+			case "graph":
+				toolText = "Graph"; break;
+		}
+		this.toolTitle.innerText = toolText;
+		this.tool.innerHTML = TextUtils.htmlSafe(data.state.toolValue);
+		$.removeClass(this.toolWrap, "hidden");
 	} else {
-		$.addClass(this.substitutionWrap, "hidden");
+		$.addClass(this.toolWrap, "hidden");
 	}
 
 	if (this._visible) {

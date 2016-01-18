@@ -63,7 +63,7 @@ s.search = function (query, startIndex, limit) {
 		query: query,
 		startIndex: startIndex || 0,
 		limit: limit || 100
-	});
+	}).then(s.formatPattern);
 };
 
 s.rate = function (patternID, rating) {
@@ -76,14 +76,32 @@ s.rate = function (patternID, rating) {
 s.getPatternByID = function (patternID) {
 	return s._createPromise("getPatternByID", {
 		patternID: patternID
-	});
+	}).then(s.formatPattern);
 };
+
+/**
+ * For old (<2.1) patterns push the replace field into state.
+ *
+ * @param result
+ * @returns {*}
+ */
+s.formatPattern = function(data) {
+	var results = data.results;
+
+	for (var i=0;i<results.length;i++) {
+		var result =results[i];
+		if (result.replace != "") {
+			result.state = {tool:"replace", toolValue:result.replace};
+		}
+	}
+	return data;
+}
 
 s.getPatternList = function (ids) {
 	if (!Array.isArray(ids)) {
 		throw new Error("You must pass an array,");
 	}
-	return s._createPromise("getPatternList", {idList: ids});
+	return s._createPromise("getPatternList", {idList: ids}).then(s.formatPattern);
 };
 
 s.trackVisit = function (id) {
