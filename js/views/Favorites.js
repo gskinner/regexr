@@ -270,8 +270,7 @@ p.insertContent = function (type) {
 	} else if (type == "all") {
 		if (ExpressionModel.id != data.id) {
 			ExpressionModel.setID(data.id);
-			this.docView.setState(data.state == null || data.state == "" ? {} : data.state);
-			this.docView.populateAll(expression, flags, data.content, data.replace);
+			this.docView.populateAll(expression, flags, data.content, data.state);
 			ServerModel.trackVisit(data.id);
 		}
 	}
