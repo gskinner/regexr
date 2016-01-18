@@ -8,13 +8,13 @@
 .favorites {
 	@extend .community;
 	.community-list {
-		top: 2.65rem;
+		top: 2.65rem!important;
 	}
 }
 
 .community-list {
 	@extend .list;
-	top: $title-h-pad + $search-height;
+	top: $title-h-pad + $search-height!important;
 
 	.label {
 		margin: 0;
