@@ -86,7 +86,13 @@ s.getPatternByID = function (patternID) {
  * @returns {*}
  */
 s.formatPattern = function(data) {
-	var results = data.results;
+	var results = null;
+
+	if (data.results == null) {
+		results = [data];
+	} else {
+		results = data.results;
+	}
 
 	for (var i=0;i<results.length;i++) {
 		var result =results[i];

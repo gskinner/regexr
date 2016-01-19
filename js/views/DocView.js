@@ -681,7 +681,7 @@ p.onToolsClick = function (evt) {
 	this.showTools(true);
 	var tool = evt.target.dataset.tool;
 	if (tool) { this.setTool(tool); }
-	Tracking.event("tools", !this.toolsEnabled ? "show" : "hide"); // TODO: update.
+	Tracking.event("tools", (!this.toolsEnabled ? "show" : "hide")+":"+tool);
 };
 
 p.onFlagsMenuChange = function (evt) {
