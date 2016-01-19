@@ -148,7 +148,7 @@
 			RegExrShared.ServerModel.getPatternByID(id).then(function (data) {
 				RegExrShared.ExpressionModel.setLastSave(data);
 				var pattern = $.parsePattern(data.pattern);
-				var state = data.state ? JSON.parse(data.state) : null;
+				var state = data.state;
 				// legacy support:
 				if (state && data.replace) {
 					state.toolValue = data.replace;
