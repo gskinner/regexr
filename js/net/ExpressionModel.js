@@ -25,6 +25,7 @@
 var EventDispatcher = require('../events/EventDispatcher');
 var ServerModel = require('./ServerModel');
 var Settings = require('../Settings');
+var Utils = require('../utils/Utils');
 
 var s = {};
 EventDispatcher.initialize(s);
@@ -44,12 +45,12 @@ s.savePattern = function (tags, name, pattern, content, replace, description, au
 };
 
 s.saveState = function () {
-	s._saveState = s.getState();
+	s._saveState = s.getStateHash();
 	s._lastId = null;
 };
 
 s.isDirty = function () {
-	var dirty = s._saveState !== s.getState();
+	var dirty = s._saveState !== s.getStateHash();
 	if (dirty && s.id) {
 		s._lastId = s.id;
 		s.id = null;
@@ -60,15 +61,12 @@ s.isDirty = function () {
 	return dirty;
 };
 
-s.getState = function () {
-	// TODO: the state changes whenever the selected tool changes
-	// TODO: you may edit the toolValue, then change tools & not register as dirty.
-	// TODO: may be easier to just use "change" events, even if can provide false positives.
+s.getStateHash = function () {
 	var state =
 			s.docView.getExpression() +
 			s.docView.getText() +
 			JSON.stringify(s.docView.getState());
-	return state;
+	return Utils.getHashCode(state);
 };
 
 s.handleSaveSuccess = function (result) {

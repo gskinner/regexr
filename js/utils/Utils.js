@@ -335,4 +335,19 @@ Utils.div = function(content, className) {
 	return div;
 };
 
+/**
+ * Implementation of Java’s String.hashCode() method
+ * Original Source: http://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
+ *
+ * @param s
+ * @returns {number}
+ */
+Utils.getHashCode = function(s) {
+	var hash = 0, l = s.length, i;
+	for (i = 0; i < l; i++ ) {
+		hash = ((hash << 5) - hash) + s.charCodeAt(i) | 0;
+	}
+	return hash;
+};
+
 module.exports = Utils;
