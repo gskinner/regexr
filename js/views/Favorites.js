@@ -57,9 +57,10 @@ p.init = function (element, content) {
 	this.previewWrap = $.el(".preview-wrap", this.contentTemplate);
 	this.preview = $.el(".preview", this.contentTemplate);
 
-	this.toolWrap = $.el(".tool-wrap", this.contentTemplate);
-	this.toolTitle = $.el(".tool-title", this.contentTemplate);
-	this.tool = $.el(".tool", this.contentTemplate);
+	this.toolWrapReplace = $.el(".tool-wrap-replace", this.contentTemplate);
+	this.toolWrapList = $.el(".tool-wrap-list", this.contentTemplate);
+	this.toolReplace = $.el(".tool-replace-content", this.contentTemplate);
+	this.toolList = $.el(".tool-list-content", this.contentTemplate);
 
 	this.favoriteBtn = $.el(".favorite", this.contentTemplate);
 	this.favoriteBtn.addEventListener("mouseover", $.bind(this, this.handleFavoriteOver));
@@ -225,8 +226,10 @@ p.onLoadClick = function (evt) {
 		type = "source";
 	} else if ($.hasClass(el, ".all")) {
 		type = "all";
-	} else if ($.hasClass(el, ".subst")) {
-		type = "subst";
+	} else if ($.hasClass(el, ".tool-list")) {
+		type = "list";
+	}else if ($.hasClass(el, ".tool-replace")) {
+		type = "replace";
 	}
 	this.insertContent(type);
 };
@@ -265,8 +268,12 @@ p.insertContent = function (type) {
 		this.docView.setFlags(flags);
 	} else if (type == "source") {
 		this.docView.setText(data.content);
-	} else if (type == "subst") {
-		this.docView.showTool(data.state.tool, data.state.toolValue);
+	} else if (type == "list") {
+		this.docView.setState(data.state);
+		this.docView.showTool("list");
+	} else if (type == "replace") {
+		this.docView.setState(data.state);
+		this.docView.showTool("replace");
 	} else if (type == "all") {
 		if (ExpressionModel.id != data.id) {
 			ExpressionModel.setID(data.id);
@@ -331,26 +338,22 @@ p.onListChange = function (evt) {
 
 	this.updateFavorite(data.id);
 
-	if (data.state) {
-		// TODO: Pull into a strings file.
-		// Also update index.html
-		var toolText = "";
-		switch(data.state.tool) {
-			case "replace":
-				toolText = "Replace"; break;
-			case "list":
-				toolText = "List"; break;
-			case "details":
-				toolText = "Details"; break;
-			case "graph":
-				toolText = "Graph"; break;
-		}
-		this.toolTitle.innerText = toolText;
-		this.tool.innerHTML = TextUtils.htmlSafe(data.state.toolValue);
-		$.removeClass(this.toolWrap, "hidden");
+	if (data.state && data.state.replace) {
+		this.toolReplace.innerHTML = TextUtils.htmlSafe(data.state["replace"]);
+
+		$.removeClass(this.toolWrapReplace, "hidden");
 	} else {
-		$.addClass(this.toolWrap, "hidden");
+		$.addClass(this.toolWrapReplace, "hidden");
 	}
+
+	if (data.state && data.state.list) {
+		this.toolList.innerHTML = TextUtils.htmlSafe(data.state["list"]);
+
+		$.removeClass(this.toolWrapList, "hidden");
+	} else {
+		$.addClass(this.toolWrapList, "hidden");
+	}
+
 
 	if (this._visible) {
 		$.removeClass(this.element, "hidden");

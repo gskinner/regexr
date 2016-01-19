@@ -97,7 +97,7 @@ s.formatPattern = function(data) {
 	for (var i=0;i<results.length;i++) {
 		var result =results[i];
 		if (result.replace != "") {
-			result.state = {tool:"replace", toolValue:result.replace};
+			result.state = {tool:"replace", replace:result.replace};
 		}
 	}
 	return data;
