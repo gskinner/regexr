@@ -340,14 +340,14 @@ p.showTools = function (value) {
 };
 
 p.setTool = function(tool) {
-	if (tool == this.tool) { return; }
+	if (tool == this.tool || !tool) { return; }
 	var el;
 	if (this.tool) {
 		el = $.el(".tools.title .button."+this.tool);
 		$.removeClass(el,"active");
 	}
 	this.tool = tool;
-	el = $.el(".tools.title .button."+this.tool);
+	el = $.el(".tools.title .button."+tool);
 	$.addClass(el,"active");
 	
 	$.removeClass(this.element, /tool-/);
@@ -356,33 +356,34 @@ p.setTool = function(tool) {
 	this.updateTool();
 };
 
-p.showTool = function(tool, value) {
-	if (!tool) {
-		this.showTools(false);
-		return;
-	}
+p.showTool = function(tool) {
+	this.showTools(!!tool);
 	this.setTool(tool);
-	if (value != null) { this.setToolValue(value); }
-	this.showTools(true);
 };
 
-p.setState = function (value) {
-	this.showTool(value&&value.tool, value&&value.toolValue);
+p.setState = function (state) {
+	if (!state) { return; }
+	this.replaceCM.setValue(state.replace);
+	this.listCM.setValue(state.list);
+	this.showTool(state.tool);
 };
 
+/** Unused
 p.setToolValue = function(value) {
 	var toolCM = this.getToolCM();
 	if (toolCM) { toolCM.setValue(value); }
 };
+*/
 
 p.getToolCM = function() {
 	return this.tool === "replace" ? this.replaceCM : this.tool === "list" ? this.listCM : null;
 };
 
 p.getState = function () {
-	var state = {}, cm = this.getToolCM();
+	var state = {};
 	if (this.toolsEnabled) { state.tool = this.tool; }
-	if (cm) { state.toolValue = cm.getValue(); }
+	state.replace = this.replaceCM.getValue();
+	state.list = this.listCM.getValue();
 	return state;
 };
 
