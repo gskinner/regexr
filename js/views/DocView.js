@@ -362,10 +362,9 @@ p.showTool = function(tool) {
 };
 
 p.setState = function (state) {
-	if (!state) { return; }
-	this.replaceCM.setValue(state.replace);
-	this.listCM.setValue(state.list);
-	this.showTool(state.tool);
+	this.replaceCM.setValue((state && state.replace) || DocView.DEFAULT_REPLACE);
+	this.listCM.setValue((state && state.list) || DocView.DEFAULT_LIST);
+	this.showTool(state && state.tool);
 };
 
 /** Unused
