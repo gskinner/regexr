@@ -57,10 +57,9 @@ p.init = function (element, content) {
 	this.previewWrap = $.el(".preview-wrap", this.contentTemplate);
 	this.preview = $.el(".preview", this.contentTemplate);
 
-	this.toolWrapReplace = $.el(".tool-wrap-replace", this.contentTemplate);
-	this.toolWrapList = $.el(".tool-wrap-list", this.contentTemplate);
-	this.toolReplace = $.el(".tool-replace-content", this.contentTemplate);
-	this.toolList = $.el(".tool-list-content", this.contentTemplate);
+	this.toolWrap = $.el(".tool-wrap", this.contentTemplate);
+	this.toolContent = $.el(".tool-content", this.contentTemplate);
+	this.toolTitle = $.el(".tool-label", this.contentTemplate);
 
 	this.favoriteBtn = $.el(".favorite", this.contentTemplate);
 	this.favoriteBtn.addEventListener("mouseover", $.bind(this, this.handleFavoriteOver));
@@ -219,17 +218,14 @@ p.handleFavoritesLoad = function (data) {
 p.onLoadClick = function (evt) {
 	var el = evt.target;
 	var type = '';
-
 	if ($.hasClass(el, ".expr")) {
 		type = "expr";
 	} else if ($.hasClass(el, ".source")) {
 		type = "source";
 	} else if ($.hasClass(el, ".all")) {
 		type = "all";
-	} else if ($.hasClass(el, ".tool-list")) {
-		type = "list";
-	}else if ($.hasClass(el, ".tool-replace")) {
-		type = "replace";
+	} else if ($.hasClass(el, ".tool")) {
+		type = this.list.selectedItem.state.tool;
 	}
 	this.insertContent(type);
 };
@@ -338,20 +334,13 @@ p.onListChange = function (evt) {
 
 	this.updateFavorite(data.id);
 
-	if (data.state && data.state.replace) {
-		this.toolReplace.innerHTML = TextUtils.htmlSafe(data.state["replace"]);
+	if (data.state && data.state.tool && data.state[data.state.tool]) {
+		this.toolContent.innerHTML = TextUtils.htmlSafe(data.state[data.state.tool]);
+		this.toolTitle.innerText = data.state.tool.substr(0, 1).toUpperCase() + data.state.tool.substr(1);
 
-		$.removeClass(this.toolWrapReplace, "hidden");
+		$.removeClass(this.toolWrap, "hidden");
 	} else {
-		$.addClass(this.toolWrapReplace, "hidden");
-	}
-
-	if (data.state && data.state.list) {
-		this.toolList.innerHTML = TextUtils.htmlSafe(data.state["list"]);
-
-		$.removeClass(this.toolWrapList, "hidden");
-	} else {
-		$.addClass(this.toolWrapList, "hidden");
+		$.addClass(this.toolWrap, "hidden");
 	}
 
 
