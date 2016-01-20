@@ -334,9 +334,8 @@ p.showTools = function (value) {
 	this.deferUpdate();
 	this.resize();
 	
-	// TODO: is this needed? Doesn't seem to be:
-	//this.toolsCM.refresh();
-	//this.sourceCM.refresh();
+	// this ensures the Text highlights update correctly when the Tools show / hide:
+	this.sourceCM.refresh();
 };
 
 p.setTool = function(tool) {
