@@ -7,7 +7,7 @@ var connect = require('gulp-connect');
 var open = require('gulp-open');
 var minifyCss = require('gulp-minify-css');
 var rimraf = require('gulp-rimraf');
-var inline = require('gulp-inline');
+var inline = require('gulp-inline-source');
 var template = require('gulp-template');
 var minifyHTML = require('gulp-minify-html');
 var source = require('vinyl-source-stream');
@@ -72,10 +72,13 @@ gulp.task('watch-js-templates', function () {
 	return gulp.watch(assets, ['copy-js-templates']);
 });
 
-gulp.task('copy-js-templates', function () {
+gulp.task('copy-js-templates', function (cb) {
 	var assets = "js/*.template.js";
-	return gulp.src(assets, {base: './js'})
-		.pipe(gulp.dest('build/js/'));
+	gulp.src(assets, {base: './js'})
+		.pipe(gulp.dest('build/js/'))
+		.on("finish", function() {
+			cb();
+		});
 });
 
 gulp.task('watch-assets', function () {
@@ -136,7 +139,12 @@ gulp.task('clean-pre-build', function () {
 });
 
 gulp.task('clean-post-build', function () {
-	return gulp.src(['./build/js/index.template.js', './build/js/scripts.min.js.map'], {read: false})
+	return gulp.src([
+		'./build/js/index.template.js',
+		'./build/js/scripts.min.js.map',
+		'./build/js/checkSupport.template.js',
+		'./build/js/analytics.template.js'
+	], {read: false})
 		.pipe(rimraf());
 });
 
@@ -160,8 +168,11 @@ gulp.task('build', function (done) {
 	runSequence(
 		'clean-pre-build',
 		['build-js', 'copy-assets', 'sass'],
-		['minify-js', 'minify-css', 'inline'],
-		['parse-index', 'clean-post-build'],
+		'copy-js-templates',
+		['minify-js', 'minify-css'],
+		['parse-index'],
+		'inline',
+		'clean-post-build',
 		'server', 'open-build',
 		done
 	);
