@@ -628,7 +628,7 @@ p.updateTool = function (source, regex) {
 		$.el(".content",this.toolsResults).innerHTML = "<code><pre>"+result+"</code></pre>";
 	} else if (this.tool == "graph") {
 		var token = this.exprLexer.token, expr = this.expressionCM.getValue();
-		result = Graph.forExpression(expr, token);
+		result = Graph.forExpression(expr, token, this.expressionHighlighter);
 		$.empty($.el(".content",this.toolsResults)).appendChild(result);
 	}
 };

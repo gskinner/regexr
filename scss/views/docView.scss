@@ -138,21 +138,25 @@
 
 .tools .graph {
 	div {
-		padding: 0.5em;
+		padding: calc(0.5em + 1px);
 		margin-top: 0.75em;
 		display: block;
 		border: solid 1px rgba($title-bg,0.5);
 		color: rgba(0,0,0,0.66);
 	}
 	
+	.selected {
+		border: solid 2px $title-bg;
+		padding: 0.5em;
+	}
+	
 	:first-child {
 		margin-top: 0;
 	}
 	
-	.related {
-		margin-top: 0;
+	div.related {
+		margin-top: -1px;
 		background: rgba($title-bg,0.33);
-		border-top: none;
 	}
 	
 	.error {

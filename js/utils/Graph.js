@@ -28,9 +28,22 @@ var ExpressionHighlighter = require('../ExpressionHighlighter');
 
 var Graph = {};
 
-Graph.forExpression = function(expr, token) {
+Graph.forExpression = function(expr, token, highlighter) {
 	var groupClasses = ExpressionHighlighter.GROUP_CLASS_BY_TYPE, pre = "exp-";
 	var result = $.div(null, "graph"), el = result;
+	
+	var enterHandler = function(evt) {
+		var o = evt.currentTarget;
+		highlighter.selectToken(o.token);
+		$.addClass(o, "selected");
+		evt.stopPropagation();
+	};
+	var exitHandler = function(evt) {
+		highlighter.selectToken(null);
+		$.removeClass(evt.currentTarget, "selected");
+		evt.stopPropagation();
+	};
+	
 	while ((token = token.next) && (token.type != "close")) {
 		if (token.proxy) { continue; }
 		
@@ -67,6 +80,12 @@ Graph.forExpression = function(expr, token) {
 		
 		if (token.err) {
 			$.addClass(div, "error");
+		}
+		
+		if (!token.open) {
+			div.token = token;
+			div.addEventListener("mouseover", enterHandler);
+			div.addEventListener("mouseout", exitHandler);
 		}
 	}
 	
