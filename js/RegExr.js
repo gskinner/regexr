@@ -7,8 +7,6 @@ require('classlist-polyfill');
 require('./third-party/history.adapter.native.js');
 require('./third-party/history.js');
 
-window.ZeroClipboard = require('zeroclipboard');
-
 // Import some classes into a shared object, for use in the index.template.js
 var Utils = require('./utils/Utils');
 window.$ = RegExrShared.Utils = Utils;

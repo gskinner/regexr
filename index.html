@@ -234,36 +234,46 @@ http://regexr.com/foo.html?q=bar
 	</div>
 
 	<div class="menu share">
-		<header>
-			Share
-		</header>
-		<hr />
-		<div id="shareLinkView">
-			<input type="text" id="shareLinkTxt">
-			<a id="shareCopyLink">Copy Link<br/><br/></a>
-			<p id="noFlashCopyText">Press <span class="copyKeyLabel">Ctrl</span>+C to copy your link.</p>
-		</div>
 		<div id="savePrompt">
 			<p><a id="showSaveLink">Save</a> your pattern before sharing.</p>
 		</div>
-		<header>Copy</header>
-		<hr />
-		<a id="copyExpression">Expression</a>
-		|
-		<a id="copyPattern">Pattern</a>
-		|
-		<a id="copyJavascript">Javascript</a>
-		<div id="copyMessageView" class="hidden">
-			<hr />
-			<code id="copyTxt"></code>
-			Copied to clipboard.
-		</div>
 
-		<div id="noFlashCopyView" class="hidden">
-			<hr />
-			<input id="noFlashCopyInput" type="text"><br/>
-			Press <span class="copyKeyLabel">dynamic</span>-C to copy.
-		</div>
+        <div class="share-wrap">
+            <header>
+                Share
+            </header>
+            <hr />
+            <div id="shareLinkView" class="share-wrap">
+                <input type="text" id="shareLinkTxt" readonly>
+                <div data-clipboard-target="#shareLinkTxt" class="icon share-link-btn">&#xE603;</div>
+            </div>
+            <header>
+                Expression
+            </header>
+            <hr />
+            <div id="shareExpressionView" class="share-wrap">
+                <input type="text" id="shareExpressionTxt" readonly>
+                <div class="icon share-expression-btn" data-clipboard-target="#shareExpressionTxt">&#xE603;</div>
+            </div>
+
+            <header>
+                Pattern
+            </header>
+            <hr />
+            <div id="sharePatternView" class="share-wrap">
+                <input type="text" id="sharePatternTxt" readonly>
+                <div class="icon share-pattern-btn" data-clipboard-target="#sharePatternTxt">&#xE603;</div>
+            </div>
+
+            <header>
+                Javascript
+            </header>
+            <hr />
+            <div id="shareJavascriptView" class="share-wrap">
+                <input type="text" id="shareJavascriptTxt" readonly>
+                <div class="icon share-javascript-btn" data-clipboard-target="#shareJavascriptTxt">&#xE603;</div>
+            </div>
+        </div>
 	</div>
 
 	<div class="menu save">
@@ -365,11 +375,6 @@ Since our initial load can cause errors, we just catch them and show the overlay
 	if (!$.isSupported()) {
 		el = document.querySelector(".not-supported");
 		$.removeClass(el, "hidden");
-
-		if (!ZeroClipboard.state().flash.disabled) {
-			var flash = document.getElementsByClassName('flash')[0];
-			flash.className = "";
-		}
 	} else if($.partialSupport()) {
 		el = document.querySelector(".not-supported-mobile");
 		$.removeClass(el, "hidden");

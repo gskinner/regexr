@@ -26,7 +26,8 @@ var Tracking = require('../Tracking');
 var TextUtils = require('../utils/TextUtils');
 var Utils = require('../utils/Utils');
 var ExpressionModel = require('../net/ExpressionModel');
-var ZeroClipboard = require('zeroclipboard');
+var Clipboard = require('clipboard');
+var Tooltip = require('../controls/Tooltip');
 
 var ShareMenu = function (element, docsView) {
 	this.initialize(element, docsView);
@@ -40,32 +41,21 @@ p.initialize = function (element, docsView) {
 	this.docsView = docsView;
 	this.element = element;
 
-	this.shareLink = $.el("#shareLinkTxt", this.element);
-	this.copyLink = $.el("#shareCopyLink", this.element);
 	this.showSaveLink = $.el("#showSaveLink", this.element);
-	this.copyExpression = $.el("#copyExpression", this.element);
-	this.copyPattern = $.el("#copyPattern", this.element);
-
 	this.showSaveLink.onclick = $.bind(this, this.handleSaveClick);
-
 	this.saveView = $.el("#savePrompt", this.element);
-	this.shareLinkView = $.el("#shareLinkView", this.element);
-	this.copyJavascript = $.el("#copyJavascript", this.element);
+	this.shareLinkTxt = $.el("#shareLinkTxt", this.element);
+	this.shareWrap = $.el(".share-wrap", this.element);
+	this.shareExpressionTxt = $.el("#shareExpressionTxt", this.element);
+	this.sharePatternTxt = $.el("#sharePatternTxt", this.element);
+	this.shareJavascriptTxt = $.el("#shareJavascriptTxt", this.element);
 
-	this.noFlashCopyView = $.el("#noFlashCopyView", this.element);
-	this.noFlashCopyInput = $.el("#noFlashCopyInput", this.element);
+	new Clipboard(".share-link-btn").on("success", this._handleCopySuccess.bind(this));
+	new Clipboard(".share-expression-btn").on("success", this._handleCopySuccess.bind(this));
+	new Clipboard(".share-javascript-btn").on("success", this._handleCopySuccess.bind(this));
+	new Clipboard(".share-pattern-btn").on("success", this._handleCopySuccess.bind(this));
 
-	this.hasFlash = !$.isFirefox() && !$.isIE() && !ZeroClipboard.state().flash.disabled;
-
-	this.copyMessageView = $.el("#copyMessageView", this.element);
-
-	if (this.hasFlash) {
-		var _this = this;
-		_this.initializeCopyLinks();
-		$.addClass($.el("#noFlashCopyText", this.element), "hidden");
-	} else {
-		this.initializeNoFlashCopyLinks();
-	}
+	this._successToolTip = new Tooltip($.el(".share-link-btn"), "", {mode: "custom"});
 
 	var copyKeyLabels = $.els(".copyKeyLabel", this.element);
 	var copyKeyLabel = $.getCtrlKey();
@@ -74,47 +64,14 @@ p.initialize = function (element, docsView) {
 	}
 };
 
-p.initializeNoFlashCopyLinks = function () {
+p._handleCopySuccess = function(event) {
+	var rect = event.trigger.getBoundingClientRect();
+	this._successToolTip.show("Copied!", rect);
 	var _this = this;
-
-	$.addClass($.el("#shareCopyLink", this.element), "hidden");
-
-	this.createNoFlashCopyLink(this.copyExpression, function () {
-		Tracking.event("share", "copy", "expression-noflash");
-		return _this.docsView.getExpression();
-	});
-
-	this.createNoFlashCopyLink(this.copyPattern, function () {
-		Tracking.event("share", "copy", "pattern-noflash");
-		return _this.docsView.getPattern();
-	});
-
-	this.createNoFlashCopyLink(this.copyJavascript, function () {
-		Tracking.event("share", "copy", "javascript-noflash");
-		return _this.createJavascriptCopy();
-	});
-};
-
-p.createNoFlashCopyLink = function (el, copyFunction) {
-	var _this = this;
-	el.onclick = function () {
-		var value = copyFunction();
-		var input = _this.noFlashCopyInput;
-
-		input.value = value;
-
-		$.addCopyListener(input, $.bind(_this, _this.handleExpressionCopied));
-
-		// Delay so the text actually selects
-		setTimeout(function () {
-			input.select();
-			input.focus();
-		}, 1);
-
-		_this.hideFlyout(_this.copyMessageView);
-		_this.showFlyout(_this.noFlashCopyView);
-	}
-};
+	setTimeout(function() {
+		_this._successToolTip.hide();
+	}, 750);
+}
 
 p.handleExpressionCopied = function (event) {
 	var _this = this;
@@ -126,34 +83,6 @@ p.handleExpressionCopied = function (event) {
 p.handleSaveClick = function () {
 	this.dispatchEvent("close");
 	this.docsView.showSave();
-};
-
-p.initializeCopyLinks = function () {
-	var _this = this;
-
-	this.createCopyLink(this.copyLink, function (event) {
-		var clipboard = event.clipboardData;
-		clipboard.setData("text/plain", _this.shareLink.value);
-		Tracking.event("share", "copy", "share");
-	});
-
-	this.createCopyLink(this.copyExpression, function (event) {
-		var clipboard = event.clipboardData;
-		clipboard.setData("text/plain", _this.docsView.getExpression());
-		Tracking.event("share", "copy", "expression");
-	});
-
-	this.createCopyLink(this.copyPattern, function (event) {
-		var clipboard = event.clipboardData;
-		clipboard.setData("text/plain", _this.docsView.getPattern());
-		Tracking.event("share", "copy", "pattern");
-	});
-
-	this.createCopyLink(this.copyJavascript, function (event) {
-		var clipboard = event.clipboardData;
-		clipboard.setData("text/plain", _this.createJavascriptCopy());
-		Tracking.event("share", "copy", "javascript");
-	});
 };
 
 p.createJavascriptCopy = function () {
@@ -178,49 +107,28 @@ p.createCopyLink = function (el, dataFunc) {
 	}();
 };
 
-p.showFlyout = function (el, time) {
-	$.animate(el, "information-default", "information-show");
-
-	if (!isNaN(time)) {
-		clearTimeout(this._toastInt);
-		var _this = this;
-		this._toastInt = setTimeout(function () {
-			_this.hideFlyout(el);
-		}, time);
-	}
-};
-
-p.hideFlyout = function (el) {
-	$.removeClass(el, "information-show");
-};
-
-p.handleCopyComplete = function (event) {
-	this.showCopyCompleteFlyout(event.data['text/plain']);
-};
-
-p.showCopyCompleteFlyout = function (expression) {
-	$.el("#copyTxt", this.element).innerText = TextUtils.shorten(expression, 31);
-	this.showFlyout(this.copyMessageView, 1500);
-}
-
 p.show = function () {
 	Tracking.event("share", "show");
 
 	Utils.removeClass(this.saveView, "visible hidden");
-	Utils.removeClass(this.shareLinkView, "visible hidden");
+	Utils.removeClass(this.shareWrap, "visible hidden");
 
 	if (!ExpressionModel.id) {
 		Utils.addClass(this.saveView, "visible");
-		Utils.addClass(this.shareLinkView, "hidden");
+		Utils.addClass(this.shareWrap, "hidden");
 	} else {
-		this.shareLink.value = Utils.createURL($.createID(ExpressionModel.id));
+		this.shareLinkTxt.value = Utils.createURL($.createID(ExpressionModel.id));
 		Utils.addClass(this.saveView, "hidden");
-		Utils.addClass(this.shareLinkView, "visible");
+		Utils.addClass(this.shareWrap, "visible");
+
+		this.shareExpressionTxt.value = this.docsView.getExpression();
+		this.sharePatternTxt.value = this.docsView.getPattern();
+		this.shareJavascriptTxt.value = this.createJavascriptCopy();
 
         // This was failing in Edge, with this error: "Could not complete the operation due to error 800a025e."
         try {
-            this.shareLink.focus();
-            this.shareLink.select();
+           // this.shareLink.focus();
+            //this.shareLink.select();
         } catch (err) {
 
         }
@@ -229,9 +137,6 @@ p.show = function () {
 
 p.hide = function () {
 	clearTimeout(this._toastInt);
-	this.hideFlyout(this.noFlashCopyView);
-	this.hideFlyout(this.copyMessageView);
 };
 
 module.exports = ShareMenu;
-

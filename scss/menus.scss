@@ -50,6 +50,22 @@
 	     top: -1px;
 		}
 
+        input[type="text"] {
+          @include calc("width", "100% - 0.375em*6");
+          float: left;
+        }
+
+        .share-wrap {
+          @include calc("width", "0.375em*36");
+        }
+
+        .icon {
+          @include calc("padding-top", "0.375em*2");
+          @include calc("padding-left", "100% - 0.375em*3");
+          @include calc("width", "100% - 0.375em*6");
+          cursor: pointer;
+        }
+
 		.update-button {
 		  position: absolute;
 		}

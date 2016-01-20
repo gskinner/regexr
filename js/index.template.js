@@ -51,16 +51,6 @@
 			$.removeClass($.el(".beta-banner"), "hidden");
 		}
 
-		// Setup our copy functionality.
-		ZeroClipboard.config(
-			{
-				swfPath: "assets/ZeroClipboard.swf",
-				cacheBust: false,
-				forceHandCursor: true,
-				hoverClass: 'a-hover'
-			}
-		);
-
 		RegExrShared.List.spinner = $.el(".spinner");
 
 		var docView = new RegExrShared.DocView($.el("#docview"));
