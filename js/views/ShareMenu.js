@@ -50,10 +50,21 @@ p.initialize = function (element, docsView) {
 	this.sharePatternTxt = $.el("#sharePatternTxt", this.element);
 	this.shareJavascriptTxt = $.el("#shareJavascriptTxt", this.element);
 
-	new Clipboard(".share-link-btn").on("success", this._handleCopySuccess.bind(this));
-	new Clipboard(".share-expression-btn").on("success", this._handleCopySuccess.bind(this));
-	new Clipboard(".share-javascript-btn").on("success", this._handleCopySuccess.bind(this));
-	new Clipboard(".share-pattern-btn").on("success", this._handleCopySuccess.bind(this));
+	new Clipboard(".share-link-btn")
+		.on("success", this._handleCopySuccess.bind(this))
+		.on("error", this._handleCopyError.bind(this));
+
+	new Clipboard(".share-expression-btn")
+		.on("success", this._handleCopySuccess.bind(this))
+		.on("error", this._handleCopyError.bind(this));
+
+	new Clipboard(".share-javascript-btn")
+		.on("success", this._handleCopySuccess.bind(this))
+		.on("error", this._handleCopyError.bind(this));
+
+	new Clipboard(".share-pattern-btn")
+		.on("success", this._handleCopySuccess.bind(this))
+		.on("error", this._handleCopyError.bind(this));
 
 	this._successToolTip = new Tooltip($.el(".share-link-btn"), "", {mode: "custom"});
 
@@ -64,13 +75,25 @@ p.initialize = function (element, docsView) {
 	}
 };
 
+p._handleCopyError = function(event) {
+	var copyKeyLabel = $.getCtrlKey();
+	this.showCopyToolTip("Press " + copyKeyLabel +" + C to copy.", event, false);
+}
+
 p._handleCopySuccess = function(event) {
+	this.showCopyToolTip("Copied!", event);
+}
+
+p.showCopyToolTip = function(content, event, autoHide) {
 	var rect = event.trigger.getBoundingClientRect();
-	this._successToolTip.show("Copied!", rect);
+	this._successToolTip.show(content, rect);
 	var _this = this;
-	setTimeout(function() {
-		_this._successToolTip.hide();
-	}, 750);
+
+	if (autoHide !== false) {
+		setTimeout(function () {
+			_this._successToolTip.hide();
+		}, 750);
+	}
 }
 
 p.handleExpressionCopied = function (event) {

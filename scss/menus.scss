@@ -36,6 +36,10 @@
 			}
 		}
 
+        header:not(:first-child) {
+          @include calc("padding-top", "0.375em*4");
+        }
+
 	  	.public-wrap {
 		  padding-top: .5rem;
 		}
