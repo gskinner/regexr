@@ -25,7 +25,6 @@
 var EventDispatcher = require('../events/EventDispatcher');
 var ServerModel = require('./ServerModel');
 var Settings = require('../Settings');
-var Utils = require('../utils/Utils');
 
 var s = {};
 EventDispatcher.initialize(s);
@@ -45,12 +44,12 @@ s.savePattern = function (tags, name, pattern, content, replace, description, au
 };
 
 s.saveState = function () {
-	s._saveState = s.getStateHash();
+	s._saveState = s.docView.getStateHash();
 	s._lastId = null;
 };
 
 s.isDirty = function () {
-	var dirty = s._saveState !== s.getStateHash();
+	var dirty = s._saveState !== s.docView.getStateHash();
 	if (dirty && s.id) {
 		s._lastId = s.id;
 		s.id = null;
@@ -59,14 +58,6 @@ s.isDirty = function () {
 	}
 
 	return dirty;
-};
-
-s.getStateHash = function () {
-	var state =
-			s.docView.getExpression() +
-			s.docView.getText() +
-			JSON.stringify(s.docView.getState());
-	return Utils.getHashCode(state);
 };
 
 s.handleSaveSuccess = function (result) {

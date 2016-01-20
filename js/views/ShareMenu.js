@@ -119,22 +119,15 @@ p.createJavascriptCopy = function () {
 	}
 };
 
-p.createCopyLink = function (el, dataFunc) {
-	var _this = this;
-	return function () {
-		var client = new ZeroClipboard(el);
-		client.on('ready', function (event) {
-			client.on("copy", dataFunc);
-			client.on("aftercopy", $.bind(_this, _this.handleCopyComplete));
-		});
-	}();
-};
-
 p.show = function () {
 	Tracking.event("share", "show");
 
 	Utils.removeClass(this.saveView, "visible hidden");
 	Utils.removeClass(this.shareWrap, "visible hidden");
+
+	this.shareExpressionTxt.value = this.docsView.getExpression();
+	this.sharePatternTxt.value = this.docsView.getPattern();
+	this.shareJavascriptTxt.value = this.createJavascriptCopy();
 
 	if (!ExpressionModel.id) {
 		Utils.addClass(this.saveView, "visible");
@@ -143,23 +136,11 @@ p.show = function () {
 		this.shareLinkTxt.value = Utils.createURL($.createID(ExpressionModel.id));
 		Utils.addClass(this.saveView, "hidden");
 		Utils.addClass(this.shareWrap, "visible");
-
-		this.shareExpressionTxt.value = this.docsView.getExpression();
-		this.sharePatternTxt.value = this.docsView.getPattern();
-		this.shareJavascriptTxt.value = this.createJavascriptCopy();
-
-        // This was failing in Edge, with this error: "Could not complete the operation due to error 800a025e."
-        try {
-           // this.shareLink.focus();
-            //this.shareLink.select();
-        } catch (err) {
-
-        }
 	}
 };
 
 p.hide = function () {
-	clearTimeout(this._toastInt);
+
 };
 
 module.exports = ShareMenu;

@@ -37,6 +37,7 @@ var Tracking = require('../Tracking');
 var RegExLexer = require('../RegExLexer');
 var BrowserHistory = require('../BrowserHistory');
 var SubstLexer = require('../SubstLexer');
+var Utils = require('../utils/Utils');
 
 var Docs = require('../utils/Docs');
 var Graph = require('../utils/Graph');
@@ -384,6 +385,15 @@ p.getState = function () {
 	state.list = this.listCM.getValue();
 	return state;
 };
+
+p.getStateHash = function() {
+	return Utils.getHashCode(
+		this.getExpression() +
+		this.getText() +
+		this.replaceCM.getValue() +
+		this.listCM.getValue()
+	);
+}
 
 p.showSave = function () {
 	this.saveTooltip.show();
