@@ -86,7 +86,9 @@ p._handleCopySuccess = function(event) {
 
 p.showCopyToolTip = function(content, event, autoHide) {
 	var rect = event.trigger.getBoundingClientRect();
-	this._successToolTip.show(content, rect);
+
+	var xOffset = 15;
+	this._successToolTip.show(content, {right: rect.right+xOffset, left: rect.left+xOffset, top: rect.top, bottom: rect.bottom});
 	var _this = this;
 
 	if (autoHide !== false) {
