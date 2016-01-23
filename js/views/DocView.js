@@ -632,9 +632,10 @@ p.updateTool = function (source, regex) {
 				"<p>"+TextUtils.htmlSafe(match[0])+"</p>";
 				
 			for (var i=1; i<match.length; i++) {
+				var group = match[i];
 				result += "<h1><b>Group #"+i+"</b>"+
-					"  <b>Length:</b> "+match[i].length+"</h1>"+
-					"<p>"+TextUtils.htmlSafe(match[i])+"</p>";
+					"  <b>Length:</b> "+(group&&group.length||0)+"</h1>"+
+					"<p>"+TextUtils.htmlSafe(group||"")+"</p>";
 			}
 		}
 		
