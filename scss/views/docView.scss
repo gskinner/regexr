@@ -136,7 +136,7 @@
 	}
 }
 
-.tools .graph {
+.tools .explain {
 	div {
 		padding: calc(0.5em + 1px);
 		margin-top: 0.75em;
@@ -189,7 +189,7 @@
 	}
 	
 	/*
-	Expression backgrounds need to be transparent so the selection shows through, but it looks wrong for the graph.
+	Expression backgrounds need to be transparent so the selection shows through, but it looks wrong for the explain.
 	*/
 	.exp-group-0 { background: tint($group-color, 89%); }
 	
@@ -228,7 +228,7 @@
 	.tool-list .editor.list, .tool-list .editor.out {
 		display: block;
 	}
-	.tool-details .tools.results, .tool-graph .tools.results {
+	.tool-details .tools.results, .tool-explain .tools.results {
 		display: block;
 	}
 }
@@ -257,11 +257,16 @@
 		.match {
 			background: $theme-color;
 		}
+		
+		.info {
+			font-style: italic;
+			background: $editor-toolsres-bg;
+		}
 	
 		h1 {
 			font-size: 1em;
 			margin: 0;
-			padding: 0.5em;
+			padding: $pad;
 			padding-left: $pad;
 			padding-right: $pad;
 			font-weight: normal;

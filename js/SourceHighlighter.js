@@ -40,11 +40,12 @@ p.initialize = function (cm, canvas, fill) {
 	this.fill = fill || this.fill;
 };
 
-p.draw = function (matches, activeMatch) {
+p.draw = function (matches, activeMatch, selectedMatch) {
 	this.clear();
 	if (!matches || !matches.length) {
 		return;
 	}
+	
 
 	var cm = this.cm;
 	var doc = cm.getDoc();
@@ -64,7 +65,6 @@ p.draw = function (matches, activeMatch) {
 
 	for (var i = 0, l = matches.length; i < l; i++) {
 		var match = matches[i];
-		var active = (match == activeMatch);
 		var start = match.index;
 		var end = match.end;
 		if (start > bottom) {
@@ -75,10 +75,11 @@ p.draw = function (matches, activeMatch) {
 		} // not visible, so don't mark.
 		var startPos = match.startPos || (match.startPos = doc.posFromIndex(start));
 		var endPos = match.endPos || (match.endPos = doc.posFromIndex(end));
+		var active = (match === activeMatch);
+		var selected = (match === selectedMatch);
 
-		if (active) {
-			ctx.globalAlpha = 0.6;
-		}
+		if (active || selected) { ctx.globalAlpha = 0.45; }
+		
 		var startRect = cm.charCoords(startPos, "local");
 		var endRect = cm.charCoords(endPos, "local");
 
@@ -98,9 +99,8 @@ p.draw = function (matches, activeMatch) {
 			this.drawHighlight(ctx, 0, endRect.top, endRect.right, endRect.bottom, scroll.top, true);
 			// CMUtils.getEOLPos(this.sourceCM, startPos);
 		}
-		if (active) {
-			ctx.globalAlpha = 1;
-		}
+		
+		if (active || selected) { ctx.globalAlpha = 1; }
 	}
 };
 

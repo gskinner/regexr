@@ -22,15 +22,15 @@
  SOFTWARE.
  */
 
-var Utils = require('./Utils');
-var Docs = require('./Docs');
+var Utils = require('../utils//Utils');
+var Docs = require('../utils/Docs');
 var ExpressionHighlighter = require('../ExpressionHighlighter');
 
-var Graph = {};
+var Explain = {};
 
-Graph.forExpression = function(expr, token, highlighter) {
+Explain.forExpression = function(expr, token, highlighter) {
 	var groupClasses = ExpressionHighlighter.GROUP_CLASS_BY_TYPE, pre = "exp-";
-	var result = $.div(null, "graph"), el = result;
+	var result = $.div(null, "explain"), el = result;
 	
 	var enterHandler = function(evt) {
 		var o = evt.currentTarget;
@@ -91,4 +91,4 @@ Graph.forExpression = function(expr, token, highlighter) {
 	
 	return result;
 };
-module.exports = Graph;
+module.exports = Explain;

@@ -40,7 +40,7 @@ var SubstLexer = require('../SubstLexer');
 var Utils = require('../utils/Utils');
 
 var Docs = require('../utils/Docs');
-var Graph = require('../utils/Graph');
+var Explain = require('../views/Explain');
 var CodeMirror = require('codemirror');
 
 var DocView = function (element) {
@@ -88,6 +88,7 @@ p.saveTooltip = null;
 p.matches = null;
 p.error = null;
 p.hoverMatch = null;
+p.selectedMatch = null;
 p.exprLexer = null;
 p.toolsLexer = null;
 p.tool = null;
@@ -545,8 +546,8 @@ p.update = function () {
 	// used primarily to handle fwdslash errors.
 	if (this.exprLexer.errors.length || !regex) {
 		this.error = "ERROR";
-		this.updateTool();
 		this.updateResults();
+		this.updateTool();
 		return;
 	}
 
@@ -556,6 +557,7 @@ p.update = function () {
 		_this.matches = matches;
 
 		_this.updateResults();
+		_this.updateTool(str, regex);
 		$.defer(_this, _this.drawSourceHighlights, "draw");
 
 		if (ExpressionModel.isDirty()) {
@@ -565,8 +567,6 @@ p.update = function () {
 		if (ExpressionModel.id) {
 			BrowserHistory.go($.createID(ExpressionModel.id));
 		}
-
-		_this.updateTool(str, regex);
 	});
 };
 
@@ -583,6 +583,9 @@ p.getRegEx = function(global) {
 }
 
 p.updateTool = function (source, regex) {
+	var oldMatch = this.selectedMatch;
+	var match = this.selectedMatch = null;
+	
 	if (!this.toolsEnabled) { return; }
 	source = source||this.sourceCM.getValue();
 	var result = "", toolsCM = this.getToolCM(), err = this.error;
@@ -619,7 +622,8 @@ p.updateTool = function (source, regex) {
 		}
 		this.toolsOutCM.setValue(result);
 	} else if (this.tool == "details") {
-		var cm = this.sourceCM, match=this.getMatchAt(cm.indexFromPos(cm.getCursor()), true);
+		var cm = this.sourceCM;
+		match = this.getMatchAt(cm.indexFromPos(cm.getCursor()), true);
 		
 		if (match) {
 			result += "<h1><b>Match #"+match.num+"</b>"+ 
@@ -632,14 +636,20 @@ p.updateTool = function (source, regex) {
 					"  <b>Length:</b> "+match[i].length+"</h1>"+
 					"<p>"+TextUtils.htmlSafe(match[i])+"</p>";
 			}
-		} else {
-			result = "<i>click a <span class='match'>match</span> above for details</i>";
 		}
+		
+		result += "<p class='info'>click a <span class='match'>match</span> above for details</p>";
 		$.el(".content",this.toolsResults).innerHTML = "<code><pre>"+result+"</code></pre>";
-	} else if (this.tool == "graph") {
+		
+	} else if (this.tool == "explain") {
 		var token = this.exprLexer.token, expr = this.expressionCM.getValue();
-		result = Graph.forExpression(expr, token, this.expressionHighlighter);
+		result = Explain.forExpression(expr, token, this.expressionHighlighter);
 		$.empty($.el(".content",this.toolsResults)).appendChild(result);
+	}
+	
+	if (match !== oldMatch) {
+		this.selectedMatch = match;
+		$.defer(this, this.drawSourceHighlights, "draw");
 	}
 };
 
@@ -658,7 +668,7 @@ p.getMatchAt = function(index, inclusive) {
 };
 
 p.drawSourceHighlights = function () {
-	this.sourceHighlighter.draw(this.error == "ERROR" ? null : this.matches, this.hoverMatch);
+	this.sourceHighlighter.draw(this.error == "ERROR" ? null : this.matches, this.hoverMatch, this.selectedMatch);
 };
 
 p.updateResults = function () {
