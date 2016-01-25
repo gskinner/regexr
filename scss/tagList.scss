@@ -7,11 +7,11 @@
 	.tag-list {
 		@extend .list;
 
-		position: relative;
-		top: 0;
-		right: 0;
-		left: 0;
-		max-height: 12rem;
+		position: relative!important;
+		top: 0!important;
+		right: 0!important;
+		left: 0!important;
+		max-height: 12rem!important;
 
 		opacity: .99;
 		background: $lib-bg;
