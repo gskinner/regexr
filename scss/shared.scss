@@ -56,46 +56,48 @@
 
 	overflow-x: hidden;
 	overflow-y: auto;
+}
 
-	.item {
-		padding: $pad;
-		padding-top: 0.5rem;
-		padding-bottom: 0.5rem;
-		border-bottom: solid 1px lighten($lib-bg, 3%);
-		cursor: pointer;
-		position: relative;
+.list {
+  .item {
+    padding: $pad;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: solid 1px lighten($lib-bg, 3%);
+    cursor: pointer;
+    position: relative;
 
-		&:hover, &:hover .detail {
-			color: $hover-color;
-		}
+    &:hover, &:hover .detail {
+      color: $hover-color;
+    }
 
-		.icon {
-			font-family: $icon-font;
-			display: inline-block;
-			vertical-align: middle;
-			position: relative;
-			top: -0.05em;
-		}
+    .icon {
+      font-family: $icon-font;
+      display: inline-block;
+      vertical-align: middle;
+      position: relative;
+      top: -0.05em;
+    }
 
-		.detail {
-			float: right;
-			color: darken($lib-color, 22%);
+    .detail {
+      float: right;
+      color: darken($lib-color, 22%);
 
-			code {
-				font-weight: bold;
-			}
-		}
-	}
+      code {
+        font-weight: bold;
+      }
+    }
+  }
 
-	.item.selected, .item.selected .detail {
-		background: $theme-color;
-		color: $color;
-	}
+  .item.selected, .item.selected .detail {
+    background: $theme-color;
+    color: $color;
+  }
 
-	.item.removed {
-		text-decoration: line-through;
-		opacity: 0.5;
-	}
+  .item.removed {
+    text-decoration: line-through;
+    opacity: 0.5;
+  }
 }
 
 .button {
