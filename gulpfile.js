@@ -41,6 +41,7 @@ function compileJs(watch) {
 			.pipe(gulp.dest('./build/js'));
 	}
 
+
 	if (watch) {
 		bundler.on('update', function () {
 			rebundle();
@@ -90,7 +91,7 @@ gulp.task('watch-sass', function () {
 });
 
 gulp.task('copy-assets', function () {
-	return gulp.src(staticAssets, {base: './'})
+	return gulp.src(staticAssets, {base: './', dot: true})
 		.pipe(gulp.dest('build/'));
 });
 
@@ -143,7 +144,8 @@ gulp.task('clean-post-build', function () {
 		'./build/js/index.template.js',
 		'./build/js/scripts.min.js.map',
 		'./build/js/checkSupport.template.js',
-		'./build/js/analytics.template.js'
+		'./build/js/analytics.template.js',
+		'./build/assets/spinner*.gif'
 	], {read: false})
 		.pipe(rimraf());
 });
