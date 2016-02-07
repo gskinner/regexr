@@ -608,16 +608,21 @@ p.updateTool = function (source, regex) {
 			if (this.tool == "replace") {
 				result = source.replace(regex || this.getRegEx(), str);
 			} else {
-				var repl, ref, regex = this.getRegEx(false);
-				if (str.search(/\$[&1-9`']/) === -1) { str = "$&"+str; }
+				var repl, ref, regex = this.getRegEx(false), lastIndex = -1, trimR = 0;
+				if (str.search(/\$[&1-9`']/) === -1) {
+					trimR = str.length;
+					str = "$&"+str;
+				}
 				while (true) {
 					ref = source.replace(regex, "\b");
 					var index = ref.indexOf("\b");
-					if (index === -1) { break; }
+					if (index === -1 || index === lastIndex) { break; }
 					repl = source.replace(regex, str);
 					result += repl.substr(index, repl.length-ref.length+1);
 					source = ref.substr(index+1);
+					lastIndex = index;
 				}
+				if (trimR) { result = result.substr(0,result.length-trimR); }
 			}
 		}
 		this.toolsOutCM.setValue(result);

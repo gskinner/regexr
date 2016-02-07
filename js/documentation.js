@@ -69,7 +69,7 @@ var library = {
 				{
 				label:"List",
 				desc:"The <b>List</b> tool lists all found matches."+
-					"<p>You can specify either a simple delimiter (ex. <code>,</code> or <code>\\n</code>), or use <a href='javascript:showLib(\"subst\")'>substitution tokens</a> (ex. <code>$&</code> or <code>$1</code>) to generate more advanced reports.</p>"+
+					"<p>You can specify either a simple delimiter (ex. <code>,</code> or <code>\\n</code>), or use <a href='javascript:showLib(\"subst\")'>substitution tokens</a> to generate more advanced reports. For example, <code>$1\\n</code> would list all group 1 results.</p>"+
 					"<p>Escaped characters compatible with the JS string format are supported, such as <code>\\n</code>, <code>\\t</code> & <code>\\u0009</code>.</p>"+
 					"<p>Roll over tokens for information.</p>"
 				},
