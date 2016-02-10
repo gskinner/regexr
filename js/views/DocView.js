@@ -616,7 +616,7 @@ p.updateTool = function (source, regex) {
 				while (true) {
 					ref = source.replace(regex, "\b");
 					var index = ref.indexOf("\b");
-					if (index === -1 || index === lastIndex) { break; }
+					if (index === -1 || ref.length > source.length) { break; }
 					repl = source.replace(regex, str);
 					result += repl.substr(index, repl.length-ref.length+1);
 					source = ref.substr(index+1);
