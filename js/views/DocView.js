@@ -134,7 +134,9 @@ p.buildUI = function (el) {
 	expCM.on("change", $.bind(this, this.deferUpdate));
 	expCM.on("mousedown", $.bind(this, this.expressionClick));
 	expCM.on("change", $.bind(this, this.handleExpressionCMChange));
-    expCM.on("keydown", $.bind(this, this.handleExpressionCMKeyDown));
+	expCM.on("keydown", $.bind(this, this.handleExpressionCMKeyDown));
+	// hacky method to disable overwrite mode on expressions to avoid issues with :
+	expCM.toggleOverwrite = function(){};
 
 	this.expressionHighlighter = new ExpressionHighlighter(expCM);
 	this.expressionHover = new ExpressionHover(expCM, this.expressionHighlighter);
