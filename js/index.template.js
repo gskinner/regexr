@@ -225,16 +225,9 @@ if ('serviceWorker' in navigator &&
 					installingWorker.onstatechange = function() {
 						switch (installingWorker.state) {
 							case 'installed':
-								// At this point, the old content will have been purged and the
-								// fresh content will have been added to the cache.
-								// It's the perfect time to display a "New content is
-								// available; please refresh." message in the page's interface.
 								break;
-
 							case 'redundant':
-								throw new Error('The installing ' +
-									'service worker became redundant.');
-
+								throw new Error('The installing service worker became redundant.');
 							default:
 							// Ignore
 						}
@@ -272,7 +265,7 @@ if (window["WebFont"] != null) {
 		xhr.onerror = function(evt) {
 			createRegExr();
 		};
-		xhr.open('get', 'http://fonts.gstatic.com/s/sourcecodepro/v6/leqv3v-yTsJNC7nFznSMqZkF8H8ye47wsfpWywda8og.woff2');
+		xhr.open('get', '//fonts.gstatic.com/s/sourcecodepro/v6/leqv3v-yTsJNC7nFznSMqZkF8H8ye47wsfpWywda8og.woff2');
 		xhr.send();
 
 		// final fall back, if all other fall backs fail
