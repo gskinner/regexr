@@ -16,6 +16,11 @@ var browserify = require('browserify');
 var watchify = require('watchify');
 var browserSync = require('browser-sync');
 var runSequence = require('run-sequence');
+var swPrecache = require('sw-precache');
+var rev = require('gulp-rev');
+var revReplace = require('gulp-rev-replace');
+var path = require('path');
+var pkg = require('./package.json');
 
 var staticAssets = [
 	"index.html",
@@ -77,7 +82,7 @@ gulp.task('copy-js-templates', function (cb) {
 	var assets = "js/*.template.js";
 	gulp.src(assets, {base: './js'})
 		.pipe(gulp.dest('build/js/'))
-		.on("finish", function() {
+		.on("finish", function () {
 			cb();
 		});
 });
@@ -141,12 +146,17 @@ gulp.task('clean-pre-build', function () {
 
 gulp.task('clean-post-build', function () {
 	return gulp.src([
-		'./build/js/index.template.js',
-		'./build/js/scripts.min.js.map',
-		'./build/js/checkSupport.template.js',
-		'./build/js/analytics.template.js',
-		'./build/assets/spinner*.gif'
-	], {read: false})
+			'./build/js/index.template.js',
+			'./build/js/scripts.min.js.map',
+			'./build/js/checkSupport.template.js',
+			'./build/js/analytics.template.js',
+			'./build/assets/spinner*.gif',
+
+			'./build/js/scripts.min.js',
+			'./build/js/regExWorker.template.js',
+			'./build/css/regexr.css',
+			'./build/rev-manifest.json'
+		], {read: false})
 		.pipe(rimraf());
 });
 
@@ -161,9 +171,70 @@ gulp.task('inline', function () {
 
 gulp.task('parse-index', function () {
 	return gulp.src('build/index.html')
-		.pipe(template({noCache: Date.now()}))
 		.pipe(minifyHTML())
 		.pipe(gulp.dest('build/'));
+});
+
+gulp.task('copy-sw-scripts', function () {
+	return gulp
+		.src([
+			'node_modules/sw-toolbox/sw-toolbox.js',
+			'js/sw/runtime-caching.js'
+		])
+		.pipe(gulp.dest('build/js/sw'));
+});
+
+gulp.task('generate-service-worker', ['copy-sw-scripts'], function (callback) {
+	var rootDir = 'build';
+	var filePath = path.join(rootDir, 'service-worker.js');
+
+	return swPrecache.write(filePath, {
+		// Used to avoid cache conflicts when serving on localhost.
+		cacheId: pkg.name || 'RegExr',
+		// sw-toolbox.js needs to be listed first. It sets up methods used in runtime-caching.js.
+		importScripts: [
+			'js/sw/sw-toolbox.js',
+			'js/sw/runtime-caching.js'
+		],
+		staticFileGlobs: [
+			// Add/remove glob patterns to match your directory setup.
+			rootDir + '/assets/**/*',
+			rootDir + '/css/**/*.css',
+			rootDir + '/js/**/*.js',
+			rootDir + '/*.{html,json}'
+		],
+		// Translates a static file path to the relative URL that it's served from.
+		// This is '/' rather than path.sep because the paths returned from
+		// glob always use '/'.
+		stripPrefix: rootDir + '/'
+	});
+});
+
+gulp.task('revision', function () {
+	var rootDir = 'build';
+
+	return gulp.src([
+			rootDir + '/js/scripts.min.js',
+			rootDir + '/js/regExWorker.template.js',
+			rootDir + '/css/regexr.css'
+		], {base: 'build'})
+		.pipe(rev())
+		.pipe(gulp.dest('build'))
+		.pipe(rev.manifest())
+		.pipe(gulp.dest('build'));
+});
+
+gulp.task('revision-replace', ['revision'], function () {
+	var manifest = gulp.src('build/rev-manifest.json');
+
+	return gulp.src([
+			'build/index.html',
+			'build/js/scripts-*.min.js'
+		], {base: 'build'})
+		.pipe(revReplace({
+			manifest: manifest
+		}))
+		.pipe(gulp.dest('build'));
 });
 
 gulp.task('build', function (done) {
@@ -174,7 +245,9 @@ gulp.task('build', function (done) {
 		['minify-js', 'minify-css'],
 		['parse-index'],
 		'inline',
+		'revision-replace',
 		'clean-post-build',
+		'generate-service-worker',
 		'server', 'open-build',
 		done
 	);
@@ -184,6 +257,7 @@ gulp.task('default', function (done) {
 	runSequence(
 		['sass', 'watch-js', 'watch-sass', 'copy-js-templates'],
 		'copy-assets',
+		'generate-service-worker',
 		['watch-assets', 'watch-js-templates', 'browser-sync'],
 		done
 	);
