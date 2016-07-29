@@ -22,6 +22,7 @@ var staticAssets = [
 	"./assets/**",
 	"./php/!(cache)**",
 	"*.ico",
+	 "fonts/**",
 	".htaccess"
 ];
 

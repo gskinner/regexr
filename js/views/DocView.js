@@ -507,6 +507,7 @@ p.sourceMouseMove = function (evt) {
 	if (rect) {
 		rect.right = rect.left = evt.clientX;
 	}
+	 
 	this.sourceTooltip.show(Docs.forMatch(this.hoverMatch), rect);
 };
 

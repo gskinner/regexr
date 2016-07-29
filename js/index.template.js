@@ -187,42 +187,4 @@ function createRegExr() {
 	}
 }
 
-if (window["WebFont"] != null) {
-	try {
-		WebFont.load({
-			google: {
-				families: ["Source Code Pro:400,700", "Cabin:400,700"],
-				fontinactive: function (family, fvd) {
-					WebFont.load({
-						custom: {
-							families: ["Source Code Pro:400,700", "Cabin:400,700"]
-						}
-					});
-				}
-			},
-			active: function () {
-				xhr.abort();
-				createRegExr();
-			}
-		});
-
-		// wdg:: Fix for https://github.com/gskinner/regexr/issues/111
-		// If the cors header is non-existent WebFont will silently fail, so we manually check to see if font can be loaded.
-		// and if not, just show the site.
-		var xhr = window.XDomainRequest == null?new XMLHttpRequest():new XDomainRequest();
-		xhr.onerror = function(evt) {
-			createRegExr();
-		};
-		xhr.open('get', 'http://fonts.gstatic.com/s/sourcecodepro/v6/leqv3v-yTsJNC7nFznSMqZkF8H8ye47wsfpWywda8og.woff2');
-		xhr.send();
-
-		// final fall back, if all other fall backs fail
-		setTimeout(function() {
-			createRegExr();
-		}, 500);
-	} catch (err) {
-		createRegExr();
-	}
-} else {
-	createRegExr();
-}
+createRegExr();
