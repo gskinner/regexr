@@ -1,8 +1,8 @@
 {
-  "name": "RegExr",
-  "version": "2.1.0",
+  "name": "regexr",
+  "version": "12.1.0",
   "license": "MIT",
-  "repository": "http://github.com/gskinner/regexr/regexr.git",
+  "repository": "git+https://github.com/pxpeterxu/regexr.git",
   "devDependencies": {
     "browser-sync": "^2.10.0",
     "browserify": "^10.2.6",

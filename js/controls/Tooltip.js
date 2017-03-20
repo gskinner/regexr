@@ -23,6 +23,7 @@
  */
 
 var EventDispatcher = require('../events/EventDispatcher');
+var $ = require('../utils/Utils');
 
 var Tooltip = function (target, content, config) {
 	this.initialize(target, content, config);

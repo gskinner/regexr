@@ -25,6 +25,7 @@
 var documentation = require('../documentation');
 var TextUtils = require('./TextUtils');
 var Utils = require('./Utils');
+var $ = Utils;
 
 var Docs = {};
 

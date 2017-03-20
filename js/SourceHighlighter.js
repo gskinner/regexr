@@ -45,7 +45,7 @@ p.draw = function (matches, activeMatch, selectedMatch) {
 	if (!matches || !matches.length) {
 		return;
 	}
-	
+
 
 	var cm = this.cm;
 	var doc = cm.getDoc();
@@ -55,11 +55,11 @@ p.draw = function (matches, activeMatch, selectedMatch) {
 	// find the range of the visible text:
 	var scroll = cm.getScrollInfo();
 	var top = cm.indexFromPos(cm.coordsChar({
-		left: 0,
+		left: scroll.left,
 		top: scroll.top
 	}, "local"));
 	var bottom = cm.indexFromPos(cm.coordsChar({
-		left: scroll.clientWidth,
+		left: scroll.left + scroll.clientWidth,
 		top: scroll.top + scroll.clientHeight
 	}, "local"));
 
@@ -79,32 +79,32 @@ p.draw = function (matches, activeMatch, selectedMatch) {
 		var selected = (match === selectedMatch);
 
 		if (active || selected) { ctx.globalAlpha = 0.45; }
-		
+
 		var startRect = cm.charCoords(startPos, "local");
 		var endRect = cm.charCoords(endPos, "local");
 
 		if (startRect.bottom == endRect.bottom) {
-			this.drawHighlight(ctx, startRect.left, startRect.top, endRect.right, endRect.bottom, scroll.top);
+			this.drawHighlight(ctx, startRect.left, startRect.top, endRect.right, endRect.bottom, scroll.left, scroll.top);
 		} else {
 			var lw = cm.getScrollInfo().width;
 			var lh = cm.defaultTextHeight();
 			// render first line:
-			this.drawHighlight(ctx, startRect.left, startRect.top, lw - 2, startRect.bottom, scroll.top, false, true); // startRect.top+lh
+			this.drawHighlight(ctx, startRect.left, startRect.top, lw - 2, startRect.bottom, scroll.left, scroll.top, false, true); // startRect.top+lh
 			// render lines in between:
 			var y = startRect.top;
 			while ((y += lh) < endRect.top - 1) { // the -1 is due to fractional issues on FF
-				this.drawHighlight(ctx, 0, y, lw - 2, y + startRect.bottom - startRect.top, scroll.top, true, true); // lh
+				this.drawHighlight(ctx, 0, y, lw - 2, y + startRect.bottom - startRect.top, scroll.left, scroll.top, true, true); // lh
 			}
 			// render last line:
-			this.drawHighlight(ctx, 0, endRect.top, endRect.right, endRect.bottom, scroll.top, true);
+			this.drawHighlight(ctx, 0, endRect.top, endRect.right, endRect.bottom, scroll.left, scroll.top, true);
 			// CMUtils.getEOLPos(this.sourceCM, startPos);
 		}
-		
+
 		if (active || selected) { ctx.globalAlpha = 1; }
 	}
 };
 
-p.drawHighlight = function (ctx, left, top, right, bottom, scrollY, startCap, endCap) {
+p.drawHighlight = function (ctx, left, top, right, bottom, scrollX, scrollY, startCap, endCap) {
 	var capW = 4;
 
 	if (right < 0 || left + 1 >= right) {
@@ -126,16 +126,16 @@ p.drawHighlight = function (ctx, left, top, right, bottom, scrollY, startCap, en
 	var a = ctx.globalAlpha;
 	if (startCap) {
 		ctx.globalAlpha = a * 0.5;
-		ctx.fillRect(left + 1 | 0, top - scrollY, capW + 1, bottom - top);
+		ctx.fillRect((left + 1 || 0) - scrollX, top - scrollY, capW + 1, bottom - top);
 		left += capW;
 	}
 	if (endCap) {
 		ctx.globalAlpha = a * 0.5;
-		ctx.fillRect(right - capW - 1 | 0, top - scrollY, capW + 1, bottom - top);
+		ctx.fillRect((right - capW - 1 || 0) - scrollY, top - scrollY, capW + 1, bottom - top);
 		right -= capW;
 	}
 	ctx.globalAlpha = a;
-	ctx.fillRect(left + 1, top - scrollY, right - left - 1, bottom - top);
+	ctx.fillRect(left + 1 - scrollX, top - scrollY, right - left - 1, bottom - top);
 };
 
 p.clear = function () {

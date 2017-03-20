@@ -1,6 +1,6 @@
 var s = {};
 
-s.match = function (regex, str, callback) {
+s.match = function (regex, str, callback, workerJs) {
 	var matches = [];
 	var error = null;
 	var match = null;
@@ -11,13 +11,13 @@ s.match = function (regex, str, callback) {
 		return;
 	}
 
-	if (window.Worker) {
+	if (typeof Worker !== 'undefined' && workerJs) {
 		if (s.worker) {
 			clearTimeout(s.id);
 			s.worker.terminate();
 		}
 
-		s.worker = new Worker("js/regExWorker.template.js");
+		s.worker = new Worker(workerJs);
 
 		s.worker.onmessage = function (evt) {
 			// When the worker says its loaded start a timer. (For IE 10);

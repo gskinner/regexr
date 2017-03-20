@@ -25,6 +25,7 @@
 var Tooltip = require('./controls/Tooltip');
 var CMUtils = require('./utils/CMUtils');
 var Docs = require('./utils/Docs');
+var $ = require('./utils/Utils');
 
 var ExpressionHover = function (cm, highlighter) {
 	this.initialize(cm, highlighter);
