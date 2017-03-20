@@ -79,7 +79,15 @@ p.token = null;
 p.errors = null;
 p.captureGroups = null;
 
-p.parse = function (str) {
+/**
+ * Parse a regular expression
+ * @param {String} str   string to parse
+ * @param {String} parseType  type of parsing to do ('pattern', 'flags', or 'all')
+ *                       			Optional: defaults to all
+ */
+p.parse = function (str, parseType) {
+	parseType = parseType || 'all';
+
 	if (str == this.string) {
 		return this.token;
 	}
@@ -98,7 +106,7 @@ p.parse = function (str) {
 
 		token = {i: i, l: 1, prev: prev};
 
-		if (i == 0 || i >= closeIndex) {
+		if (parseType === 'all' && (i == 0 || i >= closeIndex)) {
 			this.parseFlag(str, token);
 		} else if (c == "(" && !charset) {
 			this.parseGroup(str, token);
