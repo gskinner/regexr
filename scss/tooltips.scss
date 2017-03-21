@@ -1,4 +1,4 @@
-.tooltip {
+.regexr-tooltip {
 	font-size: 0.875rem;
 	font-family: $monospace;
 	max-width: 30em;
@@ -35,19 +35,19 @@
     }
 }
 
-.tooltip-tip {
+.regexr-tooltip-tip {
 	width: 19px;
 	height: 10px;
 	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAKCAYAAABWiWWfAAAANUlEQVR42o3MMQ0AAAzDsCEp1jFvKfjIF/mSSC+fQhVQoQpIkIIAOQiQgwA5CJCDADkIkIMD+gmc/LP+8KQAAAAASUVORK5CYII=);
 }
 
-.tooltip, .tooltip-tip {
+.regexr-tooltip, .regexr-tooltip-tip {
 	opacity: 0.0;
 	@include vendor-prefix(transition, opacity $default-transition-duration);
 	position: fixed;
 	z-index: $z-index-tip;
 }
 
-.tooltip-visible {
+.regexr-tooltip-visible {
 	opacity: 1.0;
 }

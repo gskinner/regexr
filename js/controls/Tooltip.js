@@ -114,15 +114,15 @@ p.show = function (content, rect) {
 
 		el.style.pointerEvents = this.config.mouseEnabled !== false;
 
-		el.className = "tooltip" + ((this.config && this.config.className) ? " " + this.config.className : "");
-		tip.className = "tooltip-tip";
+		el.className = "regexr-tooltip" + ((this.config && this.config.className) ? " " + this.config.className : "");
+		tip.className = "regexr-tooltip-tip";
 		document.body.appendChild(this.element);
 		document.body.appendChild(this.tip);
 
 		var _this = this;
 		setTimeout(function () { // needs to be delayed for transition to work
-			el.className += " tooltip-visible";
-			tip.className += " tooltip-visible";
+			el.className += " regexr-tooltip-visible";
+			tip.className += " regexr-tooltip-visible";
 		}, 0);
 	}
 
