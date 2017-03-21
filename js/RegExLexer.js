@@ -99,14 +99,15 @@ p.parse = function (str, parseType) {
 	var groups = [], i = 0, l = str.length;
 	var o, c, token, prev = null, charset = null, unquantifiable = RegExLexer.UNQUANTIFIABLE;
 	var charTypes = RegExLexer.CHAR_TYPES;
-	var closeIndex = str.lastIndexOf("/");
+	var closeIndex = parseType === 'all' ? str.lastIndexOf("/") : Infinity;
 
 	while (i < l) {
 		c = str[i];
 
 		token = {i: i, l: 1, prev: prev};
 
-		if (parseType === 'all' && (i == 0 || i >= closeIndex)) {
+		if (parseType === 'flags' ||
+				(parseType === 'all' && (i == 0 || i >= closeIndex))) {
 			this.parseFlag(str, token);
 		} else if (c == "(" && !charset) {
 			this.parseGroup(str, token);
@@ -159,7 +160,7 @@ p.parse = function (str, parseType) {
 			// this may be the start of a range, but we'll need to validate after the next token.
 			token.type = "range";
 		} else {
-			this.parseChar(str, token, charset);
+			this.parseChar(str, token, charset, parseType !== 'all');
 		}
 
 		if (prev) {
@@ -217,10 +218,10 @@ p.parseFlag = function (str, token) {
 	token.clear = true;
 };
 
-p.parseChar = function (str, token, charset) {
+p.parseChar = function (str, token, charset, allowSlash) {
 	var c = str[token.i];
 	token.type = (!charset && RegExLexer.CHAR_TYPES[c]) || "char";
-	if (!charset && c == "/") {
+	if (!charset && c == "/" && !allowSlash) {
 		token.err = "fwdslash";
 	}
 	if (token.type == "char") {
