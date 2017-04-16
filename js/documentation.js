@@ -90,6 +90,11 @@ var library = {
 			desc:"The <b>Library</b> (this panel) includes <b>help</b> content and a <b>reference</b> that includes info on all regular expression tokens and flags."+
 				"<p>Tap a selected item in the reference to insert it into your <b>Expression</b>. Click the <span class='icon'>&#xE212;</span> beside an example to load it.</p>"+
 				"<p>The library also includes <b>example</b> patterns, searchable <b>community</b> submissions, and your saved <b>favourites</b>.</p>"
+			},
+			{
+				label: "Prefilling parameters from URI",
+				desc: "You can prefill certain parameters by passing them in on the URI. This is useful if you want to link to an arbitrary regular expression from your own site. Here's an example:" +
+				"<p><pre><code><a href='http://regexr.com?pattern=[a-z]+&flags=g&text=text_to_search' target='_blank'>http://regexr.com?pattern=[a-z]+&flags=g&text=text_to_search</a></code></pre></p>"
 			}
 		]
 		},
