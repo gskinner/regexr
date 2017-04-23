@@ -53,7 +53,7 @@
 
 		RegExrShared.List.spinner = $.el(".spinner");
 
-		var querystring = RegExrShared.UriUtils.parseUri(window.location.href).queryKey;
+		var querystring = this.getUriComponents();
 
 		var docView = new RegExrShared.DocView($.el("#docview"));
 		this.docView = docView;
@@ -70,10 +70,9 @@
 
 		var initialExpression = null;
 		if (querystring.pattern) {
-			initialExpression = docView.composeExpression(querystring.pattern, querystring.flags || '');
+			initialExpression = docView.composeExpression(querystring.pattern, querystring.flags);
 		}
 		docView.setExpression(initialExpression).setState();
-
 		docView.resetHistory();
 
 		var libView = new RegExrShared.LibView($.el("#libview"), RegExrShared.Docs.content.library);
@@ -183,6 +182,15 @@
 
 	p.handleVideoClick = function (evt) {
 		this.showVideo(false);
+	};
+
+	p.getUriComponents = function () {
+		var components = {};
+		var qs = RegExrShared.UriUtils.parseUri(window.location.href).queryKey;
+		['pattern', 'flags', 'text'].forEach(function (key) {
+			components[key] = qs[key] ? decodeURIComponent(qs[key]) : ''
+		});
+		return components;
 	};
 
 	window.RegExr = s;
