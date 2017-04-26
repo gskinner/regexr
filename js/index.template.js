@@ -53,7 +53,7 @@
 
 		RegExrShared.List.spinner = $.el(".spinner");
 
-		var querystring = this.getUriComponents();
+		var querystring = this.getRegexFromQuerystring();
 
 		var docView = new RegExrShared.DocView($.el("#docview"));
 		this.docView = docView;
@@ -184,7 +184,7 @@
 		this.showVideo(false);
 	};
 
-	p.getUriComponents = function () {
+	p.getRegexFromQuerystring = function () {
 		var components = {};
 		var qs = RegExrShared.UriUtils.parseUri(window.location.href).queryKey;
 		['pattern', 'flags', 'text'].forEach(function (key) {
