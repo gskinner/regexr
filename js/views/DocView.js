@@ -117,7 +117,7 @@ p.initialize = function (element) {
 
 	Docs.content.library.desc = $.el(".lib .content").innerHTML;
 	window.onbeforeunload = $.bind(this, this.handleUnload);
-	
+
 	this.buildUI(element);
 
 	// Set the default state.
@@ -169,7 +169,7 @@ p.buildUI = function (el) {
 		readOnly: true,
 		lineWrapping: true
 	});
-	
+
 	this.toolsResults = $.el(".tools.results");
 
 	// Flags
@@ -337,7 +337,7 @@ p.showTools = function (value) {
 	}
 	this.deferUpdate();
 	this.resize();
-	
+
 	// this ensures the Text highlights update correctly when the Tools show / hide:
 	this.sourceCM.refresh();
 };
@@ -352,10 +352,10 @@ p.setTool = function(tool) {
 	this.tool = tool;
 	el = $.el(".tools.title .button."+tool);
 	$.addClass(el,"active");
-	
+
 	$.removeClass(this.element, /tool-/);
 	$.addClass(this.element, "tool-"+tool);
-	
+
 	this.updateTool();
 };
 
@@ -421,14 +421,14 @@ p.setupUndo = function() {
 		_this.addHistory(srcCM);
 	});
 	srcCM.setOption("undoDepth", this.maxHistoryDepth);
-	
+
 	expCM.getDoc().on("historyAdded", function () {
 		_this.addHistory(expCM);
 	});
 	expCM.setOption("undoDepth", this.maxHistoryDepth);
-	
+
 	// NOTE: undo / redo is set up for the replace / list CMs in createToolCM.
-	
+
 	window.addEventListener("keydown", $.bind(this, this.handleKeyDown));
 };
 
@@ -507,7 +507,7 @@ p.sourceMouseMove = function (evt) {
 	if (rect) {
 		rect.right = rect.left = evt.clientX;
 	}
-	 
+
 	this.sourceTooltip.show(Docs.forMatch(this.hoverMatch), rect);
 };
 
@@ -544,7 +544,7 @@ p.update = function () {
 	this.expressionHighlighter.draw(this.exprLexer.parse(expr));
 	this.expressionHover.token = this.exprLexer.token;
 	matches.length = 0;
-	
+
 	// this is only ok if we are very confident we will not have false errors in the lexer.
 	// used primarily to handle fwdslash errors.
 	if (this.exprLexer.errors.length || !regex) {
@@ -570,15 +570,15 @@ p.update = function () {
 		if (ExpressionModel.id) {
 			BrowserHistory.go($.createID(ExpressionModel.id));
 		}
-	});
+	}, "js/regExWorker.template.js");
 };
 
 p.getRegEx = function(global) {
 	var regex, o = this.decomposeExpression(this.expressionCM.getValue());
-	
+
 	if (global === true && o.flags.indexOf("g") === -1) { o.flags += "g"; }
 	else if (global === false) { o.flags = o.flags.replace("g",""); }
-	
+
 	try {
 		regex = new RegExp(o.pattern, o.flags);
 	} catch (e) {}
@@ -588,18 +588,18 @@ p.getRegEx = function(global) {
 p.updateTool = function (source, regex) {
 	var oldMatch = this.selectedMatch;
 	var match = this.selectedMatch = null;
-	
+
 	if (!this.toolsEnabled) { return; }
 	source = source||this.sourceCM.getValue();
 	var result = "", toolsCM = this.getToolCM(), err = this.error;
 	if (toolsCM) {
 		var str = toolsCM.getValue();
-		
+
 		var token = this.toolsLexer.parse(str, this.exprLexer.captureGroups);
 		toolsCM.highlighter.cm = toolsCM;
 		toolsCM.highlighter.draw(token);
 		toolsCM.hover.token = token;
-		
+
 		if (err) {
 			result = "EXPRESSION ERROR";
 		} else if (this.toolsLexer.errors.length === 0) {
@@ -632,13 +632,13 @@ p.updateTool = function (source, regex) {
 	} else if (this.tool == "details") {
 		var cm = this.sourceCM;
 		match = this.getMatchAt(cm.indexFromPos(cm.getCursor()), true);
-		
+
 		if (match) {
-			result += "<h1><b>Match #"+match.num+"</b>"+ 
-				"  <b>Length:</b> "+(match.end-match.index+1)+ 
+			result += "<h1><b>Match #"+match.num+"</b>"+
+				"  <b>Length:</b> "+(match.end-match.index+1)+
 				"  <b>Range:</b> "+match.index+"-"+match.end+"</h1>"+
 				"<p>"+TextUtils.htmlSafe(match[0])+"</p>";
-				
+
 			for (var i=1; i<match.length; i++) {
 				var group = match[i];
 				result += "<h1><b>Group #"+i+"</b>"+
@@ -646,16 +646,16 @@ p.updateTool = function (source, regex) {
 					"<p>"+TextUtils.htmlSafe(group||"")+"</p>";
 			}
 		}
-		
+
 		result += "<p class='info'>click a <span class='match'>match</span> above for details</p>";
 		$.el(".content",this.toolsResults).innerHTML = "<code><pre>"+result+"</code></pre>";
-		
+
 	} else if (this.tool == "explain") {
 		var token = this.exprLexer.token, expr = this.expressionCM.getValue();
 		result = Explain.forExpression(expr, token, this.expressionHighlighter);
 		$.empty($.el(".content",this.toolsResults)).appendChild(result);
 	}
-	
+
 	if (match !== oldMatch) {
 		this.selectedMatch = match;
 		$.defer(this, this.drawSourceHighlights, "draw");
@@ -796,17 +796,17 @@ p.createToolCM = function(target, content) {
 	}, "100%", "auto");
 	cm.setValue(content || "");
 	cm.on("change", $.bind(this, this.deferUpdate));
-	
+
 	cm.highlighter = new ExpressionHighlighter(cm);
 	cm.hover = new ExpressionHover(cm, cm.highlighter);
-	
+
 	// undo / redo:
 	var _this = this;
 	cm.getDoc().on("historyAdded", function () {
 		_this.addToolsHistory();
 	});
 	cm.setOption("undoDepth", this.maxHistoryDepth);
-	
+
 	return cm;
 };
 
