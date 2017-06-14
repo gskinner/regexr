@@ -136,7 +136,7 @@ gulp.task('open-build', function () {
 });
 
 gulp.task('clean-pre-build', function () {
-	return gulp.src(['./build/!(v1|.git|sitemap.txt|*.md)'], {read: false})
+	return gulp.src(['./build/!(v1|.git|sitemap.txt|*.md|php*)'], {read: false})
 		.pipe(rimraf());
 });
 
