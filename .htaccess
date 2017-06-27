@@ -1,9 +1,17 @@
+# www to non-www
+RewriteEngine On
+RewriteBase /
+RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+
+# Handle deep links
 RewriteEngine on
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule . / [L]
 RewriteRule (.+)\.md /
 
+# Font handling
 AddType 'application/x-font-woff' .woff
 
 # HTTPS to HTTP
@@ -12,6 +20,6 @@ RewriteRule (.*) http://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 # BEGIN GZIP
 <ifmodule mod_deflate.c>
-AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml text/css application/x-javascript application/javascript application/x-font-woff application/octet-stream
+AddOutputFilterByType DEFLATE text/text text/html text/plain text/xml text/css application/x-javascript application/json application/javascript application/x-font-woff application/octet-stream
 </ifmodule>
 # END GZIP
