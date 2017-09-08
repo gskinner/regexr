@@ -24,3 +24,4 @@ RegExrShared.LibView = require('./views/LibView');
 RegExrShared.ExpressionModel = require('./net/ExpressionModel');
 RegExrShared.Settings = require('./Settings');
 RegExrShared.TransitionEvents = require('./events/TransitionEvents');
+RegExrShared.UriUtils = require('./utils/UriUtils');

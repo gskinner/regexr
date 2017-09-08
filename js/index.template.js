@@ -53,10 +53,13 @@
 
 		RegExrShared.List.spinner = $.el(".spinner");
 
+		var querystring = this.getRegexFromQuerystring();
+
 		var docView = new RegExrShared.DocView($.el("#docview"));
 		this.docView = docView;
 		var def = $.el("#docview .default");
-		RegExrShared.DocView.DEFAULT_TEXT = (def.textContent || def.innerText).trim().replace("{{ctrl}}", $.getCtrlKey().toLowerCase());
+		var defaultText = querystring.text || (def.textContent || def.innerText).trim().replace("{{ctrl}}", $.getCtrlKey().toLowerCase());
+		RegExrShared.DocView.DEFAULT_TEXT = defaultText;
 		docView.setText(); // need to do this as well as the defer below, to keep the history clean.
 		$.defer(docView, docView.setText); // this fixes an issue with CodeMirror returning bad char positions at specific widths.
 		def.style.display = "none";
@@ -65,7 +68,11 @@
 		cheatsheet.style.display = "none";
 		RegExrShared.Docs.getItem("cheatsheet").desc = cheatsheet.innerHTML;
 
-		docView.setExpression().setState();
+		var initialExpression = null;
+		if (querystring.pattern) {
+			initialExpression = docView.composeExpression(querystring.pattern, querystring.flags);
+		}
+		docView.setExpression(initialExpression).setState();
 		docView.resetHistory();
 
 		var libView = new RegExrShared.LibView($.el("#libview"), RegExrShared.Docs.content.library);
@@ -158,7 +165,7 @@
 		var el = $.el(".video");
 		if (value !== false) {
 			var iframe = $.el("iframe", el);
-			if (!iframe.src) { iframe.src =  "//www.youtube.com/embed/fOH62XXGdLs?enablejsapi=1&autoplay=1"; }
+			if (!iframe.src) { iframe.src = "//www.youtube.com/embed/fOH62XXGdLs?enablejsapi=1&autoplay=1"; }
 			$.removeClass(el, "hidden");
 			el.addEventListener("click", this.handleVideoCloseProxy);
 			func = "playVideo";
@@ -175,6 +182,15 @@
 
 	p.handleVideoClick = function (evt) {
 		this.showVideo(false);
+	};
+
+	p.getRegexFromQuerystring = function () {
+		var components = {};
+		var qs = RegExrShared.UriUtils.parseUri(window.location.href).queryKey;
+		['pattern', 'flags', 'text'].forEach(function (key) {
+			components[key] = qs[key] ? decodeURIComponent(qs[key]) : ''
+		});
+		return components;
 	};
 
 	window.RegExr = s;
