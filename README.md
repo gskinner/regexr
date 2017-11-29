@@ -22,4 +22,4 @@ This version of RegExr is not open source (yet).
 
 I'm a firm proponent of open source, but it provided negligible benefits for the project, and formed the foundation for a number of competitive sites, many of which did not open source their own work. This wasn't a requirement by any means, but it created a value imbalance. RegExr will probably be open sourced again in the future, but I am considering releasing it under GPL to encourage people building on it to share alike.
 
-If you're interested in using the source for something in the interim, feel free to [get in touch](gskinner.com).
+[Feedback](https://github.com/gskinner/regexr/issues/204) on this decision is very much welcomed. If you're interested in using the source for something in the interim, feel free to [get in touch](gskinner.com).
