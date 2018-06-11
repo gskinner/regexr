@@ -1,0 +1,76 @@
+.doc > section.tools > article .details {
+	
+	> div.desc {
+		padding: $pad * 0.5;
+		color: $doc-mid;
+		margin-bottom: 0.5em;
+		
+		code {
+			color: $doc-dark;
+			font-weight: bold;
+		}
+	}
+	
+	table {
+		font-family: $monospace;
+		width: 100%;
+		border-spacing: 0;
+		border: 0;
+		
+		tr:nth-child(odd) td {
+			background: mix($doc-lighter, $doc-lightest, 40);
+		}
+		
+		tr.match td {
+			background: $doc-lighter;
+			border-bottom: 1px dotted $doc-light;
+		}
+		
+		tr.group:hover {
+			@extend %selected-token;
+		}
+		
+		td {
+			padding: $pad * 0.5 $pad;
+			vertical-align: top;
+			
+			&:first-child {
+				font-weight: bold;
+				white-space: nowrap;
+				padding-right: 0;
+			}
+			
+			&:nth-child(2) {
+				color: $doc-mid;
+				white-space: nowrap;
+				border-right: 1px dotted $doc-light;
+			}
+			
+			&:nth-child(3) {
+				white-space: pre-wrap;
+				width: 100%;
+				color: $doc-black;
+				user-select: text;
+				user-select: contain;
+				
+				em {
+					color: $doc-mid;
+				}
+			}
+		}
+	}
+	
+	span.hover {
+		@extend %selected-token;
+	}
+	
+	$details-group-color: hsla(-20, 80, 70, 1);
+	$details-hue-adj: 60;
+	.group-0 { background: adjust-color($details-group-color, $hue: $details-hue-adj*0); }
+	.group-1 { background: adjust-color($details-group-color, $hue: $details-hue-adj*1); }
+	.group-2 { background: adjust-color($details-group-color, $hue: $details-hue-adj*2); }
+	.group-3 { background: adjust-color($details-group-color, $hue: $details-hue-adj*3); }
+	.group-4 { background: adjust-color($details-group-color, $hue: $details-hue-adj*4); }
+	.group-5 { background: adjust-color($details-group-color, $hue: $details-hue-adj*5); }
+	
+}

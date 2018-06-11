@@ -1,0 +1,126 @@
+.container .header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	
+	background: $black;
+	padding: 0 $pad;
+	height: 54px;
+	z-index: 1000;
+	
+	
+	.brand {
+		font-size: 1.125rem;
+		color: $theme-color;
+		margin-top: $pad*0.25;
+		
+		.version {
+			font-size: 0.875rem;
+			color: $dark;
+		}
+	}
+	
+	.logo {
+		width: 1.5em;
+		height: 1.5em;
+		margin-right: 0.25em;
+	}
+	
+	.signin.selected a {
+		color: $white !important;
+	}
+
+	ul {
+		padding: 0;
+		margin-left: $pad*2;
+	}
+	
+	ul.etc {
+		flex: 1;
+		text-align: right;
+		font-size: 0.875rem;
+		color: $dark;
+		
+		li {
+			display: inline-block;
+			margin-left: $pad;
+
+			&:first-child {
+				margin-left: 0;
+			}
+		}
+	}
+
+	ul.file {
+		text-align: right;
+
+		li {
+			@extend .button;
+			
+			color: $light;
+			background: $darkest;
+
+			&:hover {
+				background: $darker;
+			}
+			
+			&.save {
+				color: $theme-color;
+				font-weight: bold;
+
+				.savekey {
+					font-size: 0.875em;
+					font-weight: normal;
+					color: $mid;
+				}
+			}
+		}
+	}
+}
+
+#tooltip-signin {
+	ul.list li {
+		@extend %link;
+		margin: $pad*0.25 0;
+		
+		>.icon {
+			margin-right: $pad*0.625;
+		}
+	}
+
+	.signout {
+		display: none;
+
+		.signoutbtn {
+			@extend %link;
+		}
+	}
+	
+	&.authenticated {
+		.signin {
+			display: none;
+		}
+		.signout {
+			display: block;
+		}
+	}
+
+	.distract {
+		display: none;
+		color: $mid;
+
+		.distractor {
+			margin-right: $pad/2;
+		}
+	}
+
+	&.wait {
+		.distract {
+			display: block;
+		}
+
+		.signout .signoutbtn, .signin .list {
+			display: none;
+		}
+	}
+}

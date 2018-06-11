@@ -1,0 +1,70 @@
+.doc > section.text {
+	> header {
+		.result {
+			font-weight: bold;
+			
+			&.matches {
+				//background: $theme-color;
+			}
+			&.error {
+				background: $error-color;
+				color: $doc-lightest;
+			}
+			
+			em {
+				font-style: normal;
+				font-weight: normal;
+				opacity: 0.75;
+			}
+		}
+	}
+
+	> .editor {
+		position: relative;
+		box-sizing: border-box;
+		display: flex;
+		height: 100%;
+		width: 100%;
+		padding: $pad 0 $pad $pad;
+		
+		> .pad {
+			box-sizing: border-box;
+			position: relative;
+			width: 100%;
+			flex: 1;
+			
+			> .CodeMirror {
+				color: $doc-black;
+			}
+			
+			> iframe.resizedetector {
+				opacity: 0;
+				//visibility: hidden; // Firefox doesn't resize it if it's hidden!
+				z-index: -1000;
+				border: none;
+				width: 100%;
+				height: 100%;
+				position: absolute;
+			}
+			
+			> canvas.highlights {
+				transition: opacity $transition-t;
+				position: absolute;
+			}
+		
+		}
+	}
+}
+
+#tooltip {
+	.more {
+		display: inline-block;
+		color: $doc-light;
+		font-style: italic;
+		margin-top: $pad*0.75;
+	}
+	
+	i {
+		@extend %ellipsis;
+	}
+}

@@ -1,0 +1,213 @@
+%control {
+	background: rgba($doc-white, 0.25);
+	padding: 0.375rem 0.75rem;
+	font-size: 0.875rem;
+	border-radius: $control-radius;
+}
+
+.controlbar {
+	display: flex;
+	padding: 0;
+	margin: 0; // Firefox injects a 16px margin for some reason without this.
+	
+	> * {
+		margin-left: $pad*0.25;
+	}
+}
+
+input, textarea {
+	@extend %control;
+	
+	background: rgba($white, 0.1);
+	font-family: $font-family;
+	font-size: 1rem;
+	border: none;
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+	color: $white;
+	resize: vertical;
+	
+	&::placeholder {
+		color: currentColor;
+		opacity: 0.4;
+	}
+	
+	&:focus {
+		outline: 0;
+	
+		&::placeholder {
+			opacity: 0.2;
+		}
+	}
+	
+}
+
+.status {
+	display: inline-block;
+
+	color: rgba($white, 0.5);
+
+	.icon.success {
+		color: $theme-color;
+	}
+
+	.icon.alert {
+		color: $error-color;
+	}
+}
+
+svg.icon {
+	width: 1.125em;
+	height: 1.125em;
+	display: inline-block;
+	fill: currentColor;
+	vertical-align: middle;
+	
+	&.small {
+		width: 0.75em;
+		height: 0.75em;
+	}
+	
+	&.inline {
+		margin-top: -0.25em;
+	}
+}
+
+.control {
+	@extend %control;
+}
+
+.button {
+	@extend %control;
+	
+	display: inline-block;
+	cursor: pointer;
+	transition: background $transition-t ease-out;
+	box-shadow: 0 2px 1px $light-shadow;
+	//transition: opacity $transition-t;
+	line-height: normal;
+	
+	&.default {
+		font-weight: bold;
+		background: $theme-color;
+		color: $black;
+		
+		&:hover {
+			background: $doc-white;
+		}
+	}
+	
+	&:hover, &.selected {
+		background: rgba($doc-white, 0.75);
+		
+		> svg.icon.dropdown {
+			margin-top: 0.5em;
+		}
+	}
+
+	&.disabled {
+		opacity: $disabled-opacity;
+		cursor: default;
+		pointer-events: none;
+	}
+	
+	> svg.icon {
+		margin-right: 0.25em;
+		margin-top: -0.125em;
+		
+		&.dropdown {
+			transition: margin-top $transition-t;
+			margin-top: 0.125em;
+			width: 0.375em;
+			height: 0.375em;
+		}
+	}
+}
+
+.segcontrol {
+	@extend .controlbar;
+	 > * {
+		@extend .button;
+		margin-left: 1px;
+		border-radius: 0;
+		display: inline-block;
+		
+		 &:first-child {
+			border-radius: $control-radius 0 0 $control-radius;
+		}
+		
+		&:last-child {
+			border-radius: 0 $control-radius $control-radius 0;
+		}
+	}
+}
+
+
+.tooltip {
+	display: flex;
+	flex-flow: column;
+	align-items: center;
+	z-index: 100;
+	
+	position: absolute;
+	transform: translate(-50%, 0%);
+	
+	transition-property: opacity, margin-top;
+	transition-duration: $transition-t;
+	
+	> .content {
+		background: $tooltip-bg;
+		color: $doc-white;
+		padding: $pad;
+		border-radius: $control-radius;
+		max-width: 15rem;
+		box-shadow: 0px 3px 4px $dark-shadow;
+		overflow-wrap: break-word;
+		
+		code {
+			font-weight: bold;
+		}
+	}
+	
+	header {
+		display: flex;
+		h1 {
+			flex: 1;
+		}
+		
+		.help.icon {
+			@extend %link;
+			margin-left: 1em;
+			color: $mid;
+		}
+	}
+	
+	> .tip {
+		fill: $tooltip-bg;
+		width: 8px;
+		height: 8px;
+		transform: scale(1, -1);
+	}
+	
+	&.flipped {
+		transform: translate(-50%, -100%);
+		.tip {
+			transform: scale(1, 1);
+			order: 1;
+		}
+	}
+}
+
+.example {
+	svg.icon.load {
+		@extend %link;
+		color: $dark;
+		float: right;
+		display: inline-block;
+	}
+	
+	code i {
+		@extend %ellipsis;
+	}
+}

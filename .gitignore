@@ -31,3 +31,4 @@ regexr.css
 *.map
 scripts.min.js
 yarn.lock
+TMP_*
