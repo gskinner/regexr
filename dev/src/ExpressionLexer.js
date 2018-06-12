@@ -38,6 +38,7 @@ export default class ExpressionLexer {
 		this.errors = [];
 		let capgroups = this.captureGroups = [];
 		let namedgroups = this.namedGroups = {};
+		let brgroups = this.branchResetGroups = [];
 		let groups = [], refs = [], i = 0, l = str.length;
 		let o, c, token, charset = null;
 		// previous is the previous token, prv is the previous "active" token (!ignore)
@@ -63,22 +64,15 @@ export default class ExpressionLexer {
 					token.depth = groups.length;
 					groups.push(token);
 				}
-				if (token.capture) {
-					capgroups.push(token);
-					token.num = capgroups.length;
-					if (token.name && !token.err) {
-						if (/\d/.test(token.name[0])) { token.err = "badname"; }
-						else if (namedgroups[token.name]) {
-							token.err = "dupname";
-							token.related = [namedgroups[token.name]];
-						} else { namedgroups[token.name] = token; }
-					}
-				}
+				if (token.capture) { this.addCaptureGroup(token, groups); }
 			} else if (c === ")" && !charset) {
 				token.type = "groupclose";
 				if (groups.length) {
 					o = token.open = groups.pop();
 					o.close = token;
+					if (o.type === "branchreset") {
+						brgroups.pop();
+					}
 				} else {
 					token.err = "groupclose";
 				}
@@ -151,6 +145,9 @@ export default class ExpressionLexer {
 				token.related = [curGroup];
 				token.type = "conditionalelse";
 				token.clss = "special";
+			} else if (curGroup && curGroup.type === "branchreset") {
+				// reset group
+				curGroup.curGroupNum = curGroup.inGroupNum;
 			}
 
 			// range:
@@ -180,6 +177,27 @@ export default class ExpressionLexer {
 		}
 	
 		return this.token;
+	}
+
+	addCaptureGroup(token, groups) {
+		// it would be nice to make branch reset groups actually highlight all of the groups that share the same number
+		// that would require switching to arrays of groups for each group num - requires rearchitecture throughout the app.
+		let capgroups = this.captureGroups, brgroups = this.branchResetGroups, namedgroups = this.namedGroups;
+		let curGroup = groups.length ? groups[groups.length-1] : null;
+		if (brgroups.length) {
+			let brgroup = brgroups[brgroups.length-1];
+			token.num = ++brgroup.curGroupNum;
+		} else {
+			token.num = capgroups.length+1;
+		}
+		if (!capgroups[token.num-1]) { capgroups.push(token); }
+		if (token.name && !token.err) {
+			if (/\d/.test(token.name[0])) { token.err = "badname"; }
+			else if (namedgroups[token.name]) {
+				token.err = "dupname";
+				token.related = [namedgroups[token.name]];
+			} else { namedgroups[token.name] = token; }
+		}
 	}
 	
 	getRef(token, str) {
@@ -360,7 +378,8 @@ export default class ExpressionLexer {
 			token.type = "branchreset";
 			token.close = null;
 			token.l = 3;
-			token.err = "branchreseterr";
+			token.inGroupNum = token.curGroupNum = this.captureGroups.length;
+			this.branchResetGroups.push(token);
 		} else if (s === "#" && (match = sub.match(/[^)]*\)/))) {
 			// (?#foo)
 			token.clss = token.type = "comment";
