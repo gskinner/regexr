@@ -81,6 +81,10 @@ export default class Reference {
 	}
 
 	getInsensitive(token) {
+		if (token.code) {
+			let chr = String.fromCharCode(token.code);
+			if (chr.toLowerCase() === chr.toUpperCase()) { return ""; }
+		}
 		return token.modes ? `Case ${token.modes.i ? "in" : ""}sensitive.` : "";
 	}
 
