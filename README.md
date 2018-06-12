@@ -28,4 +28,4 @@ Please make sure they are well formatted and follow the style specified out in t
 This version of RegExr is licensed under GPL v3. If you're interested in using the source under other terms, feel free to [get in touch](https://gskinner.com).
 
 # Build
-RegExr uses Gulp to manage the build process. You will need to install Node and Gulp, and install other dependencies via `npm install`.
+RegExr uses Gulp to manage the build process. You will need to install Node and Gulp, and install other dependencies via `npm install`. Running `gulp` (default) will run dev builds and set up a test server.

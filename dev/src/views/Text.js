@@ -107,12 +107,12 @@ export default class Text extends EventDispatcher {
 			el.innerText = "ERROR";
 			$.addClass(el, "error");
 		} else if (l) {
-			el.innerHTML = l + " match" + (l>1?"es":"") + (this._emptyCount?"*":"")
-				+ (result.time != null ? "<em> ("+parseFloat(result.time).toFixed(1)+"ms)</em>" : "");
+			el.innerHTML = l + " match" + (l>1?"es":"") + (this._emptyCount?"*":"");
 			$.addClass(el, "matches");
 		} else {
 			el.innerText = "No match";
 		}
+		if (result.time != null) {  el.innerHTML += "<em> ("+parseFloat(result.time).toFixed(1)+"ms)</em>"; }
 		this._updateSelected();
 	}
 	

@@ -75,7 +75,7 @@ export default class BrowserSolver {
 	
 	_onRegExComplete(error, matches) {
 		let result = {
-			time: Utils.now()-this._startTime,
+			time: error ? null : Utils.now()-this._startTime,
 			error,
 			matches
 		};
