@@ -229,8 +229,19 @@ export default class Sidebar {
 	
 	_prepCheatsheet() {
 		let els = $.queryAll("#cheatsheet *[data-id]");
+		let f = (evt)=>this.goto(evt.target.dataset.id);
 		for (let i=0, l=els.length; i<l; i++) {
-			els[i].addEventListener("click", (evt)=>this.goto(evt.target.dataset.id));
+			els[i].addEventListener("click", f);
+		}
+		els = $.queryAll("#cheatsheet tr td:first-child");
+		f = (evt)=>app.expression.insert(evt.target.innerText);
+		for (let i=0, l=els.length; i<l; i++) {
+			let el = els[i], tokens = el.innerText.split(" ");
+			$.empty(el);
+			for (let j=0; j<tokens.length; j++) {
+				let span = $.create("a", null, tokens[j], el);
+				span.addEventListener("click", f);
+			}
 		}
 	}
 	
