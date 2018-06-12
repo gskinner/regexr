@@ -24,28 +24,43 @@ export default class TextHover {
 	constructor (editor, highlighter) {
 		this.editor = editor;
 		this.highlighter = highlighter;
-		this.matches = null;
+		this._matches = this._x = null;
 		
 		let o = editor.display.lineDiv;
 		o.addEventListener("mousemove", (evt)=> this._handleMouseMove(evt));
 		o.addEventListener("mouseout", (evt)=> this._handleMouseOut(evt));
 	}
 
+	set matches(val) {
+		this._matches = val;
+		this._update();
+	}
 
 // private methods:
 	_handleMouseMove(evt) {
-		let index, cm = this.editor, match, matches = this.matches;
-		
-		if (matches && matches.length && (index = CMUtils.getCharIndexAt(cm, evt.clientX, evt.clientY + window.pageYOffset)) != null) {
-			match = this.highlighter.hoverMatch = app.text.getMatchAt(index);
-		}
-		let rect = (index != null) && CMUtils.getCharRect(cm, index);
-		if (rect) { rect.right = rect.left = evt.clientX; }
-		app.tooltip.hover.show("TextHover", app.reference.tipForMatch(match, cm.getValue()), evt.clientX, rect.bottom, true, 0);
+		this._x = evt.clientX;
+		this._y = evt.clientY + window.pageYOffset;
+		this._update();
 	}
 	
 	_handleMouseOut(evt) {
-		this.highlighter.hoverMatch = null;
-		app.tooltip.hover.hide("TextHover");
+		this._x = null;
+		this._update();
+	}
+
+	_update() {
+		if (this._x === null) {
+			this.highlighter.hoverMatch = null;
+			app.tooltip.hover.hide("TextHover");
+			return;
+		}
+		let index, cm = this.editor, match, matches = this._matches, x = this._x, y = this._y;
+		
+		if (matches && matches.length && (index = CMUtils.getCharIndexAt(cm, x, y)) != null) {
+			match = this.highlighter.hoverMatch = app.text.getMatchAt(index);
+		}
+		let rect = (index != null) && CMUtils.getCharRect(cm, index);
+		if (rect) { rect.right = rect.left = x; }
+		app.tooltip.hover.show("TextHover", app.reference.tipForMatch(match, cm.getValue()), x, rect.bottom, true, 0);
 	}
 }
