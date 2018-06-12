@@ -15,6 +15,7 @@
 .idea/
 *.sublime-project
 *.sublime-workspace
+*.vscode
 
 #-----------------------------
 # BUILD/DEBUGGING
