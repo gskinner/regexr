@@ -281,7 +281,6 @@
 			background: $black;
 			color: $white;
 			border-top: 3px solid $theme-color;
-			//animation: 5.5s linear infinite alternate hellopulse;
 
 			a {
 				font-weight: bold;
@@ -294,13 +293,6 @@
 			}
 		}
 	}
-}
-
-@keyframes hellopulse {
-	from { border-top: 3px solid $theme-color; }
-	80%  { border-top: 3px solid $theme-color; }
-	90%  { border-top: 3px solid $white; }
-	to   { border-top: 3px solid $theme-color; }
 }
 
 #cheatsheet {
