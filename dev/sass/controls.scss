@@ -206,8 +206,12 @@ svg.icon {
 		float: right;
 		display: inline-block;
 	}
-	
-	code i {
-		@extend %ellipsis;
+	code {
+		display: inline-block;
+		word-break: break-all;
+
+		i {
+			@extend %ellipsis;
+		}
 	}
 }
