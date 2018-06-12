@@ -209,6 +209,7 @@ svg.icon {
 	code {
 		display: inline-block;
 		word-break: break-all;
+		width: 100%;
 
 		i {
 			@extend %ellipsis;
