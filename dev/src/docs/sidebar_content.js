@@ -156,7 +156,7 @@ home.kids = [
 	label: "Community",
 	id: "community",
 	desc: "Welcome to the Community, a searchable database of patterns submitted by users like you."+
-		"<p>After selecting a pattern, use the arrows in this section to load the full pattern or components of it.</p>"+
+		"<p>After selecting a pattern, load the full pattern by clicking its URL, or use the right arrow icon to load just the pattern or text.</p>"+
 		"<p>Help make the Community better by rating patterns, and submitting your own via <b>Search & Share</b> in the menu.</p>",
 	search: true,
 	kids: []
@@ -165,7 +165,8 @@ home.kids = [
 	{
 	label: "My Patterns",
 	id:"favorites",
-	desc: "The list above will display any patterns that you create or favorite.",
+	desc: "The list above will display any patterns that you create or favorite."+
+		"<p>To edit a pattern you created, click its URL to load it, then open Save / Share to edit and save.</p>",
 	search: true,
 	kids: []
 	},
