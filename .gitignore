@@ -33,3 +33,5 @@ scripts.min.js
 yarn.lock
 TMP_*
 /deploy
+/server
+/index.php
