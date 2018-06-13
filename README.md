@@ -1,6 +1,6 @@
 
 
-RegExr v3.0
+RegExr
 ======
 
 # About
@@ -17,7 +17,7 @@ RegExr v3.0
 * Search for & rate Community patterns.
 
 # Issues & Feature Requests
-Please report issues & feature requests on [GitHub](https://github.com/gskinner/regexr/issues).
+Please report issues & feature requests on [GitHub](https://github.com/gskinner/regexr/issues). Please do not post questions about regular expressions (use Stack Overflow instead).
 
 # Contributing
 If you would like to contribute back to RegExr.com please send us pull requests.
