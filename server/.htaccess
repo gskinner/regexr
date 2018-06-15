@@ -1,0 +1,2 @@
+# Switch to PHP 7.x
+AddHandler phplatest-script .php

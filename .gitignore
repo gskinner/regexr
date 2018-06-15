@@ -27,12 +27,13 @@ build/
 #-----------------------------
 # PROJECT SPECIFIC
 #-----------------------------
-_db.php
 regexr.css
 *.map
 scripts.min.js
 yarn.lock
 TMP_*
 /deploy
-/server
-/index.php
+server/cache/
+server/Config.php
+server/**/.php_cs.cache
+server/vendor/

@@ -54,7 +54,7 @@ gulp.task("build-js", function() {
 			sourceMap: true,
 			moduleContext: {"dev/lib/codemirror.js":"window"},
 			plugins: [babel({
-				presets: [["es2015",{"modules": false}]], 
+				presets: [["es2015",{"modules": false}]],
 				plugins: ["external-helpers"],
 				include: "./dev/src/**",
 				babelrc: false
@@ -75,7 +75,7 @@ gulp.task("build-js-prod", function() {
 			entry: "dev/src/app.js",
 			moduleContext: {"dev/lib/codemirror.js":"window"},
 			plugins: [babel({
-				presets: [["es2015",{"modules": false}]], 
+				presets: [["es2015",{"modules": false}]],
 				plugins: ["external-helpers"],
 				include: "./dev/src/**",
 				babelrc: false
@@ -152,6 +152,7 @@ gulp.task("copy-build", function() {
 		'deploy/**', 'assets/**', 'index.*', 'server/**',
 		'!deploy/*.map',
 		'!server/**/composer.*',
+		'!server/**/*.sql',
 		'!server/**/*.md',
 		'!server/gulpfile.js',
 		'!server/Config*.php',
@@ -165,7 +166,7 @@ gulp.task("copy-build", function() {
 
 function createFileHash(filename) {
 	const hash = crypto.createHash('sha256');
-	
+
 	const fileContents = fs.readFileSync(filename, 'utf-8');
 	hash.update(fileContents);
 	return hash.digest('hex').slice(0, 9);

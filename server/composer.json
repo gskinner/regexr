@@ -1,0 +1,8 @@
+{
+  "require": {
+		"respect/validation": "1.1.12",
+		"hybridauth/hybridauth": "v3.0.0-beta.1"
+  },
+  "require-dev": {
+  }
+}
