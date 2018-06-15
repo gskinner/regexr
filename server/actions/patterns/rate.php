@@ -63,10 +63,11 @@ class rate extends \core\AbstractAction {
             }
         }
 
-        // Tag that the user rated this pattern.
-        $this->db->query("INSERT INTO userRatings (userId, patternId, rating)
-                            VALUES ('$userProfile->userId', '$patternId', '$rating')
-                            ON DUPLICATE KEY UPDATE `rating` = '$rating', `lastUpdated`=NOW()
+				// Tag that the user rated this pattern.
+				$ip = $this->db->sanitize(getClientIpAddr());
+        $this->db->query("INSERT INTO userRatings (userId, patternId, rating, ip)
+                            VALUES ('$userProfile->userId', '$patternId', '$rating', '$ip')
+                            ON DUPLICATE KEY UPDATE `rating`='$rating', `lastUpdated`=NOW(), `ip`='$ip'
                         ");
 
         if (!is_null($voteQuery)) {

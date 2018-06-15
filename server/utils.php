@@ -204,3 +204,8 @@ function savePattern($db, $name, $content, $pattern, $author, $description, $key
 
     return $db->getLastId();
 }
+
+function getClientIpAddr() {
+	$ip = $_SERVER['REMOTE_ADDR']?:($_SERVER['HTTP_X_FORWARDED_FOR']?:$_SERVER['HTTP_CLIENT_IP']);
+	return $ip;
+}
