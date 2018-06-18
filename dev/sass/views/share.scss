@@ -50,6 +50,10 @@
 		display: none;
 	}
 
+	.delete.row:hover {
+		background: rgba($error-color, 0.6);
+	}
+
 	> .save {
 		background: $darker;
 		margin: $pad;

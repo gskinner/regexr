@@ -96,6 +96,9 @@ export default class Share extends EventDispatcher {
 		this._favoritesStatus = new Status($.query(".status", this._favoritesRow));
 		this._communityRow = $.query(".row.community", this.mainEl);
 		this._communityRow.addEventListener("click", ()=> this._showCommunity());
+		this._deleteRow = $.query(".row.delete", this.mainEl);
+		this._deleteRow.addEventListener("click", ()=> this._doDelete());
+		this._deleteStatus = new Status($.query(".status", this._deleteRow));
 		$.query(".row.signin a", this.mainEl).addEventListener("click", ()=> this._doSignin());
 
 		// set up link row:
@@ -158,6 +161,7 @@ export default class Share extends EventDispatcher {
 		$.toggleClass(this._privateRow, "disabled", isNew || !isOwned);
 		$.toggleClass(this._favoritesRow, "disabled", isNew || !isOwned);
 		$.toggleClass(this._communityRow, "disabled", isNew || !isOwned);
+		$.toggleClass(this._deleteRow, "disabled", isNew || !isOwned);
 
 		$.toggleClass(this._privateRow, "active", o.access === "private");
 		$.toggleClass(this._favoritesRow, "active", !!o.favorite);
@@ -275,12 +279,28 @@ export default class Share extends EventDispatcher {
 			.then((data) => this._handleFavorite(data))
 			.catch((err) => this._handleErr(err, this._favoritesStatus));
 	}
-
+	
 	_handleFavorite(data) {
 		if (data.id === this._pattern.id) {
 			this._pattern.favorite = data.favorite;
 			this._favoritesStatus.hide();
 			this._updateUI();
+		}
+	}
+
+	_doDelete() {
+		let o = this._pattern;
+		if (!confirm("Are you sure you want to permanently delete this pattern?")) { return; }
+		this._deleteStatus.distract();
+		Server.delete(o.id)
+			.then((data) => this._handleDelete(data))
+			.catch((err) => this._handleErr(err, this._deleteStatus));
+	}
+
+	_handleDelete(data) {
+		this._deleteStatus.hide();
+		app.state = {
+			flavor: app.flavor.value
 		}
 	}
 
