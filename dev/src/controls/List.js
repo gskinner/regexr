@@ -50,6 +50,7 @@ export default class List extends EventDispatcher {
 			item.dataset.id = id;
 			item.item = o;
 			item.addEventListener("click", f);
+			item.addEventListener("dblclick", f);
 		}
 	}
 
@@ -87,9 +88,12 @@ export default class List extends EventDispatcher {
 
 	handleClick(evt) {
 		let id = evt.currentTarget.dataset.id, old = this.selected;
-		if (this.multi) {
+		if (evt.type === "dblclick") {
+			if (id != null) { this.dispatchEvent("dblclick"); }
+			return;
+		} else if (this.multi) {
 			$.toggleClass(evt.currentTarget, "selected");
-		} else if (this.selected === id) {
+		} else if (old === id) {
 			if (id != null) { this.dispatchEvent("selclick"); }
 			return;
 		} else {

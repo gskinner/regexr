@@ -146,7 +146,7 @@ export default class Sidebar {
 		this.listEl = $.query("> .list", this.fullEl);
 		this.menuList = new List(this.listEl, {data:content.kids, template:this.menuListTemplate});
 		this.menuList.on("change", ()=> this.show(this.menuList.selectedItem));
-		this.menuList.on("selclick", ()=> this._onSelClick(this.menuList.selectedItem));
+		this.menuList.on("dblclick", ()=> this._onDblClick(this.menuList.selectedItem));
 		this.contentEl = $.query("> .content", this.fullEl);
 		
 		// set up minimized sidebar:
@@ -202,7 +202,7 @@ export default class Sidebar {
 		return false;
 	}
 	
-	_onSelClick(o) {
+	_onDblClick(o) {
 		if (o.token) {
 			let expr = app.expression;
 			if (o.parent.id === "flags") { expr.toggleFlag(o.token); }
