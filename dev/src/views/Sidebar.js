@@ -207,6 +207,8 @@ export default class Sidebar {
 			let expr = app.expression;
 			if (o.parent.id === "flags") { expr.toggleFlag(o.token); }
 			else { expr.insert(o.token); }
+		} else if (this.curItem.id === "community" || this.curItem.id === "favorites") {
+			app.load(o);
 		}
 	}
 	
