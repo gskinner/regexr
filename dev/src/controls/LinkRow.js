@@ -37,7 +37,7 @@ export default class LinkRow {
 
 	showMessage(message) {
 		// for some reason this displays one line too low if it's synchronous:
-		setTimeout(()=>app.tooltip.toggle.showOn("linkrow", message, $.query(".row.link .copy.icon"), true, 0), 1);
+		setTimeout(()=>app.tooltip.toggle.showOn("linkrow", message, $.query(".copy.icon", this.el), true, 0), 1);
 	}
 
 	_initUI() {
