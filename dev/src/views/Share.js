@@ -302,6 +302,7 @@ export default class Share extends EventDispatcher {
 		app.state = {
 			flavor: app.flavor.value
 		}
+		setTimeout(()=>app.tooltip.toggle.showOn("delete", "Pattern was permanently deleted.", this._deleteRow, true, 0), 1);
 	}
 
 	_handleErr(err, status) {
