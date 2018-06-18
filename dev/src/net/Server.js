@@ -86,8 +86,7 @@ export default class Server {
 		return Server._getRequest("account/patterns", {}, (data) => {
 			this._processPatternList(data);
 			data.results.sort((a, b) => {
-				if (a.favorite !== b.favorite) { return b.favorite - a.favorite; }
-				return b.dateAdded - a.dateAdded;
+				return (b.favorite - a.favorite) || (b.dateAdded - a.dateAdded) || 1-2*(a.id > b.id);
 			})
 		});
 	}
