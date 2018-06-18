@@ -117,6 +117,12 @@ export default class RegExr extends EventDispatcher {
 	resetUnsaved() {
 		this._savedHash = this.hash;
 	}
+
+	load(state, warn=true) {
+		if (warn === true) { warn = "You have unsaved changes. Continue without saving?"; }
+		if (warn && this.unsaved && !confirm(warn)) { return; }
+		this.state = Utils.clone(state);
+	}
 	
 // private methods:
 	_initUI() {

@@ -54,8 +54,7 @@ export default class LinkRow {
 		if (evt.which === 2 || evt.metaKey || evt.ctrlKey) {
 			window.open(Utils.getPatternURL(this._pattern));
 		} else {
-			if (app.unsaved && !confirm("You have unsaved changes. Load pattern without saving?")) { return; }
-			app.state = Utils.clone(this._pattern);
+			app.load(this._pattern);
 		}
 	}
 };

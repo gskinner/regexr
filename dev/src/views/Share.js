@@ -238,8 +238,6 @@ export default class Share extends EventDispatcher {
 				this.nameFld.focus();
 				this.nameFld.select();
 			}
-			
-			
 			this._linkRow.showMessage("<b>Saved.</b> New share link created. Click to copy to clipboard.");
 		}
 	}
@@ -250,10 +248,7 @@ export default class Share extends EventDispatcher {
 	}
 	
 	_doNew() {
-		if (app.unsaved && !confirm("You have unsaved changes. Create new pattern without saving?")) { return; }
-		app.state = {
-			flavor: app.flavor.value
-		}
+		app.load({flavor: app.flavor.value});
 	}
 
 	_doPrivate() {
