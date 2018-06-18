@@ -27,7 +27,7 @@ o.label = "Reference";
 o.id = "reference";
 o.search = true,
 o.desc = `Information on all of the tokens available to create regular expressions.
-	<p>Click a selected item again to insert it into your Expression.</p>
+	<p>Double-click an item in the list to insert it into your Expression.</p>
 	<p>Click the arrow beside an example to load it.</p>`;
 
 o.kids = [

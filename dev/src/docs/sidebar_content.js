@@ -92,7 +92,7 @@ home.kids = [
 			{
 			label:"Menu",
 			desc:"The <b>Menu</b> (this panel) includes <b>Help</b>, a full regular expression <b>Reference</b>, a <b>Cheatsheet</b>, and <b>Save &amp; Share</b> features."+
-				"<p>Tap a selected item in the <b>Reference</b> to insert it into your <b>Expression</b>. Click the arrow beside an example to load it.</p>"+
+				"<p>Double-click a selected item in the <b>Reference</b> to insert it into your <b>Expression</b>. Click the arrow beside an example to load it.</p>"+
 				"<p>The library also includes searchable <b>Community</b> submissions, and patterns you've created or favorited in <b>My Patterns</b>.</p>"
 			}
 		]
@@ -156,7 +156,7 @@ home.kids = [
 	label: "Community",
 	id: "community",
 	desc: "Welcome to the Community, a searchable database of patterns submitted by users like you."+
-		"<p>After selecting a pattern, load the full pattern by clicking its URL, or use the right arrow icon to load just the pattern or text.</p>"+
+		"<p>After selecting a pattern, click its URL or double-click it in the list to load the full pattern. Or use the right arrow icon to load just the expression or text.</p>"+
 		"<p>Help make the Community better by rating patterns, and submitting your own via <b>Search & Share</b> in the menu.</p>",
 	search: true,
 	kids: []
@@ -166,7 +166,7 @@ home.kids = [
 	label: "My Patterns",
 	id:"favorites",
 	desc: "The list above will display any patterns that you create or favorite."+
-		"<p>To edit a pattern you created, click its URL to load it, then open Save / Share to edit and save.</p>",
+		"<p>To edit a pattern you created, click its URL or double-click it in the list to load it, then open Save / Share to edit and save.</p>",
 	search: true,
 	kids: []
 	},
