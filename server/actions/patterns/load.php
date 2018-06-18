@@ -60,7 +60,7 @@ class load extends \core\AbstractAction {
             $this->trackVisit($patternId);
 
             if (intval($result->visits) > 10) {
-                \core\Cache::SaveItem($patternCacheKey, $json, true);
+                // \core\Cache::SaveItem($patternCacheKey, $json, true);
             }
         } else {
             throw new \core\APIError(\core\ErrorCodes::API_PATTERN_NOT_FOUND);
