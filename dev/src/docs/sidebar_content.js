@@ -93,7 +93,7 @@ home.kids = [
 			label:"Menu",
 			desc:"The <b>Menu</b> (this panel) includes <b>Help</b>, a full regular expression <b>Reference</b>, a <b>Cheatsheet</b>, and <b>Save &amp; Share</b> features."+
 				"<p>Double-click a selected item in the <b>Reference</b> to insert it into your <b>Expression</b>. Click the arrow beside an example to load it.</p>"+
-				"<p>The library also includes searchable <b>Community</b> submissions, and patterns you've created or favorited in <b>My Patterns</b>.</p>"
+				"<p>The menu also includes searchable <b>Community</b> submissions, and patterns you've created or favorited in <b>My Patterns</b>.</p>"
 			}
 		]
 		},
