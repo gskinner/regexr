@@ -55,13 +55,11 @@
 	}
 
 	> .save {
-		background: $darker;
-		margin: $pad;
 		padding: $pad;
 		color: $white;
-		border-radius: 3px;
-		box-shadow: 0 2px 4px $dark-shadow;
-
+		background: $darker;
+		margin-bottom: $pad * 0.5;
+		
 		> .row {
 			padding: 0 0 $pad/2 0;
 			border: 0;
