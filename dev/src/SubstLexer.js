@@ -63,9 +63,9 @@ export default class SubstLexer {
 				this.token = token;
 			}
 			
-			if (token.err) {
+			if (token.error) {
 				// SubstLexer currently doesn't generate any errors.
-				this.errors.push(token.err);
+				this.errors.push(token.error);
 			}
 			prev = token;
 		}

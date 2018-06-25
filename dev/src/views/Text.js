@@ -102,10 +102,11 @@ export default class Text extends EventDispatcher {
 	
 	_updateResult() {
 		let result = this._result, matches=result&&result.matches, l=matches&&matches.length, el = this.resultEl;
-		$.removeClass(el, "error matches");
+		$.removeClass(el, "error warning matches");
 		if (result && result.error) {
-			el.innerText = "ERROR";
+			el.innerText = result.error.warning ? "WARNING" : "ERROR";
 			$.addClass(el, "error");
+			if (result.error.warning) { $.addClass(el, "warning"); }
 		} else if (l) {
 			el.innerHTML = l + " match" + (l>1?"es":"") + (this._emptyCount?"*":"");
 			$.addClass(el, "matches");
@@ -145,13 +146,16 @@ export default class Text extends EventDispatcher {
 	}
 	
 	_mouseResult(evt) {
-		let tt = app.tooltip.hover, res=this._result, err = res&&res.error, str;
+		let tt = app.tooltip.hover, res=this._result, err = res&&res.error, str="";
 		if (evt.type === "mouseleave") { return tt.hide("result"); }
-		if (err) {
-			str = "<span class='error'>EXEC ERROR:</span> "+this._errorText(err);
+		if (err && !err.warning) {
+			str = "<span class='error'>EXEC ERROR:</span> " + this._errorText(err);
 		} else {
+			if (err && err.warning) {
+				str = "<span class='error warning'>WARNING:</span> "+ this._errorText(err) + "<hr>";
+			}
 			let l = res&&res.matches&&res.matches.length;
-			str = (l||"No")+" match"+(l>1?"es":"")+" found in "+this.value.length+" characters";
+			str += (l||"No")+" match"+(l>1?"es":"")+" found in "+this.value.length+" characters";
 			str += this._emptyCount  ? ", including "+this._emptyCount+" empty matches (* not displayed)." : ".";
 			let cm = this.editor, sel = cm.listSelections()[0], pos = sel.head;
 			let i0 = cm.indexFromPos(pos), i1=cm.indexFromPos(sel.anchor), range=Math.abs(i0-i1);
@@ -167,7 +171,7 @@ export default class Text extends EventDispatcher {
 	}
 	
 	_errorText(err) {
-		return err.message || app.reference.getError(err.id);
+		return err.message || app.reference.getError(err);
 	}
 	
 	_handleResize(el) {

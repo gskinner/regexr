@@ -55,8 +55,8 @@ export default class ExpressionHighlighter extends EventDispatcher {
 				token = this._calcTokenPos(doc, token);
 	
 				var className = pre + (token.clss || token.type);
-				if (token.err) { 
-					className += " " + pre + "error";
+				if (token.error) {
+					className += " " + pre + (token.error.warning ? "warning" : "error");
 				}
 	
 				if (className) {

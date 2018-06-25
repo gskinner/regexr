@@ -99,7 +99,11 @@
 }
 
 .exp-error {
-	border-bottom: solid 3px $error-color;
+	border-bottom: solid 2px $error-color;
+}
+
+.exp-warning {
+	border-bottom: dotted 2px $warning-color;
 }
 
 .exp-char {

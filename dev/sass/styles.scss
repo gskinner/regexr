@@ -120,6 +120,10 @@ span.match {
 span.error {
 	color: $error-color;
 	font-weight: bold;
+
+	&.warning {
+		color: $warning-color;
+	}
 }
 
 .anim-spin {

@@ -53,10 +53,11 @@ export default class Reference {
 	}
 	
 	idForToken(token) {
-		if (this._idMap[token.err]) { return token.err; }
+		let errId = token.error && token.error.id;
+		if (this._idMap[errId]) { return errId; }
 		if (this._idMap[token.type]) { return token.type; }
 		if (this._idMap[token.clss]) { return token.clss; }
-		return token.err || token.type || token.clss;
+		return errId || token.type || token.clss;
 	}
 	
 // methods used in fillTags:
@@ -139,7 +140,7 @@ export default class Reference {
 	
 	Currently only supports a single param.
 	 */
-	fillTags(str, data, functs, maxLength, htmlSafe=true) {
+	fillTags(str, data, functs, maxLength=20, htmlSafe=true) {
 		let match;
 		while (match = str.match(/{{~?[\w.()]+}}/)) {
 			let val, f, safe=false;
@@ -196,9 +197,11 @@ export default class Reference {
 		return node;
 	}
 	
-	getError(id, token) {
-		// doesn't fill tags.
-		return this._content.errors[id] || "no docs for error='" + id + "'";
+	getError(error, token) {
+		let errId = error && error.id;
+		let str = this._content.errors[errId] || "no docs for error='" + errId + "'";
+		if (token) { str = this.fillTags(str, token, this, 20); }
+		return str;
 	}
 	
 	tipForToken(token) {
@@ -206,17 +209,19 @@ export default class Reference {
 
 		let node = this.getNodeForToken(token), label, tip
 
-		if (token.err) {
-			label = "<span class='error'>ERROR: </span>";
-			tip = this.getError(token.err);
+		if (token.error) {
+			if (token.error.warning) { label = "<span class='error warning'>WARNING: </span>"; }
+			else { label = "<span class='error'>ERROR: </span>"; }
+			tip = this.getError(token.error, token);
 		} else {
 			label = node ? node.label || node.id || "" : token.type;
 			tip = this.getVal(node, "tip") || this.getVal(node, "desc");
+			tip = this.fillTags(tip, token, this, 20);
 			if (token.type === "group") { label += " #" + token.num; }
 			label = "<b>" + label[0].toUpperCase() + label.substr(1) + ".</b> ";
 		}
 		
-		return tip ? label + this.fillTags(tip, token, this, 20) :  "no docs for id='" + this.idForToken(token) + "'";
+		return tip ? label + tip :  "no docs for id='" + this.idForToken(token) + "'";
 	}
 	
 	getContent(id) {

@@ -98,8 +98,9 @@ export default class Explain {
 				el = el.parentNode;
 			}
 	
-			if (token.err) {
+			if (token.error) {
 				$.addClass(div, "error");
+				if (token.error.warning) { $.addClass(div, "warning"); }
 			}
 	
 			if (!token.open) {

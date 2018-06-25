@@ -775,8 +775,6 @@ o.errors = {
 	notsupported:"The \"{{~getLabel()}}\" feature is not supported in this flavor of RegEx.",
 	fwdslash:"Unescaped forward slash. This may cause issues if copying/pasting this expression into code.",
 	esccharbad:"Invalid escape sequence.",
-	infinite:"The expression can match 0 characters, and therefore matches infinitely.", // TODO: can we couple this to the help content somehow?
-	timeout:"The expression took longer than 250ms to execute.", // TODO: can we couple this to the help content somehow?
 	servercomm:"An error occurred while communicating with the server.",
 	extraelse:"Extra else in conditional group.",
 	unmatchedref:"Reference to non-existent group \"{{name}}\".",
@@ -784,7 +782,11 @@ o.errors = {
 	badname:"Group name can not start with a digit.",
 	dupname:"Duplicate group name.",
 	branchreseterr:"<b>Branch Reset.</b> Results will be ok, but RegExr's parser does not number branch reset groups correctly. Coming soon!",
-	jsfuture:"The \"{{~getLabel()}}\" feature may not be supported in all browsers."
+	timeout:"The expression took longer than 250ms to execute.", // TODO: can we couple this to the help content somehow?
+
+	// warnings:
+	jsfuture:"The \"{{~getLabel()}}\" feature may not be supported in all browsers.",
+	infinite:"The expression can return empty matches, and may match infinitely in some use cases.", // TODO: can we couple this to the help content somehow?
 };
 
 /*

@@ -44,7 +44,7 @@ export default class BrowserSolver {
 				if (evt.data === "onload") {
 					this._startTime = Utils.now();
 					this._timeoutId = setTimeout(()=> {
-						this._doCallback({id: "timeout"});
+						this._doCallback({id: "timeout"}); // TODO: make this a warning, and return all results so far.
 						worker.terminate();
 					}, 250);
 				} else {
@@ -61,7 +61,7 @@ export default class BrowserSolver {
 			// shared between BrowserSolver & RegExWorker
 			var matches = [], match, index, error;
 			while (match = regex.exec(text)) {
-				if (index === regex.lastIndex) { error = {id:"infinite"}; break; }
+				if (index === regex.lastIndex) { error = {id:"infinite", warning:true}; ++regex.lastIndex; }
 				index = regex.lastIndex;
 				var groups = match.reduce(function (arr, s, i) { return (i===0 || arr.push({s:s})) && arr },[]);
 				matches.push({i:match.index, l:match[0].length, groups:groups});

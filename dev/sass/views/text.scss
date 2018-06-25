@@ -9,6 +9,10 @@
 			&.error {
 				background: $error-color;
 				color: $doc-lightest;
+
+				&.warning {
+					background: $warning-color;
+				}
 			}
 			
 			em {

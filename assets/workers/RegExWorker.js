@@ -7,7 +7,7 @@ onmessage = function (evt) {
 	// shared between BrowserSolver & RegExWorker
 	var matches = [], match, index, error;
 	while (match = regex.exec(text)) {
-		if (index === regex.lastIndex) { error = {id:"infinite"}; break; }
+		if (index === regex.lastIndex) { error = {id:"infinite", warning:true}; ++regex.lastIndex; }
 		index = regex.lastIndex;
 		var groups = match.reduce(function (arr, s, i) { return (i===0 || arr.push({s:s})) && arr },[]);
 		matches.push({i:match.index, l:match[0].length, groups:groups});

@@ -39,6 +39,10 @@
 		background: mix($doc-white, $error-color, 85);
 		border-color: $error-color;
 
+		&.warning {
+			/* nothing yet */
+		}
+
 		.error-title {
 			font-weight: bold;
 		}

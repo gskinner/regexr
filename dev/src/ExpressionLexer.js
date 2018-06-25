@@ -74,7 +74,7 @@ export default class ExpressionLexer {
 						brgroups.pop();
 					}
 				} else {
-					token.err = "groupclose";
+					token.error = {id: "groupclose"};
 				}
 			} else if (c === "[") {
 				charset = this.parseSquareBracket(str, token, charset);
@@ -120,16 +120,10 @@ export default class ExpressionLexer {
 			// quantifier:
 			if (token.clss === "quant") {
 				if (!prv || prv.close !== undefined || unquantifiable[prv.type] || (prv.open && unquantifiable[prv.open.type])) {
-					token.err = "quanttarg";
+					token.error = {id: "quanttarg"};
 				} else {
 					token.related = [prv.open || prv];
 				}
-			}
-
-			// js warnings:
-			// TODO: this isn't ideal, but I'm hesitant to write a more robust solution for a couple of edge cases.
-			if (profile.id === "js" && (token.type === "neglookbehind" || token.type === "poslookbehind")) {
-				token.err = "jsfuture";
 			}
 
 			// reference:
@@ -141,7 +135,7 @@ export default class ExpressionLexer {
 			let curGroup = groups.length ? groups[groups.length-1] : null;
 			if (curGroup && (curGroup.type === "conditional" || curGroup.type === "conditionalgroup") && token.type === "alt") {
 				if (!curGroup.alt) { curGroup.alt = token; }
-				else { token.err = "extraelse"; }
+				else { token.error = {id: "extraelse"}; }
 				token.related = [curGroup];
 				token.type = "conditionalelse";
 				token.clss = "special";
@@ -154,13 +148,17 @@ export default class ExpressionLexer {
 			if (prv && prv.type === "range" && prv.l === 1) {
 				this.validateRange(str, token);
 			}
+			
+			// js warnings:
+			// TODO: this isn't ideal, but I'm hesitant to write a more robust solution for a couple of edge cases.
+			if (profile.id === "js") { this.addJSWarnings(token); }
 
 			// general:
 			if (token.open && !token.clss) {
 				token.clss = token.open.clss;
 			}
-			if (token.err) {
-				this.errors.push(token.err);
+			if (token.error) {
+				this.addError(token);
 			}
 			i += token.l;
 			prev = token;
@@ -169,14 +167,26 @@ export default class ExpressionLexer {
 	
 		// post processing:
 		while (groups.length) {
-			this.errors.push(groups.pop().err = "groupopen");
+			this.addError(groups.pop(), {id: "groupopen"});
 		}
 		this.matchRefs(refs, capgroups, namedgroups);
 		if (charset) {
-			this.errors.push(charset.err = "setopen");
+			this.addError(charset, {id: "setopen"});
 		}
 	
 		return this.token;
+	}
+
+	addError(token, error=token.error) {
+		token.error = error;
+		this.errors.push(token);
+	}
+
+	addJSWarnings(token) {
+		if ((token.type === "neglookbehind" || token.type === "poslookbehind") ||
+			(token.type === "sticky" || token.type === "unicode")) {
+				token.error = {id: "jsfuture", warning:true};
+		}
 	}
 
 	addCaptureGroup(token, groups) {
@@ -191,10 +201,10 @@ export default class ExpressionLexer {
 			token.num = capgroups.length+1;
 		}
 		if (!capgroups[token.num-1]) { capgroups.push(token); }
-		if (token.name && !token.err) {
-			if (/\d/.test(token.name[0])) { token.err = "badname"; }
+		if (token.name && !token.error) {
+			if (/\d/.test(token.name[0])) { token.error = {id: "badname"}; }
 			else if (namedgroups[token.name]) {
-				token.err = "dupname";
+				token.error = {id: "dupname"};
 				token.related = [namedgroups[token.name]];
 			} else { namedgroups[token.name] = token; }
 		}
@@ -224,7 +234,7 @@ export default class ExpressionLexer {
 				delete token.group;
 				delete token.relIndex;
 				this.refToOctal(token);
-				if (token.err) { this.errors.push(token.err); }
+				if (token.error) { this.errors.push(token.error); }
 			}
 		}
 	};
@@ -241,7 +251,7 @@ export default class ExpressionLexer {
 		let name = token.name, profile = this._profile;
 		if (token.type !== "numref") {
 			// not a simple \4 style reference, so can't decompose into an octal.
-			token.err = "unmatchedref";
+			token.error = {id: "unmatchedref"};
 		} else if (/^[0-7]{2}$/.test(name) || (profile.config.reftooctalalways && /^[0-7]$/.test(name))) { // octal
 			let next = token.next, char = String.fromCharCode(next.code);
 			if (next.type === "char" && char >= "0" && char <= "7" && parseInt(name+char, 8) <= 255) {
@@ -256,7 +266,7 @@ export default class ExpressionLexer {
 			this.parseEscChar(token, name);
 			delete token.name;
 		} else {
-			token.err = "unmatchedref";
+			token.error = {id: "unmatchedref"};
 		}
 	};
 	
@@ -279,14 +289,14 @@ export default class ExpressionLexer {
 		} else {
 			token.type = this._profile.flags[c];
 		}
-		token.clear = true;
+		//token.clear = true;
 	};
 	
 	parseChar(str, token, charset) {
 		let c = str[token.i];
 		token.type = (!charset && this._profile.charTypes[c]) || "char";
 		if (!charset && c === "/") {
-			token.err = "fwdslash";
+			token.error = {id: "fwdslash"};
 		}
 		if (token.type === "char") {
 			token.code = c.charCodeAt(0);
@@ -310,12 +320,12 @@ export default class ExpressionLexer {
 			token.clss = "charclass";
 			if (match[1] === ":") {
 				token.type = "posixcharclass";
-				if (!this._profile.posixCharClasses[match[2]]) { token.err = "posixcharclassbad"; }
-				else if (!charset) { token.err = "posixcharclassnoset"; }
+				if (!this._profile.posixCharClasses[match[2]]) { token.error = {id: "posixcharclassbad"}; }
+				else if (!charset) { token.error = {id: "posixcharclassnoset"}; }
 			} else {
 				token.type = "posixcollseq";
 				// TODO: can this be generalized? Right now, no, because we assign ids that aren't in the profile.
-				token.err = "notsupported";
+				token.error = {id: "notsupported"};
 			}
 		} else if (!charset) {
 			// set [a-z] [aeiou]
@@ -449,7 +459,7 @@ export default class ExpressionLexer {
 			token.capture = true;
 		}
 	
-		if (!this._profile.tokens[token.type]) { token.err = "notsupported"; }
+		if (!this._profile.tokens[token.type]) { token.error = {id: "notsupported"}; }
 	
 		return token;
 	};
@@ -459,7 +469,7 @@ export default class ExpressionLexer {
 		let i = token.i, match, profile = this._profile;
 		let sub = str.substr(i + 1), c = sub[0], val;
 		if (i + 1 === (closeIndex || str.length)) {
-			token.err = "esccharopen";
+			token.error = {id: "esccharopen"};
 			return;
 		}
 	
@@ -502,7 +512,7 @@ export default class ExpressionLexer {
 			token.l += match[0].length;
 			val = parseInt(match[1], 16);
 			// PCRE errors on more than 2 digits (>255). In theory it should allow 4?
-			if (isNaN(val) || val > 255 || /[^\da-f]/i.test(match[1])) { token.err = "esccharbad"; }
+			if (isNaN(val) || val > 255 || /[^\da-f]/i.test(match[1])) { token.error = {id: "esccharbad"}; }
 			else { token.code = val; }
 		} else if (match = sub.match(/^x([\da-fA-F]{0,2})/)) {
 			// hex ascii: \xFF
@@ -519,7 +529,7 @@ export default class ExpressionLexer {
 				token.l += 2;
 			} else if (profile.config.ctrlcodeerr) {
 				token.l++;
-				token.err = "esccharbad";
+				token.error = {id: "esccharbad"};
 			} else {
 				return this.parseChar(str, token, charset); // this builds the "/" token
 			}
@@ -537,7 +547,7 @@ export default class ExpressionLexer {
 			token.type = "escoctal";
 			token.l += match[0].length;
 			val = parseInt(match[1], 8);
-			if (isNaN(val) || val > 255 || /[^0-7]/.test(match[1])) { token.err = "esccharbad"; }
+			if (isNaN(val) || val > 255 || /[^0-7]/.test(match[1])) { token.error = {id: "esccharbad"}; }
 			else { token.code = val; }
 		} else {
 			// single char
@@ -572,7 +582,7 @@ export default class ExpressionLexer {
 			token.code = c.charCodeAt(0);
 			token.clss = "esc";
 		} else {
-			token.err = "esccharbad";
+			token.error = {id: "esccharbad"};
 		}
 	}
 	
@@ -616,7 +626,7 @@ export default class ExpressionLexer {
 			val = null;
 		}
 		if (not) { token.type = "not"+token.type; }
-		if (!val) { token.err = "unicodebad"; }
+		if (!val) { token.error = {id: "unicodebad"}; }
 		token.value = val;
 		token.clss = "charclass"
 		return token;
@@ -651,7 +661,7 @@ export default class ExpressionLexer {
 		token.l = match[0].length + 2;
 
 		if (bad) {
-			token.err = "modebad";
+			token.error = {id: "modebad"};
 			token.errmode = c;
 		} else {
 			this._modes = modes;
@@ -669,7 +679,7 @@ export default class ExpressionLexer {
 		token.min = parseInt(arr[0]);
 		token.max = (arr[1] === undefined) ? token.min : (arr[1] === "") ? -1 : parseInt(arr[1]);
 		if (token.max !== -1 && token.min > token.max) {
-			token.err = "quantrev";
+			token.error = {id: "quantrev"};
 		}
 		return token;
 	};
@@ -684,7 +694,7 @@ export default class ExpressionLexer {
 			token.clss = "set";
 			if (prv.code > next.code) {
 				// this gets added here because parse has already moved to the next token:
-				this.errors.push(token.err = "rangerev");
+				this.errors.push(token.error = {id: "rangerev"});
 			}
 			// preserve as separate tokens, but treat as one in the UI:
 			next.proxy = prv.proxy = token;

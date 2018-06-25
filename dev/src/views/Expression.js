@@ -239,8 +239,10 @@ export default class Expression extends EventDispatcher {
 		let tt = app.tooltip.hover, errs = this.lexer.errors;
 		if (evt.type === "mouseleave") { return tt.hide("error"); }
 		if (errs.length === 0) { return; }
-		let str = errs.length === 1 ? app.reference.getError(errs[0]) : "Errors in the Expression are underlined in <span class='exp-error'>red</span>. Roll over them for details.";
-		tt.showOn("error", "<span class='error'>PARSE ERROR:</span> "+str, this.errorEl);
+		let err = errs.length === 1 && errs[0].error;
+		let str = err ? app.reference.getError(err, errs[0]) : "Problems in the Expression are underlined in <span class='exp-error'>red</span>. Roll over them for details.";
+		let label = err && err.warning ? "WARNING" : "PARSE ERROR";
+		tt.showOn("error", "<span class='error'>"+label+":</span> "+str, this.errorEl);
 	}
 	
 }
