@@ -138,7 +138,7 @@ function createPatternNode($row) {
         'dateAdded' => strtotime(stripslashes(idx($row, 'dateAdded')))*1000,
         'flavor' => idx($row, 'flavor'),
         'expression' => stripslashes(idx($row, 'pattern')),
-        'text' => stripslashes(idx($row, 'content')),
+        'text' => idx($row, 'content'),
         'tool' => $tool,
         'rating' => idx($row, 'rating'),
         'userId' => intval(idx($row, 'owner')),
