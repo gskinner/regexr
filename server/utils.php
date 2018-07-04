@@ -112,7 +112,7 @@ function createPatternNode($row) {
     $tool = idx($row, 'state');
 
     // Replace a few hidden characters with there string counterparts. Otherwise JSON parsing will break.
-    $tool = preg_replace(["/\n/", "/\r/", "/\t/"], ["\\\\n", "\\\\r", "\\\\t"], $tool);
+    $tool = preg_replace(["/\n/", "/\r/", "/\t/"], ["\\\\\\n", "\\\\\\r", "\\\\\\t"], $tool);
     $tool = json_decode($tool);
 
     $replace = idx($row, 'replace');
