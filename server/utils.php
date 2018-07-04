@@ -109,14 +109,19 @@ function convertFromURL($id) {
 }
 
 function createPatternNode($row) {
-    // Migrate over old "replace" and "state" formats.
-    $tool = (array)json_decode(stripslashes(idx($row, 'state')));
+    $tool = idx($row, 'state');
+
+    // Replace a few hidden characters with there string counterparts. Otherwise JSON parsing will break.
+    $tool = preg_replace(["/\n/", "/\r/", "/\t/"], ["\\\\n", "\\\\r", "\\\\t"], $tool);
+    $tool = json_decode($tool);
+
     $replace = idx($row, 'replace');
 
     if (is_null($tool)) {
         $tool = [];
     }
 
+    // Migrate over old "replace" and "state" formats.
     if (!empty($tool) && array_key_exists('toolValue', $tool)) {
         $id =  $tool['tool'];
         $value = $tool['toolValue'];
