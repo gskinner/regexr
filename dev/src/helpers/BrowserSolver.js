@@ -82,7 +82,7 @@ export default class BrowserSolver {
 		
 		let tool = this._req.tool;
 		result.tool = { id: tool.id };
-		if (!error && tool.input != null) {
+		if (!error || error.warning && tool.input != null) {
 			let str = Utils.unescSubstStr(tool.input);
 			result.tool.result = (tool.id === "replace") ? this._getReplace(str) : this._getList(str);
 		}
@@ -94,6 +94,7 @@ export default class BrowserSolver {
 	}
 	
 	_getList(str) {
+		// TODO: should we move this into a worker?
 		let source = this._req.text, result = "", repl, ref, trimR = 0, regex;
 		
 		// build a RegExp without the global flag:
@@ -107,14 +108,14 @@ export default class BrowserSolver {
 			trimR = str.length;
 			str = "$&"+str;
 		}
-		while (true) {
-			ref = source.replace(regex, "\b");
-			let index = ref.indexOf("\b");
-			if (index === -1 || ref.length > source.length) { break; }
+		do {
+			ref = source.replace(regex, "\b"); // bell char - just a placeholder to find
+			let index = ref.indexOf("\b"), empty = (ref.length > source.length);
+			if (index === -1) { break; }
 			repl = source.replace(regex, str);
 			result += repl.substr(index, repl.length-ref.length+1);
-			source = ref.substr(index+1);
-		}
+			source = ref.substr(index+(empty?2:1));
+		} while (source.length);
 		if (trimR) { result = result.substr(0,result.length-trimR); }
 		return result;
 	}

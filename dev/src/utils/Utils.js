@@ -85,6 +85,7 @@ Utils.shorten = function (str, length, htmlSafe, tag="") {
 };
 
 Utils.unescSubstStr = function(str) {
+	if (!str) { return ""; }
 	return str.replace(Utils.SUBST_ESC_RE, (a, b, c)=> Utils.SUBST_ESC_CHARS[b] || String.fromCharCode(parseInt(c, 16)) );
 };
 
