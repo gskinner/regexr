@@ -44,7 +44,7 @@ export default class BrowserSolver {
 				if (evt.data === "onload") {
 					this._startTime = Utils.now();
 					this._timeoutId = setTimeout(()=> {
-						this._doCallback({id: "timeout"}); // TODO: make this a warning, and return all results so far.
+						this._onRegExComplete({id: "timeout"}); // TODO: make this a warning, and return all results so far.
 						worker.terminate();
 					}, 250);
 				} else {
