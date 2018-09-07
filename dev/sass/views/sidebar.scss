@@ -101,7 +101,7 @@
 				@extend %link;
 				color: $light;
 				
-				&:hover {
+				&:hover:not(.inactive) {
 					background: mix($dark, $darker, 50);
 					.token, .rating, .icon { color: currentColor; }
 				}
@@ -121,9 +121,15 @@
 
 				&.link:not(.disabled) {
 					overflow: hidden;
-					color: $theme-color;
+					.url {
+						color: $theme-color;
+						margin: 0;
+					}
 					&:hover {
 						color:$white;
+						.url {
+							color: $white;
+						}
 					}
 					.icon.copy {
 						padding: $pad; /* easier to click */

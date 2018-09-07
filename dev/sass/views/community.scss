@@ -1,15 +1,15 @@
 .community {
-		
-	svg.icon {
-		@extend %link;
-		color: $dark;
-
-		&.selected:not(:hover) {
-			color: $theme-color;
-		}
-	}
 	
 	> header {
+		.icon {
+			@extend %link;
+			color: $dark;
+	
+			&.selected:not(:hover) {
+				color: $theme-color;
+			}
+		}
+
 		background: $black;
 		padding: $pad;
 		margin: -$pad;
@@ -28,17 +28,27 @@
 		
 		> div {
 			display: flex;
-			
-			.rating {
-				margin: 0 0.25*$pad;
-			}
 
 			.favorites {
 				margin: 0 $pad;
 			}
 		}
-		
-		svg.icon.thumbdown {
+	}
+
+	.row.rate {
+		.icon.thumbdown, .icon.thumbup {
+			cursor: pointer;
+
+			&:hover, &.selected:hover {
+				color: $white;
+			}
+
+			&.selected {
+				color: $theme-color;
+			}
+		}
+
+		.icon.thumbdown {
 			transform: translate(0,0.125em) scale(1,-1);
 		}
 	}

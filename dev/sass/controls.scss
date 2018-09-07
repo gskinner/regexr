@@ -18,10 +18,10 @@
 input, textarea {
 	@extend %control;
 	
-	background: rgba($white, 0.1);
+	background: rgba($white, 0.07);
+	border: none;
 	font-family: $font-family;
 	font-size: 1rem;
-	border: none;
 	display: block;
 	width: 100%;
 	box-sizing: border-box;
@@ -205,7 +205,9 @@ svg.icon {
 		color: $dark;
 		float: right;
 		display: inline-block;
+		padding-left: $pad*0.5;
 	}
+	
 	code {
 		display: inline-block;
 		word-break: break-all;

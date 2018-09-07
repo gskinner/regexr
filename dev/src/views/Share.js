@@ -60,7 +60,10 @@ export default class Share extends EventDispatcher {
 	}
 
 	get name() { return this.nameFld.value; }
-	set name(val) { this.nameFld.value = val||""; }
+	set name(val) {
+		this.nameFld.value = val||"";
+		this.hNameFld.innerText = val||"Untitled Pattern";
+	}
 
 	get author() { return this.authorFld.value; }
 	set author(val) { this.authorFld.value = val||""; }
@@ -71,21 +74,28 @@ export default class Share extends EventDispatcher {
 	get keywords() { return this.keywordsFld.value; }
 	set keywords(val) { this.keywordsFld.value = val||""; }
 
+	show() {
+		app.sidebar.goto("share");
+	}
+
 // private methods:
 	_initUI() {
 		let el = this.el;
-		this.mainEl = $.query("> #share_main", el);
+		let mainEl = this.mainEl = $.query("> #share_main", el);
 		let comEl = this.communityEl = $.query("> #share_community", el);
 
 		// set up header:
-		let hEl = $.query(".header .file");
+		let hEl = $.query(".header");
 		this.hNewBtn = $.query(".new", hEl);
 		this.hForkBtn = $.query(".fork", hEl);
 		this.hSaveBtn = $.query(".save", hEl);
+		this.hNameFld = $.query(".name", hEl);
+		$.query(".settings", hEl).addEventListener("click", () => this.show());
 		$.query(".savekey", this.hSaveBtn).innerText = "("+Utils.getCtrlKey()+"-s)";
 		this.hSaveBtn.addEventListener("click", () => this._doSave());
-		this.hForkBtn.addEventListener("click", () => this._doSave(true));
 		this.hNewBtn.addEventListener("click", () => this._doNew());
+
+		this._defaultName = this.hNameFld.innerText;
 
 		// set up main:
 		this._privateRow = $.query(".row.private", this.mainEl);
@@ -102,22 +112,23 @@ export default class Share extends EventDispatcher {
 		$.query(".row.signin a", this.mainEl).addEventListener("click", ()=> this._doSignin());
 
 		// set up link row:
-		this._linkRow = new LinkRow($.query(".link.row", this.mainEl));
+		this._linkRow = new LinkRow($.query(".link.row", mainEl));
 
 		// set up save buttons:
-		let saveEl = this.saveEl = $.query("> .save", this.mainEl);
+		let saveEl = this.saveEl = $.query("> .save", mainEl);
 		this.saveBtn = $.query(".button.save", saveEl);
 		this.forkBtn = $.query(".button.fork", saveEl);
 		this.saveBtn.addEventListener("click", ()=> this._doSave());
 		this.forkBtn.addEventListener("click", ()=> this._doSave(true));
 		this.saveStatus = new Status($.query(".status", saveEl));
+		this.saveMessage = $.query(".message", saveEl);
 
 		// set up input fields:
-		let inputsEl = $.query(".inputs", saveEl);
-		this.nameFld = $.query(".name", inputsEl);
-		this.authorFld = $.query(".author", inputsEl);
-		this.descriptionFld = $.query(".description", inputsEl);
-		this.keywordsFld = $.query(".keywords", inputsEl);
+		let infoEl = this.infoEl = $.query("> .info", mainEl);
+		this.nameFld = $.query(".name", infoEl);
+		this.authorFld = $.query(".author", infoEl);
+		this.descriptionFld = $.query(".description", infoEl);
+		this.keywordsFld = $.query(".keywords", infoEl);
 
 		// listen for changes:
 		this.nameFld.addEventListener("input", () => this._handleChange());
@@ -144,7 +155,10 @@ export default class Share extends EventDispatcher {
 		let isChanged = this._isChanged(), isNew = this._isNew(), isOwned = this._isOwned();
 		
 		$.toggleClass([this.forkBtn, this.hForkBtn], "disabled", !this._canFork());
-		$.toggleClass([this.saveBtn, this.hSaveBtn], "disabled", !this._canSave());
+		$.toggleClass(this.saveBtn, "disabled", !this._canSave());
+
+		$.toggleClass(this.hSaveBtn, "disabled", !this._canSave() && isOwned);
+		$.query(".action",this.hSaveBtn).innerText = isOwned ? "Save" : "Fork";
 		
 		if (!isOwned) { text = "This pattern was created by '"+(o.author||"[anonymous]")+"'."; }
 		else if (!isChanged) { text = "No unsaved changes." }
@@ -152,7 +166,7 @@ export default class Share extends EventDispatcher {
 		else { text = "Save will update the current link."; }
 
 		if (!isOwned && !isChanged) { text += " Fork to create your own copy."; }
-		else if (!isNew) { text += " Fork will create a new link" + (isChanged ? " with your changes." : "."); }
+		else if (!isNew) { text += " Fork will create a new copy" + (isChanged ? " with your changes." : "."); }
 		
 		this._setSaveText(text);
 
@@ -233,7 +247,7 @@ export default class Share extends EventDispatcher {
 		app.state = data;
 
 		if (isFork || isNew) {
-			app.sidebar.goto("share");
+			this.show();
 			if (isFork || !this.name) {
 				this.nameFld.focus();
 				this.nameFld.select();
@@ -248,7 +262,7 @@ export default class Share extends EventDispatcher {
 	}
 	
 	_doNew() {
-		app.load({flavor: app.flavor.value});
+		app.load({flavor: app.flavor.value, expression: ".", text:"Text"});
 	}
 
 	_doPrivate() {
@@ -333,7 +347,7 @@ export default class Share extends EventDispatcher {
 	_handleComSave(data) {
 		$.removeClass($.query(".buttons", this.communityEl), "wait");
 		this.comSaveStatus.hide();
-		app.sidebar.goto("share");
+		this.show();
 	}
 
 	_handleComSaveErr(err) {
@@ -365,7 +379,7 @@ export default class Share extends EventDispatcher {
 	}
 
 	_setSaveText(str) {
-		$.query(".save .message .label", this.mainEl).innerText = str;
+		this.saveMessage.innerText = str;
 	}
 
 	_getErrMsg(err) {

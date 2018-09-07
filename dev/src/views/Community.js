@@ -34,7 +34,7 @@ export default class CommunityContent {
 		$.query(".icon.thumbdown", el).addEventListener("click", ()=>this._rate(-1));
 		$.query(".icon.favorites", el).addEventListener("click", ()=>this._favorite());
 		this.linkRow = new LinkRow($.query(".row.link", el))
-		
+		$.query(".icon.share", el).addEventListener("click", ()=>this._share());
 	}
 	
 	set item(o) {
@@ -70,6 +70,11 @@ export default class CommunityContent {
 		this._updateRating();
 		
 		Server.rate(o.id, o.userRating).then((data) => this._handleRate(data));
+	}
+
+	_share() {
+		app.load(this._pattern);
+		app.share.show();
 	}
 
 	_handleRate(data) {

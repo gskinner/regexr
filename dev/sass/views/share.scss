@@ -37,6 +37,7 @@
 		}
 
 		&.authenticated {
+			display: none;
 			.signout {
 				display: inline-block;
 			}
@@ -54,31 +55,42 @@
 		background: rgba($error-color, 0.6);
 	}
 
-	> .save {
+	> .info {
 		padding: $pad;
-		color: $white;
-		background: $darker;
 		margin-bottom: $pad * 0.5;
+		border-bottom: solid 1px $darker;
 		
 		> .row {
 			padding: 0 0 $pad/2 0;
 			border: 0;
-			color: $lighter;
+			color: $light;
 			align-items: flex-start;
 
 			svg.icon {
 				color: currentColor;
 				margin: 0;
 			}
+		}
+	}
 
-	
-			&.message {
-				padding: $pad 0;
+	> .save {
+		flex-direction: column;
+		align-items: flex-start;
+		padding: $pad*1.5 $pad*0.5;
+		background: $darker;
+		border: 0;
 
-				.label {
-					color: $white;
-					margin: 0;
-				}
+		.message {
+			color: $white;
+		}
+
+		.buttons {
+			padding: $pad*0.5 0 0 0;
+			border: 0;
+			color: $white;
+
+			.button {
+				margin: 0 $pad*0.5 0 0;
 			}
 		}
 	}

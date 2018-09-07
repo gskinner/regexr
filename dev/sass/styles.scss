@@ -55,18 +55,21 @@ pre {
 %link {
 	transition: color $transition-t;
 	color: $theme-color;
-	cursor: pointer;
+
+	&:not(.inactive) {
+		cursor: pointer;
+	
+		&:hover {
+			color: $lightest;
+			
+			svg.icon {
+				color: currentColor;
+			}
+		}
+	}
 	
 	svg.icon {
 		transition: fill $transition-t;
-	}
-	
-	&:hover {
-		color: $lightest;
-		
-		svg.icon {
-			color: currentColor;
-		}
 	}
 }
 

@@ -23,6 +23,56 @@ home.id = "home";
 home.label = "Menu";
 home.desc = "[from HTML]";
 home.kids = [
+
+	
+	{
+	label: "Pattern Settings",
+	id: "share",
+	el: "#share_main",
+	list: false,
+	kids: [
+		{
+		label: "Save to my Favorites", 
+		id: "share_favorites",
+		el:"#share_favorites"
+		},
+		{
+		label: "Share with the Community",
+		id: "share_community",
+		el:"#share_community"
+		}
+	]
+	},
+	
+	{
+	label: "My Patterns",
+	id:"favorites",
+	desc: "The list above will display any patterns that you create or favorite."+
+		"<p>To edit a pattern you created, click its URL or double-click it in the list to load it, then open Save / Share to edit and save.</p>",
+	search: true,
+	kids: []
+	},
+	
+	{
+	label: "Cheatsheet",
+	id:"cheatsheet",
+	el: "#cheatsheet"
+	},
+	
+	{ // injected from Reference
+	id:"reference"
+	},
+	
+	{
+	label: "Community Patterns",
+	id: "community",
+	desc: "Welcome to the Community, a searchable database of patterns submitted by users like you."+
+		"<p>After selecting a pattern, click its URL or double-click it in the list to load the full pattern. Or use the right arrow icon to load just the expression or text.</p>"+
+		"<p>Help make the Community better by rating patterns, and submitting your own via <b>Search & Share</b> in the menu.</p>",
+	search: true,
+	kids: []
+	},
+
 	{
 	label: "Help",
 	id: "help",
@@ -138,54 +188,6 @@ home.kids = [
 			"<li><code>input</code> - populates the tool input field</li>"+
 			"</ul></p>"+
 			"Ex. <a href='http://regexr.com/?expression=.&text=testing'>regexr.com/?expression=.&text=testing</a>"
-		}
-	]
-	},
-	
-	{ // injected from Reference
-	id:"reference"
-	},
-	
-	{
-	label: "Cheatsheet",
-	id:"cheatsheet",
-	el: "#cheatsheet"
-	},
-	
-	{
-	label: "Community",
-	id: "community",
-	desc: "Welcome to the Community, a searchable database of patterns submitted by users like you."+
-		"<p>After selecting a pattern, click its URL or double-click it in the list to load the full pattern. Or use the right arrow icon to load just the expression or text.</p>"+
-		"<p>Help make the Community better by rating patterns, and submitting your own via <b>Search & Share</b> in the menu.</p>",
-	search: true,
-	kids: []
-	},
-	
-	{
-	label: "My Patterns",
-	id:"favorites",
-	desc: "The list above will display any patterns that you create or favorite."+
-		"<p>To edit a pattern you created, click its URL or double-click it in the list to load it, then open Save / Share to edit and save.</p>",
-	search: true,
-	kids: []
-	},
-	
-	{
-	label: "Save & Share",
-	id: "share",
-	el: "#share_main",
-	list: false,
-	kids: [
-		{
-		label: "Save to my Favorites", 
-		id: "share_favorites",
-		el:"#share_favorites"
-		},
-		{
-		label: "Share with the Community",
-		id: "share_community",
-		el:"#share_community"
 		}
 	]
 	}

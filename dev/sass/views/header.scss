@@ -8,22 +8,34 @@
 	height: 54px;
 	z-index: 1000;
 	
-	
-	.brand {
-		font-size: 1.125rem;
-		color: $theme-color;
-		margin-top: $pad*0.25;
-		
-		.version {
-			font-size: 0.875rem;
-			color: $dark;
-		}
-	}
-	
 	.logo {
+		flex: none;
+		font-size: 1.125rem;
+		margin-top: $pad/16;
+		color: $theme-color;
 		width: 1.5em;
 		height: 1.5em;
-		margin-right: 0.25em;
+	}
+
+	.settings {
+		@extend %link;
+		display: flex;
+		min-width: 0;
+		max-width: 20em;
+
+		.name {
+			margin: 0 $pad*0.25 0 $pad*0.5;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			overflow: hidden;
+		}
+
+		.icon.share {
+			flex: none;
+			color: $dark;
+			width: 1em;
+			margin-right: $pad*0.5;
+		}
 	}
 	
 	.signin.selected a {
@@ -32,18 +44,10 @@
 
 	ul {
 		padding: 0;
-		margin-left: $pad*2;
-	}
-	
-	ul.etc {
-		flex: 1;
-		text-align: right;
-		font-size: 0.875rem;
-		color: $dark;
-		
+		white-space: nowrap;
+
 		li {
 			display: inline-block;
-			margin-left: $pad;
 
 			&:first-child {
 				margin-left: 0;
@@ -74,6 +78,17 @@
 					color: $mid;
 				}
 			}
+		}
+	}
+	
+	ul.etc {
+		flex: 1;
+		text-align: right;
+		font-size: 0.875rem;
+		color: $dark;
+
+		li {
+			margin-left: $pad;
 		}
 	}
 }

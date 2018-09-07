@@ -23,7 +23,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 let reference_content = {}, o = reference_content;
 export default reference_content; 
 
-o.label = "Reference";
+o.label = "RegEx Reference";
 o.id = "reference";
 o.search = true,
 o.desc = `Information on all of the tokens available to create regular expressions.

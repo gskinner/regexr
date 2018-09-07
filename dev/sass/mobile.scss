@@ -4,15 +4,11 @@
 		//font-size: 14px;
 
 		>.container > .header {
-			> .brand > .version {
+			> .etc > .github {
 				display: none;
 			}
 
-			> ul {
-				margin-left: $pad;
-			}
-
-			> .etc > .github {
+			> .file .savekey {
 				display: none;
 			}
 		}

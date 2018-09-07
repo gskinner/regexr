@@ -30,7 +30,7 @@ export default class LinkRow {
 	set pattern(val) {
 		let url = Utils.getPatternURLStr(val)
 		this._pattern = val;
-		$.query(".label", this.el).innerText = url || "Shareable link";
+		$.query(".url", this.el).innerText = url || "";
 		$.toggleClass(this.el, "disabled", !url);
 		$.toggleClass(this.el, "active", !!url);
 	}
@@ -43,7 +43,7 @@ export default class LinkRow {
 	_initUI() {
 		this.el.onclick = (evt) => this._onClick(evt);
 
-		let fld=$.query(".label", this.el), copyBtn = $.query(".copy", this.el);
+		let fld=$.query(".url", this.el), copyBtn = $.query(".copy", this.el);
 		let clipboard = new Clipboard(copyBtn, { target: () => fld });
 		clipboard.on("success", () => app.tooltip.toggle.toggleOn("copy", "Copied to clipboard.", copyBtn, true, 3));
 		clipboard.on("error", (e) => app.tooltip.toggle.toggleOn("copy", Utils.getCtrlKey()+"-C to copy.", copyBtn, true, 3)); // TODO: cmd/ctrl
