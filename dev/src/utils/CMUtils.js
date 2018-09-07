@@ -111,3 +111,8 @@ CMUtils.enforceSingleLine = function (cm, change) {
 	}
 	return true;
 };
+
+CMUtils.selectAll = function(cm) {
+	cm.focus();
+	cm.setSelection({ch:0,line:0},{ch:0, line:cm.lineCount()});
+}

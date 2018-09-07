@@ -48,12 +48,14 @@ export default class RegExr extends EventDispatcher {
 		this._migrateFavorites();
 		this._initUI();
 
+		this.account.value = account;
 		if (state === false) {
 			this._localInit();
+		} else if (this.account.authenticated && !state) {
+			this.newDoc();
 		} else {
 			this.state = state;
 		}
-		this.account.value = account;
 		this._savedHash = null;
 
 		let params = Utils.getUrlParams();
@@ -116,6 +118,11 @@ export default class RegExr extends EventDispatcher {
 // public methods:
 	resetUnsaved() {
 		this._savedHash = this.hash;
+	}
+	
+	newDoc() {
+		this.load({flavor: this.flavor.value, expression: ".", text:"Text"});
+		this.expression.selectAll();
 	}
 
 	load(state, warn=true) {

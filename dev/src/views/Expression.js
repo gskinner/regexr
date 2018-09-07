@@ -94,6 +94,10 @@ export default class Expression extends EventDispatcher {
 	insert(str) {
 		this.editor.replaceSelection(str, "end");
 	}
+
+	selectAll() {
+		CMUtils.selectAll(this.editor);
+	}
 	
 // private methods:
 	_initUI(el) {

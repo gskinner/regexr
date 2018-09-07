@@ -262,7 +262,7 @@ export default class Share extends EventDispatcher {
 	}
 	
 	_doNew() {
-		app.load({flavor: app.flavor.value, expression: ".", text:"Text"});
+		app.newDoc();
 	}
 
 	_doPrivate() {
