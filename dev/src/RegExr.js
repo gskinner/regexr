@@ -65,6 +65,14 @@ export default class RegExr extends EventDispatcher {
 		
 		window.onbeforeunload = (e) => this.unsaved ? "You have unsaved changes." : null;
 		this.resetUnsaved();
+
+		setTimeout(() => this._initAds(), 500);
+	}
+
+	_initAds() {
+		_native && _native.init("CK7D65QM", {
+			targetClass: 'native-js'
+		});
 	}
 
 	_localInit() {

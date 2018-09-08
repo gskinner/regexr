@@ -283,20 +283,8 @@
 
 		> .hello {
 			flex: 0 0 0;
-			padding: $pad;
-			background: $black;
-			color: $white;
+			padding: 0;
 			border-top: 3px solid $theme-color;
-
-			a {
-				font-weight: bold;
-			}
-
-			p {
-				margin-top: 0.25em;
-				margin-bottom: 0;
-				color: $mid;
-			}
 		}
 	}
 }
