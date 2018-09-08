@@ -52,7 +52,7 @@ export default class RegExr extends EventDispatcher {
 		if (state === false) {
 			this._localInit();
 		} else if (this.account.authenticated && !state) {
-			this.newDoc();
+			this.newDoc(false);
 		} else {
 			this.state = state;
 		}
@@ -120,8 +120,8 @@ export default class RegExr extends EventDispatcher {
 		this._savedHash = this.hash;
 	}
 	
-	newDoc() {
-		this.load({flavor: this.flavor.value, expression: ".", text:"Text"});
+	newDoc(warn=true) {
+		this.load({flavor: this.flavor.value, expression: ".", text:"Text"}, warn);
 		this.expression.selectAll();
 	}
 
