@@ -195,5 +195,5 @@ class ServerPromise {
 
 Server.isLocal = (window.location.hostname === "localhost");
 Server.useBeta = Server.isLocal || (window.location.hostname === "beta.regexr.com");
-Server.host = (Server.useBeta ? "http://beta." : "https://") + "regexr.com"
+Server.host = "https://" + (Server.useBeta ? "beta." : "") + "regexr.com"
 Server.url =  Server.host + "/server/api.php";
