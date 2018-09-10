@@ -108,7 +108,6 @@ window._native_go = function (json) {
 			selectedTarget.setAttribute('data-state', 'visible');
 		} else {
 			selectedTarget.innerHTML = null;
-			selectedTarget.style.display = 'none';
 		}
 	});
 };

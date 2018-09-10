@@ -1,17 +1,17 @@
 .native-js {
-	transition: all .5s ease-in-out;
-	//visibility: hidden;
-	//opacity: 0;
-	//display: none;
+	transition: all 0.25s ease-in-out;
+	opacity: 0;
+	position: absolute;
+	top: 0;
   }
-  
-  .native-show {
-	visibility: visible;
+
+  .native-js[data-state=visible] {
+	position: static;
 	opacity: 1;
   }
   
   .native-img {
-	margin-right: $pad;
+	margin-right: $pad*0.75;
 	max-height: 40px;
 	max-width: 27%;
 	border-radius: 3px;
@@ -19,7 +19,7 @@
   
   .native-flex {
 	display: flex;
-	padding: $pad;
+	padding: $pad*0.5 $pad*0.75;
 	text-decoration: none;
   
 	flex-flow: row nowrap;
@@ -29,7 +29,6 @@
   
   .native-main {
 	display: flex;
-	flex-grow: 1;
   
 	flex-flow: row nowrap;
 	align-items: center;
@@ -39,7 +38,7 @@
 	display: flex;
 	font-size: 12px;
   
-	flex-flow: column nowrap;
+	flex-flow: column;
   }
   
   .native-company {
@@ -53,7 +52,11 @@
   .native-desc {
 	letter-spacing: 1px;
 	font-weight: 300;
-	line-height: 1.4;
+	line-height: 1.3em;
+	text-overflow: ellipsis;
+	max-height: 3.7em;
+	overflow: hidden;
+	position: relative;
   }
   
   .native-cta {

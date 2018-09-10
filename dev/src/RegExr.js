@@ -66,7 +66,7 @@ export default class RegExr extends EventDispatcher {
 		window.onbeforeunload = (e) => this.unsaved ? "You have unsaved changes." : null;
 		this.resetUnsaved();
 
-		setTimeout(() => this._initAds(), 500);
+		setTimeout(() => this._initAds(), 100);
 	}
 
 	_initAds() {
