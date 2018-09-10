@@ -8,6 +8,9 @@
   .native-js[data-state=visible] {
 	position: static;
 	opacity: 1;
+	+ .noad {
+		display: none;
+	}
   }
   
   .native-img {
@@ -19,7 +22,7 @@
   
   .native-flex {
 	display: flex;
-	padding: $pad*0.5 $pad*0.75;
+	padding: $pad*0.75;
 	text-decoration: none;
   
 	flex-flow: row nowrap;
@@ -54,46 +57,71 @@
 	font-weight: 300;
 	line-height: 1.3em;
 	text-overflow: ellipsis;
-	max-height: 3.7em;
+	max-height: 5em;
 	overflow: hidden;
 	position: relative;
   }
   
-  .native-cta {
-	padding: 10px 14px;
-	border-radius: 3px;
-	box-shadow: 0 6px 13px 0 hsla(0, 0%, 0%, .15);
+  
+
+/* Carbon Ads */
+
+#carbonads {
+	display: block;
+	overflow: hidden;
+	background-color: $black;
+	font-size: 13px;
+	line-height: 1.5;
+  }
+  
+  #carbonads a {
+	color: inherit;
+	text-decoration: none;
+  }
+  
+  #carbonads a:hover {
+	color: inherit;
+  }
+  
+  #carbonads span {
+	position: relative;
+	display: block;
+	overflow: hidden;
+  }
+  
+  .carbon-img {
+	display: block;
+	float: left;
+	margin: 0;
+	line-height: 1;
+  }
+  
+  .carbon-img img {
+	display: block;
+  }
+  
+  .carbon-text {
+	display: block;
+	float: left;
+	padding: 8px 1em;
+	max-width: calc(100% - 130px - 2em);
+	text-align: left;
+	letter-spacing: .5px;
+  }
+  
+  .carbon-poweredby {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	left: 130px;
+	display: block;
+	padding: 8px 13px;
+	background: $darkest;
 	text-transform: uppercase;
-	white-space: nowrap;
 	letter-spacing: 1px;
 	font-weight: 400;
-	font-size: 12px;
-	transition: all .3s ease-in-out;
-	transform: translateY(-1px);
+	font-size: 9px;
+	line-height: 1;
   }
   
-  .native-cta:hover {
-	box-shadow: none;
-	transform: translateY(1px);
-  }
   
-  @media only screen and (min-width: 320px) and (max-width: 759px) {
-	.native-flex,
-	.native-main {
-	  flex-flow: column nowrap;
-	}
-	
-	.native-img,
-	.native-details {
-	  margin: 0;
-	}
-	
-	.native-img {
-	  margin-bottom: 10px;
-	}
-	
-	.native-main {
-	  text-align: center;
-	  margin-bottom: 20px;
-	}
-  }

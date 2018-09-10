@@ -285,6 +285,15 @@
 			flex: 0 0 0;
 			padding: 0;
 			border-top: 3px solid $theme-color;
+
+			.noad {
+				padding: $pad;
+				color: $mid;
+
+				b {
+					color: $light;
+				}
+			}
 		}
 	}
 }
