@@ -38,12 +38,6 @@
 
 		&.authenticated {
 			display: none;
-			.signout {
-				display: inline-block;
-			}
-			.signin {
-				display: none;
-			}
 		}
 	}
 

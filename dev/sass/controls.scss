@@ -17,9 +17,10 @@
 
 input, textarea {
 	@extend %control;
-	
-	background: rgba($white, 0.07);
+	border-radius: 0;
+	background: rgba($white, 0.05);
 	border: none;
+	border-bottom: solid 1px rgba($white, 0.05);
 	font-family: $font-family;
 	font-size: 1rem;
 	display: block;
@@ -83,9 +84,9 @@ svg.icon {
 	
 	display: inline-block;
 	cursor: pointer;
-	transition: background $transition-t ease-out;
+	transition: background-color $transition-t ease-out;
+	transition: opacity $transition-t ease-out;
 	box-shadow: 0 2px 1px $light-shadow;
-	//transition: opacity $transition-t;
 	line-height: normal;
 	
 	&.default {
