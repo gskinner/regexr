@@ -282,7 +282,7 @@ o.kids = [
 		{
 		id:"reservedchar",
 		label:"reserved characters",
-		desc:"The following character have special meaning, and must be preceded by a <code>\\</code> (backslash) to represent a literal character:"+
+		desc:"The following character have special meaning, and should be preceded by a <code>\\</code> (backslash) to represent a literal character:"+
 			"<p><code>{{getEscChars()}}</code></p>"+
 			"<p>Within a character set, only <code>\\</code>, <code>-</code>, and <code>]</code> need to be escaped.</p>",
 		example:["\\+","1 + 1 = 2"],
