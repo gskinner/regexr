@@ -66,7 +66,7 @@ home.kids = [
 	{
 	label: "Community Patterns",
 	id: "community",
-	desc: "Welcome to the Community, a searchable database of patterns submitted by users like you."+
+	desc: "Welcome to Community Patterns, a searchable database of patterns submitted by users like you."+
 		"<p>After selecting a pattern, click its URL or double-click it in the list to load the full pattern. Or use the right arrow icon to load just the expression or text.</p>"+
 		"<p>Help make the Community better by rating patterns, and submitting your own via <b>Search & Share</b> in the menu.</p>",
 	search: true,
@@ -76,7 +76,7 @@ home.kids = [
 	{
 	label: "Help",
 	id: "help",
-	desc: "Help for the RegExr v3.5 application. See the <b>Reference</b> for help with Regular Expressions.",
+	desc: "Help for the RegExr v3.5 application. See the <b>RegEx Reference</b> for help with Regular Expressions.",
 	kids: [
 
 		{
@@ -87,8 +87,9 @@ home.kids = [
 		{
 		label:"Getting started",
 		desc:"RegExr provides real-time visual results, syntax highlighting, tooltips, and undo/redo ({{getCtrlKey()}}-Z / Y) so it's easy and fun to explore Regular Expressions."+
-			"<p>Browse through the <b>Reference</b> and test different tokens to see what they do, then check out the <b>Community</b> to see example patterns.</p>"+
-			"<p>You can also <b>Save</b> your patterns for later reference, or to share with others. <b>Sign In</b> to ensure you don't lose your patterns.</p>",
+			"<p>Browse through the <b>RegEx Reference</b> and test different tokens to see what they do, then check out <b>Community Patterns</b> to see examples.</p>"+
+			"<p>You can also <b>Save</b> your patterns for later reference, or to share with others. <b>Sign In</b> to ensure you don't lose your patterns.</p>"+
+			"<p>Modify your pattern's details, share it with the <b>Community</b>, or make it private, or delete it in <b>Pattern Settings</b></p>",
 		kids: [
 			{
 			label:"Expression panel",
@@ -113,7 +114,7 @@ home.kids = [
 				desc:"The <b>Replace</b> tool replaces matches with a specified string or pattern."+
 					"<p>Matches in the <b>Text</b> panel are replaced by the substitution string & displayed as you type.</p>"+
 					"<p>Substitution tokens and escaped characters are supported, such as <code>\\n</code>, <code>\\t</code> & <code>\\u0009</code>.</p>"+
-					"<p>Roll over tokens for information, and check out the <b>Reference</b> for more information.</p>"
+					"<p>Roll over tokens for information, and check out the <b>RegEx Reference</b> for more information.</p>"
 				},
 				{
 				label:"List",
@@ -135,15 +136,15 @@ home.kids = [
 				id: "explain",
 				desc:"The <b>Explain</b> tool displays a detailed breakdown of the <b>Expression</b>."+
 					"<p>Mouse over the explanation to highlight the related tokens in the <b>Expression</b> panel and vice versa.</p>"+
-					"<p>Click an item in the explanation to show more info in the <b>Reference</b>.</p>"
+					"<p>Click an item in the explanation to show more info in the <b>RegEx Reference</b>.</p>"
 				}
 			]
 			},
 			{
 			label:"Menu",
-			desc:"The <b>Menu</b> (this panel) includes <b>Help</b>, a full regular expression <b>Reference</b>, a <b>Cheatsheet</b>, and <b>Save &amp; Share</b> features."+
-				"<p>Double-click a selected item in the <b>Reference</b> to insert it into your <b>Expression</b>. Click the arrow beside an example to load it.</p>"+
-				"<p>The menu also includes searchable <b>Community</b> submissions, and patterns you've created or favorited in <b>My Patterns</b>.</p>"
+			desc:"The <b>Menu</b> (this panel) includes <b>Help</b>, a full <b>RegEx Reference</b>, a <b>Cheatsheet</b>, and <b>Pattern Settings</b> features."+
+				"<p>Double-click a selected item in the <b>RegEx Reference</b> to insert it into your <b>Expression</b>. Click the arrow beside an example to load it.</p>"+
+				"<p>The menu also includes searchable <b>Community Patterns</b>, and patterns you've created or favorited in <b>My Patterns</b>.</p>"
 			}
 		]
 		},
@@ -181,7 +182,7 @@ home.kids = [
 		},
 		{
 		label:"Query string support",
-		desc:"In addition to the built in <b>Save & Share</b> mechanism, RegExr also supports the ability to pre-populate a pattern via the query string."+
+		desc:"In addition to the built in <b>Save</b> mechanism which creates a shareable link, RegExr also supports the ability to pre-populate a pattern via the query string."+
 			"<p>The following query string params are recognized:<ul>"+
 			"<li><code>expression</code> & <code>text</code> - populate their respective fields</li>"+
 			"<li><code>tool</code> - sets the tool (replace, list, details, or explain)</li>"+
