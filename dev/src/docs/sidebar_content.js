@@ -76,7 +76,7 @@ home.kids = [
 	{
 	label: "Help",
 	id: "help",
-	desc: "Help for the RegExr application. See the <b>Reference</b> for help with Regular Expressions.",
+	desc: "Help for the RegExr v3.5 application. See the <b>Reference</b> for help with Regular Expressions.",
 	kids: [
 
 		{
