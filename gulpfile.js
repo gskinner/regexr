@@ -85,7 +85,9 @@ gulp.task("build-js-prod", function() {
 		}).on("error", swallowError)
 		.pipe(source("regexr.js","./src"))
 		.pipe(buffer())
-		.pipe(uglifyJS())
+		.pipe(uglifyJS().on('error', function(e){
+            console.log(e);
+         }))
 		.pipe(gulp.dest("./deploy"));
 });
 

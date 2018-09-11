@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 import "../lib/codemirror.js";
 import "../lib/clipboard.js";
+import "../lib/native.js";
 import RegExr from "./RegExr";
 
 let app = new RegExr();
