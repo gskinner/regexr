@@ -28,6 +28,11 @@ html, body {
 	}
 }
 
+.app .sidebar, .container .header, .tooltip  {
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+}
+
 a {
 	@extend %link;
 	text-decoration: none;
