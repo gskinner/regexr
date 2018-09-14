@@ -76,12 +76,13 @@ home.kids = [
 	{
 	label: "Help",
 	id: "help",
-	desc: "Help for the RegExr v3.5 application. See the <b>RegEx Reference</b> for help with Regular Expressions.",
+	desc: "Help for the RegExr application. See the <b>RegEx Reference</b> for help with Regular Expressions.",
 	kids: [
 
 		{
 		label:"About",
-		desc:"Created by <a href='http://twitter.com/gskinner/' target='_blank'>Grant Skinner</a> and the <a href='http://gskinner.com/' target='_blank'>gskinner</a> team, using the <a href='http://createjs.com/' target='_blank'>CreateJS</a> & <a href='http://codemirror.net/' target='_blank'>CodeMirror</a> libraries."+
+		desc:"RegExr v[build-version], built on [build-date]."+
+			"<p>Created by <a href='http://twitter.com/gskinner/' target='_blank'>Grant Skinner</a> and the <a href='http://gskinner.com/' target='_blank'>gskinner</a> team, using the <a href='http://createjs.com/' target='_blank'>CreateJS</a> & <a href='http://codemirror.net/' target='_blank'>CodeMirror</a> libraries.</p>"+
 			"<p>You can provide feedback or log bugs on <a href='http://github.com/gskinner/regexr/' target='_blank'>GitHub</a>.</p>"
 		},
 		{
