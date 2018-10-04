@@ -105,11 +105,11 @@ abstract class AbstractAction {
                             if(is_array($value)) {} else
                             if (!v::json()->validate($value)) {
                                 throw new APIError(ErrorCodes::API_INVALID_JSON, array(
-																		'key' => $key,
-																		'code' => $this->jsonErrorToString(json_last_error())
+                                    'key' => $key,
+                                    'code' => $this->jsonErrorToString(json_last_error())
                                 ));
                             } else {
-																$this->values[$key] = json_decode($this->values[$key]);
+							    $this->values[$key] = json_decode($this->values[$key]);
                             }
                             break;
                         case self::NUMBER:
@@ -154,26 +154,26 @@ abstract class AbstractAction {
                             }
                             break;
                         case self::GUID_ARRAY:
-														$arr = $this->validateArray($key, $value);
+                            $arr = $this->validateArray($key, $value);
 
-														foreach ($arr as $g) {
-																if (!isGuid($g)) {
-																		throw new APIError(ErrorCodes::API_INVALID_GUID, $key);
-																}
-														}
-														$this->values[$key] = $arr;
+                            foreach ($arr as $g) {
+                                if (!isGuid($g)) {
+                                    throw new APIError(ErrorCodes::API_INVALID_GUID, $key);
+                                }
+                            }
+                            $this->values[$key] = $arr;
                             break;
                         case self::ENUM:
-														$enumValues = $schemaValue['values'];
-														$this->validateEnum($enumValues, $key, $value);
+                            $enumValues = $schemaValue['values'];
+                            $this->validateEnum($enumValues, $key, $value);
                             break;
                         case self::ENUM_ARRAY:
-														$enumValues = $schemaValue['values'];
-														$arr = $this->validateArray($key, $value);
-														foreach ($arr as $e) {
-																$this->validateEnum($enumValues, $key, $e, "values all must be one of: ");
-														}
-														$this->values[$key] = $arr;
+                            $enumValues = $schemaValue['values'];
+                            $arr = $this->validateArray($key, $value);
+                            foreach ($arr as $e) {
+                                    $this->validateEnum($enumValues, $key, $e, "values all must be one of: ");
+                            }
+                            $this->values[$key] = $arr;
                             break;
                         case self::STRING:
                         default:
