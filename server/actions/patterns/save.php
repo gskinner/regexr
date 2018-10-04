@@ -49,10 +49,6 @@ class save extends \core\AbstractAction {
 
         $author = empty($savedAuthor)?$userProfile->username:$savedAuthor;
 
-        if (!is_null($tool)) {
-            $tool = json_encode($tool);
-        }
-
         // Check to see if the user wants to edit this pattern.
         if (!empty($id)) { // Update
             // Make sure the user has access to edit this pattern.
@@ -129,7 +125,7 @@ class save extends \core\AbstractAction {
             "text" => array("type"=>self::STRING, "required"=>false),
             "description" => array("type"=>self::STRING, "required"=>false, "length"=>250),
             "token" => array("type"=>self::STRING, "required"=>false),
-            "tool" => array("type"=>self::JSON, "required"=>false, "length"=>1024),
+            "tool" => array("type"=>self::STRING, "required"=>false, "length"=>1024),
             "flavor" => array("type"=>self::ENUM, "values"=>$this->getTypeValues(), "required"=>false),
             "parentId" => array("type"=>self::STRING, "required"=>false),
             "access" => array("type"=>self::ENUM, "values"=>$this->getVisibilityValues(), "required"=>false)
