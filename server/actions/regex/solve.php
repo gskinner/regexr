@@ -101,7 +101,7 @@ class solve extends \core\AbstractAction {
 		}
 
 		function pcreReplace($pattern, $modifiers, $text, $input) {
-				return mb_ereg_replace("/{$pattern}/{$modifiers}", $input, $text);
+                return preg_replace("/{$pattern}/{$modifiers}", $input, $text);
 		}
 
 		function pcreMatch($pattern, $modifiers, $global, $text) {
