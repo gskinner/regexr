@@ -118,7 +118,7 @@ Utils.now = function() {
 
 Utils.getUrlParams = function() {
 	let match, re = /([^&=]+)=?([^&]*)/g, params = {};
-	let url  = window.location.search.substring(1).replace("+", " ");
+	let url  = window.location.search.substr(1).replace(/\+/g, " ");
 	while (match = re.exec(url)) { params[decodeURIComponent(match[1])] = decodeURIComponent(match[2]); }
 	return params;
 };
