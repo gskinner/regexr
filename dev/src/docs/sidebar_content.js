@@ -185,11 +185,13 @@ home.kids = [
 		label:"Query string support",
 		desc:"In addition to the built in <b>Save</b> mechanism which creates a shareable link, RegExr also supports the ability to pre-populate a pattern via the query string."+
 			"<p>The following query string params are recognized:<ul>"+
-			"<li><code>expression</code> & <code>text</code> - populate their respective fields</li>"+
+			"<li><code>engine</code> - the RegEx engine to use (<code>js</code> or <code>pcre</code>)</li>"+
+			"<li><code>expression</code> - populates the Expression area. It is recommended to pass a full expression with flags (<code>/.*/ig</code>) not just the pattern (<code>.*</code>)</li>"+
+			"<li><code>text</code> - populates the Text area</li>"+
 			"<li><code>tool</code> - sets the tool (replace, list, details, or explain)</li>"+
 			"<li><code>input</code> - populates the tool input field</li>"+
 			"</ul></p>"+
-			"Ex. <a href='http://regexr.com/?expression=.&text=testing'>regexr.com/?expression=.&text=testing</a>"
+			"Ex. <a href='http://regexr.com/?expression=/./g&text=test'>regexr.com/?expression=/./g&text=test</a>"
 		}
 	]
 	}
