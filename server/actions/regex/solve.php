@@ -101,7 +101,7 @@ class solve extends \core\AbstractAction {
 		}
 
 		function pcreReplace($pattern, $modifiers, $text, $input) {
-				return preg_replace("/{$pattern}/{$modifiers}", $input, $text);
+                return preg_replace("/{$pattern}/{$modifiers}", $input, $text);
 		}
 
 		function pcreMatch($pattern, $modifiers, $global, $text) {
@@ -118,22 +118,22 @@ class solve extends \core\AbstractAction {
 						for ($i=0;$i<count($matches);$i++) {
 								$match = $matches[$i];
 								$first = array_shift($match);
-								$jsonMatches[] = $this->createMatchEntry($first, $match);
+								$jsonMatches[] = $this->createMatchEntry($first, $match, $text);
 						}
 				} elseif ($match !== false) {
 						$first = array_shift($matches);
-						$jsonMatches[] = $this->createMatchEntry($first, $matches);
+						$jsonMatches[] = $this->createMatchEntry($first, $matches, $text);
 				}
 
 				return $jsonMatches;
 		}
 
-		function createMatchEntry($match, $groups) {
+		function createMatchEntry($match, $groups, $text) {
 				$result = [];
 
 				$txt = $match[0];
 				$index = intval($match[1]);
-				$result['i'] = $index;
+				$result['i'] = \mb_strlen(\mb_strcut($text, 0, $index));
 				$result['l'] = realStringLength($txt);
 				$result['groups'] = [];
 
@@ -142,7 +142,7 @@ class solve extends \core\AbstractAction {
 								$index = intval($group[1]);
 								$matchResult = $group[0];
 								$result['groups'][] = [
-										'i' => $index,
+										'i' => \mb_strlen(\mb_strcut($text, 0, $index)),
 										'l' => realStringLength($matchResult)
 								];
 						}
