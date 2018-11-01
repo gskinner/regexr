@@ -59,6 +59,7 @@ export default class RegExr extends EventDispatcher {
 		this._savedHash = null;
 
 		let params = Utils.getUrlParams();
+		if (params.engine) { this.flavor.value = params.engine; }
 		if (params.expression) { this.expression.value = params.expression; }
 		if (params.text) { this.text.value = params.text; }
 		if (params.tool) { this.tools.value = {id:params.tool, input:params.input}; }

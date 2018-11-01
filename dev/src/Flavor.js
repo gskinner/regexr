@@ -33,7 +33,7 @@ export default class Flavor extends EventDispatcher {
 	}
 	
 	set value(id) {
-		let profile = profiles[id || "js"];
+		let profile = profiles[id.toLowerCase() || "js"];
 		if (!profile || profile === this._profile) { return; }
 		Track.page("flavor/"+id);
 		this._profile = profile;
