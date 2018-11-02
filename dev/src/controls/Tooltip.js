@@ -87,9 +87,9 @@ export default class Tooltip {
 		if (x - w / 2 < pad) { off = pad - x + w / 2; }
 		else if (x + w / 2 > ww - pad) { off = ww - pad - x - w / 2; }
 		this.tipEl.style.marginRight = Math.max(-w / 2 + 10, Math.min(w / 2 - 10, off)) * 2 + "px";
-		elStyle.width = w + "px";
-		elStyle.top = y + "px";
-		elStyle.left = (x + off) + "px";
+		elStyle.width = Math.ceil(w/2)*2 + "px";
+		elStyle.top = Math.round(y) + "px";
+		elStyle.left = Math.round(x + off) + "px";
 		if (this.transition) {
 			elStyle.opacity = 1;
 			elStyle.marginTop = 0;
