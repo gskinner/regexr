@@ -84,8 +84,9 @@ export default class Text extends EventDispatcher {
 		textEl.appendChild(editor.display.wrapper); // move the editor on top of the iframe & canvas.
 
 		win.onresize = ()=> {
+			let w = win.innerWidth|0, h = win.innerHeight|0;
 			this._startResize();
-			Utils.defer(()=>this._handleResize(win), "text_resize", 250);
+			Utils.defer(()=>this._handleResize(w, h), "text_resize", 250);
 		};
 		win.onresize();
 		
@@ -174,11 +175,11 @@ export default class Text extends EventDispatcher {
 		return err.message || app.reference.getError(err);
 	}
 	
-	_handleResize(el) {
+	_handleResize(w, h) {
 		let canvas = this.canvas, style=canvas.style;
 		style.visibility = style.opacity = "";
-		canvas.width = el.innerWidth;
-		canvas.height = el.innerHeight;
+		canvas.width = w;
+		canvas.height = h;
 		this.editor.refresh();
 		this._deferUpdate();
 	}
