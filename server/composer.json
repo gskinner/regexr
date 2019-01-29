@@ -1,7 +1,7 @@
 {
   "require": {
 		"respect/validation": "1.1.12",
-		"hybridauth/hybridauth": "v3.0.0-beta.1"
+		"hybridauth/hybridauth": "v3.0.0-rc.9"
   },
   "require-dev": {
   }

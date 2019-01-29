@@ -1,23 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aa3fcfeb7b1881b8cb755dae344f9994",
+    "content-hash": "99048d76b1b7b46a3b7ed742d738bf8b",
     "packages": [
         {
             "name": "hybridauth/hybridauth",
-            "version": "v3.0.0-beta.1",
+            "version": "v3.0.0-rc.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hybridauth/hybridauth.git",
-                "reference": "a48838e81fdf083ff99f1d66e4f2f183efb7bb84"
+                "reference": "6123c31700bda7acd49cef7f1f0c138b60f39070"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hybridauth/hybridauth/zipball/a48838e81fdf083ff99f1d66e4f2f183efb7bb84",
-                "reference": "a48838e81fdf083ff99f1d66e4f2f183efb7bb84",
+                "url": "https://api.github.com/repos/hybridauth/hybridauth/zipball/6123c31700bda7acd49cef7f1f0c138b60f39070",
+                "reference": "6123c31700bda7acd49cef7f1f0c138b60f39070",
                 "shasum": ""
             },
             "require": {
@@ -25,7 +25,7 @@
             },
             "require-dev": {
                 "ext-curl": "*",
-                "phpunit/phpunit": "~4.1"
+                "phpunit/phpunit": "~4.8.35"
             },
             "type": "library",
             "extra": {
@@ -61,7 +61,7 @@
                 "social",
                 "twitter"
             ],
-            "time": "2017-04-08T22:46:40+00:00"
+            "time": "2019-01-03T11:08:24+00:00"
         },
         {
             "name": "respect/validation",
@@ -130,16 +130,16 @@
         },
         {
             "name": "symfony/polyfill-mbstring",
-            "version": "v1.5.0",
+            "version": "v1.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-mbstring.git",
-                "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803"
+                "reference": "c79c051f5b3a46be09205c73b80b346e4153e494"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/7c8fae0ac1d216eb54349e6a8baa57d515fe8803",
-                "reference": "7c8fae0ac1d216eb54349e6a8baa57d515fe8803",
+                "url": "https://api.github.com/repos/symfony/polyfill-mbstring/zipball/c79c051f5b3a46be09205c73b80b346e4153e494",
+                "reference": "c79c051f5b3a46be09205c73b80b346e4153e494",
                 "shasum": ""
             },
             "require": {
@@ -151,7 +151,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.5-dev"
+                    "dev-master": "1.9-dev"
                 }
             },
             "autoload": {
@@ -185,14 +185,14 @@
                 "portable",
                 "shim"
             ],
-            "time": "2017-06-14T15:44:48+00:00"
+            "time": "2018-09-21T13:07:52+00:00"
         }
     ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "hybridauth/hybridauth": 10
+        "hybridauth/hybridauth": 5
     },
     "prefer-stable": false,
     "prefer-lowest": false,
