@@ -86,7 +86,7 @@ class API {
 
     function connect() {
         $this->db = new \core\DB();
-        $this->db->connect(DB_HOST, DB_USER_NAME, DB_PASSWORD, DB_NAME);
+        $this->db->connect(DB_HOST, DB_USER_NAME, DB_PASSWORD, DB_NAME, DB_PORT, DB_SOCK);
     }
 
     function result($data, $time=null) {

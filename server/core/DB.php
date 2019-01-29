@@ -23,14 +23,14 @@ class DB {
 
     private $_isConnected;
 
-    function connect($host, $username, $password, $dbName) {
+    function connect($host, $username, $password, $dbName, $dbPort = null, $dbSock = null) {
         mysqli_report(MYSQLI_REPORT_STRICT);
 
         $this->_inTransaction = false;
         $this->_isConnected = false;
 
         try {
-            $this->mysqli = new \mysqli($host, $username, $password, $dbName);
+            $this->mysqli = new \mysqli($host, $username, $password, $dbName, $dbPort, $dbSock);
         } catch (\Exception $e) {
             throw new \core\APIError(\core\ErrorCodes::MYSQL_CONNECTION_ERR, "MySQL connection error {$e}");
         }
