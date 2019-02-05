@@ -25,17 +25,22 @@ class patterns extends \core\AbstractAction {
     public function execute() {
 				$userProfile = $this->getUserProfile();
 
-				$result = $this->db->query("SELECT patterns.*, favorites.patternId = patterns.id as favorite, ur.rating as userRating
-								FROM patterns
-								LEFT JOIN userRatings as ur ON ur.userId='{$userProfile->userId}' AND ur.patternId=patterns.id
-								LEFT JOIN favorites ON favorites.userId = '{$userProfile->userId}'
-								WHERE patterns.owner = '$userProfile->userId' || favorites.patternId = patterns.id
-								ORDER BY favorite DESC
-								");
+                // When using a single query performance is awful, so we run favorites and created separate.
+				$createdResult = $this->db->query("SELECT patterns.*, ur.rating as userRating
+                                    FROM patterns
+                                    LEFT JOIN userRatings as ur ON ur.userId='{$userProfile->userId}' AND ur.patternId=patterns.id
+                                    WHERE patterns.owner = '{$userProfile->userId}'
+                                ");
 
-				// Filter out duplicate results.
-				// We can't user GROUP BY, because it can remove the isFavorite flag from your own patterns.
-				// Thats why we sort by isFavorite DESC, so we remove the !isFavorite patterns first.
+                $favoriteResult = $this->db->query("SELECT patterns.*, favorites.patternId = patterns.id as favorite, ur.rating as userRating
+                                    FROM patterns
+                                    LEFT JOIN userRatings as ur ON ur.userId='{$userProfile->userId}' AND ur.patternId=patterns.id
+                                    LEFT JOIN favorites ON favorites.userId = '{$userProfile->userId}'
+                                    WHERE favorites.patternId = patterns.id");
+
+				// Merge everything and filter out duplicate results.
+                $result = \array_merge(\is_array($createdResult)?$createdResult:[], \is_array($favoriteResult)?$favoriteResult:[]);
+
 				$cleanResult = [];
 				if (!is_null($result)) {
 						$keys = [];
@@ -43,7 +48,7 @@ class patterns extends \core\AbstractAction {
 								$id = $value->id;
 								if (!array_key_exists($id, $keys)) {
 										$cleanResult[] = $value;
-										$value->favorite = $value->favorite == '1'?true:null;
+										$value->favorite = property_exists($value, "favorite")?true:null;
 										$keys[$id] = true;
 								}
 						}
