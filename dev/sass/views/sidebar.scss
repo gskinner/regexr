@@ -284,11 +284,11 @@
 		> .hello {
 			flex: 0 0 0;
 			padding: 0;
-			border-top: 3px solid $theme-color;
+			border: $pad*0.25 solid $black;
 			background: $black;
 
 			.noad {
-				padding: $pad;
+				padding: $pad*0.75;
 				color: $mid;
 
 				b {
