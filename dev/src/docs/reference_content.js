@@ -635,7 +635,7 @@ o.kids = [
 	id:"flags",
 	label:"Flags",
 	tooltip:"Expression flags change how the expression is interpreted. Click to edit.",
-	desc:"Expression flags change how the expression is interpreted. There are three flags in JS: i, g, and m. Flags follow the closing backslash of the expression (ex. <code>/.+/igm</code> ).",
+	desc:"Expression flags change how the expression is interpreted. Flags follow the closing forward slash of the expression (ex. <code>/.+/igm</code> ).",
 	target:"flags",
 	kids: [
 		{
