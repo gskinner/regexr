@@ -25,15 +25,19 @@ class multiFavorite extends \core\AbstractAction {
 
     public function execute() {
         $urlIds = $this->getValue("patternIds");
-        $userProfile = $this->getUserProfile();
 
-        $idList = quoteStringArray($urlIds);
+        // Each id needs to be a number.
+        $idList = quoteStringArray(array_map(function($id) {
+            return intval($id);
+        }, $urlIds));
 
         $existingIds = $this->db->query("SELECT id FROM patterns WHERE id IN ($idList)");
         $cleanIds = [];
 
         if (!is_null($existingIds)) {
             $idList = [];
+            $userProfile = $this->getUserProfile();
+
             for ($i=0; $i < count($existingIds); $i++) {
                 $id = $existingIds[$i]->id;
                 $cleanIds[] = convertToURL($id);
