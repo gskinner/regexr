@@ -111,7 +111,10 @@
 					color: $lighter;
 					
 					.token, .rating, .icon { color: currentColor; }
-					&:hover { color: $white; }
+					&:hover {
+						background: $dark;
+						color: $white;
+					}
 				}
 				
 				&.disabled {
