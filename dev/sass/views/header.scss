@@ -95,10 +95,24 @@
 
 #tooltip-signin {
 	ul.list li {
-		@extend %link;
+		@extend .button;
 		margin: $pad*0.25 0;
+		padding: $pad*0.625;
+
+		opacity: 0.85;
+		&:hover {
+			background: $dark;
+			opacity: 1;
+		}
+
+		&[data-id='Facebook'] {
+			background: #4267B2;
+		}
+		&[data-id='Google'] {
+			background: #C94130;
+		}
 		
-		>.icon {
+		>svg.icon {
 			margin-right: $pad*0.625;
 		}
 	}
