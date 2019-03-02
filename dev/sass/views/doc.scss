@@ -51,4 +51,10 @@
 			}
 		}
 	}
+
+	&.tests-mode {
+		section.tools {
+			display: none;
+		}
+	}
 }

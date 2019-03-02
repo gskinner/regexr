@@ -31,7 +31,7 @@ $doc-light: mix($doc-white, $base-color, 50%);
 // control colors:
 $title-bg: $doc-light;
 $tooltip-bg: rgba($doc-black,0.9);
-$selected-stroke-color: rgba($black, 0.4);
+$selected-stroke-color: rgba($black, 0.3);
 $match-color: rgba($theme-color, 0.6);
 $dark-shadow: rgba(0,0,0, 0.25);
 $light-shadow: rgba(0,0,0, 0.1);
@@ -39,6 +39,7 @@ $strong-shadow: rgba(0,0,0, 0.45);
 
 // syntax coloring:
 $error-color: #C22;
+$pass-color: #090;
 $warning-color: $error-color;
 
 $group-color: #090;

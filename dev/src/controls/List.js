@@ -76,8 +76,12 @@ export default class List extends EventDispatcher {
 	}
 	
 	get selectedItem() {
-		let el = $.query("li.selected", this.el);
+		let el = this.selectedEl;
 		return el && el.item;
+	}
+
+	get selectedEl() {
+		return $.query("li.selected", this.el);
 	}
 	
 	refresh() {
@@ -103,7 +107,7 @@ export default class List extends EventDispatcher {
 	}
 	
 	scrollTo(id) {
-		let el = $.query("[data-id='"+id+"']",this.el);
+		let el = this.getEl(id);
 		if (!el) { return; }
 		// el.scrollIntoView(); // this is too jumpy, but would handle horizontal.
 		
@@ -113,5 +117,9 @@ export default class List extends EventDispatcher {
 		} else if (top < this.el.scrollTop) {
 			this.el.scrollTop = top-10;
 		}
+	}
+
+	getEl(id) {
+		return $.query("[data-id='"+id+"']", this.el);
 	}
 };

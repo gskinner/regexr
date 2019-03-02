@@ -160,7 +160,7 @@ export default class RegExr extends EventDispatcher {
 			toggle: new Tooltip($.query("#library #tooltip"), true)
 		};
 		
-		let el = $.query(".app > .doc", this.el);
+		let el = this.docEl = $.query(".app > .doc", this.el);
 		this.expression = new Expression($.query("> section.expression", el));
 		this.text = new Text($.query("> section.text", el));
 		this.tools = new Tools($.query("> section.tools", el));
@@ -171,6 +171,7 @@ export default class RegExr extends EventDispatcher {
 		
 		this.expression.on("change", ()=> this._change());
 		this.text.on("change", ()=> this._change());
+		this.text.on("modechange", ()=> this._modeChange());
 		this.flavor.on("change", ()=> this._change());
 		this.tools.on("change", ()=> this._change());
 		this.share.on("change", ()=> this._change());
@@ -195,6 +196,10 @@ export default class RegExr extends EventDispatcher {
 		this.dispatchEvent("change");
 		var solver = this.flavor.solver, exp = this.expression;
 		solver.solve({pattern:exp.pattern, flags:exp.flags, text:this.text.value, tool:this.tools.value}, (result) => this._handleResult(result));
+	}
+
+	_modeChange() {
+		$.toggleClass(this.docEl, "tests-mode", this.text.mode === "tests");
 	}
 	
 	_handleResult(result) {

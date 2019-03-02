@@ -22,6 +22,7 @@ import CMUtils from "../utils/CMUtils";
 import TextHighlighter from "./TextHighlighter";
 import TextHover from "./TextHover";
 import EventDispatcher from "../events/EventDispatcher";
+import List from "../controls/List";
 
 import app from "../app";
 
@@ -39,6 +40,15 @@ export default class Text extends EventDispatcher {
 	
 	get value() {
 		return this.editor.getValue();
+	}
+
+	set mode(val) {
+		this.modeList.selected = val;
+		this._updateMode();
+	}
+
+	get mode() {
+		return this.modeList.selected;
 	}
 	
 	get selectedMatch() {
@@ -69,8 +79,14 @@ export default class Text extends EventDispatcher {
 		this.resultEl = $.query("> header .result", el);
 		this.resultEl.addEventListener("mouseenter", (evt)=>this._mouseResult(evt));
 		this.resultEl.addEventListener("mouseleave", (evt)=>this._mouseResult(evt));
+
+		this.modeListEl = $.query("> header .modelist", el);
+		let data = ["Text", "Tests"].map((val) => ({label:val, id:val.toLowerCase()}));
+		this.modeList = new List(this.modeListEl, {data});
+		this.modeList.on("change", ()=> this._handleModeChange());
+		this.modeList.selected = "text";
 		
-		let textEl = $.query("> .editor > .pad", el);
+		let textEl = $.query(".editor > .pad", el);
 		this.defaultText = $.query("textarea", textEl).value;
 		let editor = this.editor = CMUtils.create($.empty(textEl), {lineWrapping: true}, "100%", "100%");
 		editor.setValue(this.defaultText);
@@ -92,6 +108,15 @@ export default class Text extends EventDispatcher {
 		
 		this.highlighter = new TextHighlighter(editor, canvas, $.getCSSValue("match", "color"), $.getCSSValue("selected-stroke", "color"));
 		this.hover = new TextHover(editor, this.highlighter);
+	}
+
+	_handleModeChange(evt) {
+		this._updateMode();
+		this.dispatchEvent("modechange");
+	}
+
+	_updateMode() {
+
 	}
 	
 	_setResult(val) {
