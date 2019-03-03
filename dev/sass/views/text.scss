@@ -85,9 +85,14 @@
 		overflow: auto;
 
 		li {
-			margin-bottom: $pad*0.375;
-			background: $white;
+			background: $lightest;
 			box-shadow: 0 1px 2px $light-shadow;
+			transition: margin $transition-t ease-out;
+			margin: $pad*0.375 0;
+
+			&:first-child {
+				margin-top: 0;
+			}
 
 			&:hover {
 				outline: $selected-stroke;
@@ -135,6 +140,7 @@
 				border-top: solid 1px $lighter;
 				padding: $pad*0.5 $pad*0.75;
 				display: none;
+				height: 5em;
 				align-items: stretch;
 
 				.bar {
@@ -159,12 +165,12 @@
 
 			&.selected {
 				outline: $selected-stroke;
+				background: $white;
 				box-shadow: 0 3px 4px $dark-shadow;
+				margin: $pad 0;
 
-				margin-bottom: $pad;
-
-				&:not(:first-child) {
-					margin-top: $pad;
+				&:first-child {
+					margin-top: 0;
 				}
 
 				article {
