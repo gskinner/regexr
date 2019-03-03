@@ -1,4 +1,8 @@
 .doc > section.text {
+	article {
+		display: flex;
+	}
+
 	> header {
 		.modelist li {
 			font-size: 1rem;
@@ -77,9 +81,11 @@
 		padding: $pad;
 		background: $lighter;
 		height: 100%;
+		width: 100%;
+		overflow: auto;
 
 		li {
-			margin-bottom: $pad*0.25;
+			margin-bottom: $pad*0.375;
 			background: $white;
 			box-shadow: 0 1px 2px $light-shadow;
 
@@ -154,7 +160,12 @@
 			&.selected {
 				outline: $selected-stroke;
 				box-shadow: 0 3px 4px $dark-shadow;
-				margin-bottom: $pad*0.5;
+
+				margin-bottom: $pad;
+
+				&:not(:first-child) {
+					margin-top: $pad;
+				}
 
 				article {
 					display: flex;

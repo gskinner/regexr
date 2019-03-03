@@ -34,23 +34,8 @@ export default class List extends EventDispatcher {
 		$.empty(this.el);
 		this._data = data;
 		if (!data || !data.length) { return; }
-		let f=(evt) => this.handleClick(evt), template=this.template;
 		for (let i=0, l=data.length; i<l; i++) {
-			let o=data[i], label, id, selected;
-			if (typeof o === "string") {
-				id = o;
-				label = template ? template(o) : o;
-			} else {
-				if (o.hide) { continue; }
-				id = o.id || o.label;
-				label = template ? template(o) : o.label;
-				selected = o.selected;
-			}
-			let item = $.create("li", selected ? "selected" : null, label, this.el);
-			item.dataset.id = id;
-			item.item = o;
-			item.addEventListener("click", f);
-			item.addEventListener("dblclick", f);
+			this.addItem(data[i]);
 		}
 	}
 
@@ -88,6 +73,29 @@ export default class List extends EventDispatcher {
 		let sel = this.selected;
 		this.data = this._data;
 		this.selected = sel;
+	}
+
+	addItem(o, selected=null) {
+		let label, id, sel;
+		let f=(evt) => this.handleClick(evt), template=this.template;
+		if (typeof o === "string") {
+			id = o;
+			label = template ? template(o) : o;
+		} else {
+			if (o.hide) { return; }
+			id = o.id || o.label;
+			label = template ? template(o) : o.label;
+			if (selected === null) { sel = o.selected; }
+		}
+		let item = $.create("li", sel ? "selected" : null, label, this.el);
+		item.dataset.id = id;
+		item.item = o;
+		item.addEventListener("click", f);
+		item.addEventListener("dblclick", f);
+
+		if (selected) {
+			this.selected = o.id;
+		}
 	}
 
 	handleClick(evt) {

@@ -97,7 +97,10 @@ $.empty = function(element) {
 $.create = function(type, className, content, parent) {
 	let element = document.createElement(type || "div");
 	if (className) { element.className = className; }
-	if (content) { element.innerHTML = content; }
+	if (content) {
+		if (content instanceof HTMLElement) { element.appendChild(content); }
+		else { element.innerHTML = content; }
+	}
 	if (parent) { parent.appendChild(element); }
 	return element;
 };

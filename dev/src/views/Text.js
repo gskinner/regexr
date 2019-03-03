@@ -108,6 +108,20 @@ export default class Text extends EventDispatcher {
 		
 		this.highlighter = new TextHighlighter(editor, canvas, $.getCSSValue("match", "color"), $.getCSSValue("selected-stroke", "color"));
 		this.hover = new TextHover(editor, this.highlighter);
+
+		// test mode:
+		this.testItemEl = $.query("#library > #tests_item");
+		this.testListEl = $.query(".list.tests", el);
+		this.testList = new List(this.testListEl, {template:(o) => this._testItemTemplate(o)});
+		this.testList.data = [{id:"foo"}, {id:"bar"}]; /* TMP */
+
+		let addTestBtn = $.query("> header .button.add", el);
+		addTestBtn.addEventListener("click", ()=>this._addTest());
+
+	}
+
+	_updateMode() {
+		
 	}
 
 	_handleModeChange(evt) {
@@ -115,8 +129,13 @@ export default class Text extends EventDispatcher {
 		this.dispatchEvent("modechange");
 	}
 
-	_updateMode() {
+	_testItemTemplate(o) {
+		return this.testItemEl.cloneNode(true);
+	}
 
+	_addTest() {
+		console.log("add");
+		this.testList.addItem({id:Math.random()+"_"}, true);
 	}
 	
 	_setResult(val) {
