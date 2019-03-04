@@ -87,8 +87,10 @@
 		li {
 			background: $lightest;
 			box-shadow: 0 1px 2px $light-shadow;
-			transition: margin $transition-t ease-out;
-			margin: $pad*0.375 0;
+			transition: margin $transition-t*0.5 linear;
+			margin: $pad*0.125 0;
+			display: inline-block;
+			width: 100%;
 
 			&:first-child {
 				margin-top: 0;
@@ -138,9 +140,9 @@
 
 			article {
 				border-top: solid 1px $lighter;
-				padding: $pad*0.5 $pad*0.75;
+				padding: $pad*0.5 0 $pad*0.5 $pad*0.75;
 				display: none;
-				height: 5em;
+				height: 6em;
 				align-items: stretch;
 
 				.bar {
@@ -148,6 +150,10 @@
 					width: 0px;
 					outline: solid 1px $pass-color;
 					margin: $pad*0.25 $pad*0.875 $pad*0.25 $pad*0.375;
+				}
+
+				.editor {
+					padding: 0;
 				}
 			}
 
@@ -167,7 +173,7 @@
 				outline: $selected-stroke;
 				background: $white;
 				box-shadow: 0 3px 4px $dark-shadow;
-				margin: $pad 0;
+				margin: $pad*0.75 0;
 
 				&:first-child {
 					margin-top: 0;
@@ -210,7 +216,7 @@
 	}
 
 	
-	.editor {
+	> article > .editor {
 		display: none;
 	}
 

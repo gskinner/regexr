@@ -115,13 +115,25 @@ export default class Text extends EventDispatcher {
 		this.testList = new List(this.testListEl, {template:(o) => this._testItemTemplate(o)});
 		this.testList.data = [{id:"foo"}, {id:"bar"}]; /* TMP */
 
+		this.testList.on("change", (evt) => this._handleTestChange(evt));
+
 		let addTestBtn = $.query("> header .button.add", el);
 		addTestBtn.addEventListener("click", ()=>this._addTest());
 
+		let matchtypes = [
+			{id:"all", label:"Match All"},
+			{id:"any", label:"Match Any"},
+			{id:"none", label:"Match None"},
+
+		]
+		const template = $.template`<svg class="inline check icon"><use xlink:href="#check"></use></svg> ${"label"}`;
+		this.matchtypesEl = $.query("#library #tooltip-matchtypes");
+		this.matchtypesList = new List($.query("ul.list", this.matchtypesEl), {data:matchtypes, template});
+		this.matchtypesList.on("change", ()=> this._handleMatchtypesChange());
 	}
 
 	_updateMode() {
-		
+
 	}
 
 	_handleModeChange(evt) {
@@ -130,12 +142,61 @@ export default class Text extends EventDispatcher {
 	}
 
 	_testItemTemplate(o) {
-		return this.testItemEl.cloneNode(true);
+		let el = this.testItemEl.cloneNode(true);
+		let typeBtn = $.query("header .button.matchtype", el);
+		typeBtn.addEventListener("click", (evt) => this._showMatchtypes(typeBtn));
+
+		let delBtn = $.query("header .delete", el);
+		delBtn.addEventListener("click", (evt) => this._deleteTest(o));
+		return el;
 	}
 
 	_addTest() {
-		console.log("add");
+		// TODO: update data.
 		this.testList.addItem({id:Math.random()+"_"}, true);
+	}
+
+	_handleTestChange() {
+		let el, o, typeBtn;
+		if (this._selTest) {
+			// clean up?
+		}
+
+		el = this.testList.selectedEl;
+		o = this.testList.selectedItem;
+
+		this._getTestEditor($.query("article .editor .pad", el), o);
+		this._selTest = o;
+	}
+
+	_handleMatchtypesChange() {
+		// TODO: update data.
+		let el = this.testList.selectedEl;
+		let typeBtn = $.query("header .button.matchtype", el);
+		$.query(".label", typeBtn).innerText = this.matchtypesList.selectedItem.label;
+		app.tooltip.toggle.hide("matchtypes");
+	}
+
+	_showMatchtypes(el) {
+		app.tooltip.toggle.toggleOn("matchtypes", this.matchtypesEl, el, true, -2);
+	}
+
+	_deleteTest(o) {
+		this.testList.removeItem(o.id);
+		// TODO: figure out which is next and select it.
+		// TODO: update data.
+		console.log(this.testList.data[0].id);
+		this.testList.selected = this.testList.data[0].id;
+	}
+
+	_getTestEditor(el, o) {
+		let editor = this.testEditor;
+		if (!editor) {
+			editor = this.testEditor = CMUtils.create($.empty(el), {lineWrapping: true}, "100%", "100%");;
+		} else {
+			el.appendChild(editor.getWrapperElement());
+		}
+		editor.setValue("id: "+o.id);
 	}
 	
 	_setResult(val) {

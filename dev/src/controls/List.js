@@ -98,8 +98,14 @@ export default class List extends EventDispatcher {
 		}
 	}
 
+	removeItem(id) {
+		let el = $.query("[data-id='"+id+"']",this.el);
+		el && el.remove();
+	}
+
 	handleClick(evt) {
 		let id = evt.currentTarget.dataset.id, old = this.selected;
+		if (!this.getEl(id)) { return; }
 		if (evt.type === "dblclick") {
 			if (id != null) { this.dispatchEvent("dblclick"); }
 			return;
