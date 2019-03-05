@@ -111,9 +111,9 @@ export default class Text extends EventDispatcher {
 
 		// test mode:
 		this.testItemEl = $.query("#library > #tests_item");
-		this.testListEl = $.query(".list.tests", el);
+		this.testListEl = $.query(".tests .list", el);
 		this.testList = new List(this.testListEl, {template:(o) => this._testItemTemplate(o)});
-		this.testList.data = [{id:"foo"}, {id:"bar"}]; /* TMP */
+		this.testList.data = [];
 
 		this.testList.on("change", (evt) => this._handleTestChange(evt));
 
@@ -185,6 +185,7 @@ export default class Text extends EventDispatcher {
 		this.testList.removeItem(o.id);
 		// TODO: figure out which is next and select it.
 		// TODO: update data.
+		// TODO: confirm?
 		console.log(this.testList.data[0].id);
 		this.testList.selected = this.testList.data[0].id;
 	}
