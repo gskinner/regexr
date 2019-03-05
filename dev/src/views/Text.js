@@ -110,25 +110,39 @@ export default class Text extends EventDispatcher {
 		this.hover = new TextHover(editor, this.highlighter);
 
 		// test mode:
+		const types = [
+			{id:"all", label:"Match All"},
+			{id:"any", label:"Match Any"},
+			{id:"none", label:"Match None"},
+		];
+		this.typeLabels = types.reduce((o, t) => { o[t.id] = t.label; return o; }, {});
+
 		this.testItemEl = $.query("#library > #tests_item");
 		this.testListEl = $.query(".tests .list", el);
 		this.testList = new List(this.testListEl, {template:(o) => this._testItemTemplate(o)});
-		this.testList.data = [];
+		this.testList.data = [ /* TODO: TMP */
+			{
+				name: "Hello",
+				type: "any",
+				text: "this is\nsome text\nand line 3\na fourth line",
+				id: 1
+			},
+			{
+				name: "",
+				type: "none",
+				text: "some more text",
+				id: 2
+			},
+		];
 
 		this.testList.on("change", (evt) => this._handleTestChange(evt));
 
 		let addTestBtn = $.query("> header .button.add", el);
 		addTestBtn.addEventListener("click", ()=>this._addTest());
 
-		let matchtypes = [
-			{id:"all", label:"Match All"},
-			{id:"any", label:"Match Any"},
-			{id:"none", label:"Match None"},
-
-		]
 		const template = $.template`<svg class="inline check icon"><use xlink:href="#check"></use></svg> ${"label"}`;
 		this.matchtypesEl = $.query("#library #tooltip-matchtypes");
-		this.matchtypesList = new List($.query("ul.list", this.matchtypesEl), {data:matchtypes, template});
+		this.matchtypesList = new List($.query("ul.list", this.matchtypesEl), {data:types, template});
 		this.matchtypesList.on("change", ()=> this._handleMatchtypesChange());
 	}
 
@@ -144,60 +158,94 @@ export default class Text extends EventDispatcher {
 	_testItemTemplate(o) {
 		let el = this.testItemEl.cloneNode(true);
 		let typeBtn = $.query("header .button.matchtype", el);
-		typeBtn.addEventListener("click", (evt) => this._showMatchtypes(typeBtn));
+		typeBtn.addEventListener("click", (evt) => this._showMatchtypes(typeBtn, o));
 
 		let delBtn = $.query("header .delete", el);
 		delBtn.addEventListener("click", (evt) => this._deleteTest(o));
+
+		let nameFld = $.query("header .name", el);
+		nameFld.addEventListener("input", () => this._handleTestNameChange(nameFld, o));
+
+		this._updateTestHeader(o, el, false);
+
 		return el;
 	}
 
+	_updateTestHeader(o, el, edit) {
+		let nameFld = $.query("header .name", el);
+		nameFld.value = o.name||"";
+		nameFld.placeholder = o.text && !edit ? o.text.substr(0, 100) : "Untitled Test";
+
+		let typeLbl = $.query("header .button.matchtype .label", el);
+		typeLbl.innerText = this.typeLabels[o.type];
+	}
+
 	_addTest() {
-		// TODO: update data.
-		this.testList.addItem({id:Math.random()+"_"}, true);
+		const o = {
+			id:Math.random()+"_",
+			name: "",
+			text: "Enter your test text here.",
+			type: "any"
+		}
+		this.testList.data.push(o); /* TODO: shouldn't access via testList */
+		this.testList.addItem(o, true);
+		this._handleTestChange();
 	}
 
 	_handleTestChange() {
 		let el, o, typeBtn;
 		if (this._selTest) {
-			// clean up?
+			o = this._selTest;
+			el = this.testList.getEl(o.id);
+			this._updateTestHeader(o, el, false);
 		}
 
 		el = this.testList.selectedEl;
-		o = this.testList.selectedItem;
+		o = this._selTest = this.testList.selectedItem;
 
 		this._getTestEditor($.query("article .editor .pad", el), o);
-		this._selTest = o;
+		this._updateTestHeader(o, el, true);
+	}
+
+	_handleTestNameChange(fld, o) {
+		o.name = fld.value;
 	}
 
 	_handleMatchtypesChange() {
-		// TODO: update data.
-		let el = this.testList.selectedEl;
-		let typeBtn = $.query("header .button.matchtype", el);
-		$.query(".label", typeBtn).innerText = this.matchtypesList.selectedItem.label;
+		let el = this.testList.selectedEl, o = this.testList.selectedItem;
+		o.type = this.matchtypesList.selectedItem.id;
 		app.tooltip.toggle.hide("matchtypes");
+		this._updateTestHeader(o, el, true);
 	}
 
-	_showMatchtypes(el) {
+	_handleTestTextChange() {
+		this._selTest.text = this.testEditor.getValue();
+	}
+
+	_showMatchtypes(el, o) {
+		this.matchtypesList.selected = o.type;
 		app.tooltip.toggle.toggleOn("matchtypes", this.matchtypesEl, el, true, -2);
 	}
 
 	_deleteTest(o) {
+		let data = this.testList.data;/* TODO: don't access through testList */
+		let i = data.indexOf(o);
+		data.splice(i, 1);
+		this._selTest = null;
 		this.testList.removeItem(o.id);
-		// TODO: figure out which is next and select it.
-		// TODO: update data.
-		// TODO: confirm?
-		console.log(this.testList.data[0].id);
-		this.testList.selected = this.testList.data[0].id;
+		this.testList.selected = data[Math.min(i, data.length-1)].id;
+		this._handleTestChange();
 	}
 
 	_getTestEditor(el, o) {
-		let editor = this.testEditor;
-		if (!editor) {
-			editor = this.testEditor = CMUtils.create($.empty(el), {lineWrapping: true}, "100%", "100%");;
+		let cm = this.testEditor;
+		if (!cm) {
+			cm = this.testEditor = CMUtils.create($.empty(el), {lineWrapping: true}, "100%", "100%");
+			cm.on("change", () => this._handleTestTextChange());
 		} else {
-			el.appendChild(editor.getWrapperElement());
+			el.appendChild(cm.getWrapperElement());
 		}
-		editor.setValue("id: "+o.id);
+		cm.setValue(o.text);
 	}
 	
 	_setResult(val) {
