@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 
 import EventDispatcher from "../events/EventDispatcher";
+import CMUtils from "../utils/CMUtils";
 
 export default class ExpressionHighlighter extends EventDispatcher {
 	constructor(cm) {
@@ -52,7 +53,7 @@ export default class ExpressionHighlighter extends EventDispatcher {
 					token = token.next;
 					continue;
 				}
-				token = this._calcTokenPos(doc, token);
+				token = this._calcTokenPos(token);
 	
 				var className = pre + (token.clss || token.type);
 				if (token.error) {
@@ -64,7 +65,7 @@ export default class ExpressionHighlighter extends EventDispatcher {
 				}
 	
 				if (token.close) {
-					endToken = this._calcTokenPos(doc, token.close);
+					endToken = this._calcTokenPos(token.close);
 					className = groupClasses[token.clss || token.type];
 					if (className) {
 						className = className.replace("%depth%", token.depth);
@@ -111,8 +112,8 @@ export default class ExpressionHighlighter extends EventDispatcher {
 			token = token.set[0];
 		}
 		
-		this._calcTokenPos(doc, endToken);
-		this._calcTokenPos(doc, token);
+		this._calcTokenPos(endToken);
+		this._calcTokenPos(token);
 		this._hoverMarks.push(doc.markText(token.startPos, endToken.endPos, {
 			className: style,
 			startStyle: style + "-left",
@@ -120,12 +121,11 @@ export default class ExpressionHighlighter extends EventDispatcher {
 		}));
 	};
 
-	_calcTokenPos(doc, token) {
+	_calcTokenPos(token) {
 		if (token.startPos || token == null) {
 			return token;
 		}
-		token.startPos = doc.posFromIndex(token.i);
-		token.endPos = doc.posFromIndex(token.i+token.l);
+		CMUtils.calcRangePos(this.cm, token.i, token.l, token);
 		return token;
 	};
 	

@@ -88,6 +88,7 @@ export default class RegExr extends EventDispatcher {
 		let o = {
 			expression: this.expression.value,
 			text: this.text.value,
+			tests: this.text.tests,
 			flavor: this.flavor.value,
 			tool: this.tools.value
 		};
@@ -100,6 +101,7 @@ export default class RegExr extends EventDispatcher {
 		this.flavor.value = o.flavor;
 		this.expression.value = o.expression;
 		this.text.value = o.text;
+		this.text.tests = o.tests;
 		this.tools.value = o.tool;
 		this.share.pattern = o;
 		this.resetUnsaved();
@@ -194,21 +196,31 @@ export default class RegExr extends EventDispatcher {
 	
 	_change() {
 		this.dispatchEvent("change");
-		var solver = this.flavor.solver, exp = this.expression;
-		solver.solve({pattern:exp.pattern, flags:exp.flags, text:this.text.value, tool:this.tools.value}, (result) => this._handleResult(result));
+		let solver = this.flavor.solver, exp = this.expression;
+		let o = {pattern:exp.pattern, flags:exp.flags, mode:this.text.mode};
+		if (o.mode === "tests") {
+			o.tests = this.text.tests;
+		} else {
+			o.text = this.text.value;
+			o.tool = this.tools.value;
+		}
+		solver.solve(o, (result) => this._handleResult(result));
 	}
 
 	_modeChange() {
 		$.toggleClass(this.docEl, "tests-mode", this.text.mode === "tests");
+		this._change();
 	}
 	
 	_handleResult(result) {
-		this.result = this._processResult(result);;
+		this.result = this._processResult(result);
 		this.dispatchEvent("result");
 	}
 	
 	_processResult(result) {
-		result.matches && result.matches.forEach((o, i)=>o.num=i);
+		if (result.mode === "text") {
+			result.matches && result.matches.forEach((o, i)=>o.num=i);
+		}
 		return result;
 	}
 }

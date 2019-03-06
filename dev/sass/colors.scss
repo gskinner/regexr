@@ -39,8 +39,9 @@ $strong-shadow: rgba(0,0,0, 0.45);
 
 // syntax coloring:
 $error-color: #C22;
-$pass-color: #090;
 $warning-color: $error-color;
+$fail-color: $error-color;
+$pass-color: #090;
 
 $group-color: #090;
 $groupbg-color: #0E0;

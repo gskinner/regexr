@@ -28,6 +28,16 @@
 					background: $warning-color;
 				}
 			}
+			//*
+			&.pass {
+				background: $pass-color;
+				color: $doc-lightest;
+			}
+			//*/
+			&.fail {
+				background: $fail-color;
+				color: $doc-lightest;
+			}
 			
 			em {
 				font-style: normal;
