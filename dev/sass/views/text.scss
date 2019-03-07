@@ -87,14 +87,14 @@
 	.tests {
 		display: none;
 		width: 100%;
-		background: $lighter;
+		background: $doc-lighter;
 		padding: $pad;
 		box-sizing: border-box;
 		overflow: auto;
 
 		.default {
 			display: none;
-			color: $mid;
+			color: $doc-mid;
 		}
 
 		.list:empty + .default {
@@ -103,7 +103,7 @@
 
 		.list {
 			li {
-				background: $lightest;
+				background: $doc-lightest;
 				box-shadow: 0 1px 2px $light-shadow;
 				transition: margin $transition-t*0.5 linear;
 				margin: $pad*0.125 0;
@@ -123,15 +123,17 @@
 					padding: $pad*0.5 $pad*0.75;
 
 					input.name {
-						color: $darker;
+						color: $doc-darker;
 						font-weight: bold;
 						padding: 0;
 						margin: 0 $pad * 0.5;
+						background: transparent;
+						border: none;
 					}
 
 					.icon.delete {
 						@extend %link;
-						color: $light;
+						color: $doc-light;
 		
 						&:hover {
 							color: $error-color !important;
@@ -148,16 +150,17 @@
 					}
 
 					.matchtype {
+						background: transparent;
 						text-transform: uppercase;
 						font-size: 0.75em;
-						color: $light;
+						color: $doc-light;
 						font-weight: bold;
 						box-shadow: none;
 					}
 				}
 
 				article {
-					border-top: solid 1px $lighter;
+					border-top: solid 1px $doc-lighter;
 					padding: $pad*0.5 0 $pad*0.5 $pad*0.75;
 					display: none;
 					height: 6em;
@@ -189,7 +192,7 @@
 
 				&.selected {
 					outline: $selected-stroke;
-					background: $white;
+					background: $doc-white;
 					box-shadow: 0 3px 4px $dark-shadow;
 					margin: $pad*0.75 0;
 
@@ -202,10 +205,10 @@
 					}
 
 					.matchtype {
-						color: $dark;
+						color: $doc-dark;
 
 						&:hover {
-							color: $darkest;
+							color: $doc-darkest;
 						}
 					}
 				}

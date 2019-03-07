@@ -218,6 +218,10 @@ svg.icon {
 			&.selected .check.icon {
 				color: $theme-color;
 			}
+
+			&:not(.inactive):hover {
+				color: $doc-lightest;
+			}
 			
 			em {
 				font-style: normal;
