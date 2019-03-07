@@ -21,6 +21,7 @@ TODO:
 Add analytics.
 Save / load - don't forget to assign IDs on load.
 Server solve.
+Issue with CM not updating in Text when loading pattern in Test mode.
 */
 
 import $ from "../utils/DOMUtils";
@@ -54,7 +55,10 @@ export default class Text extends EventDispatcher {
 	set tests(val) {
 		val = val || [];
 		this._tests = this.testList.data = val;
+		this._testMatches = this._selTest = null;
 		if (val.length) { this.testList.selected = val[0].id; }
+		this._handleTestChange();
+		//if (this.mode === "tests") { this._change(); }
 	}
 
 	get tests() {

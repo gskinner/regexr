@@ -30,7 +30,6 @@ export default class List extends EventDispatcher {
 	}
 	
 	set data(data) {
-		// TODO: retain selection?
 		$.empty(this.el);
 		this._data = data;
 		if (!data || !data.length) { return; }
