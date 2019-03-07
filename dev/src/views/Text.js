@@ -19,13 +19,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 /*
 TODO:
 Add analytics.
-Save / load.
+Save / load - don't forget to assign IDs on load.
 Server solve.
-Proper UIDs for tests.
 */
 
 import $ from "../utils/DOMUtils";
 import Utils from "../utils/Utils";
+import UID from "../utils/UID";
 import CMUtils from "../utils/CMUtils";
 import TextHighlighter from "./TextHighlighter";
 import TextHover from "./TextHover";
@@ -351,7 +351,7 @@ export default class Text extends EventDispatcher {
 
 	_addTest() {
 		const o = {
-			id:Math.random()+"_",
+			id: "t"+UID.id,
 			name: "",
 			text: "Enter your test text here.",
 			type: "any"
