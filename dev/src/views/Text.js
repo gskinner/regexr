@@ -133,12 +133,7 @@ export default class Text extends EventDispatcher {
 	}
 
 	_handleModeChange(evt) {
-		this._updateMode();
 		this.dispatchEvent("modechange");
-	}
-
-	_updateMode() {
-
 	}
 	
 	_setResult(val) {
@@ -222,12 +217,23 @@ export default class Text extends EventDispatcher {
 				str = "<span class='error warning'>WARNING:</span> "+ this._errorText(err) + "<hr>";
 			}
 			let l = res&&res.matches&&res.matches.length;
-			str += (l||"No")+" match"+(l>1?"es":"")+" found in "+this.value.length+" characters";
-			str += this._emptyCount  ? ", including "+this._emptyCount+" empty matches (* not displayed)." : ".";
-			let cm = this.editor, sel = cm.listSelections()[0], pos = sel.head;
-			let i0 = cm.indexFromPos(pos), i1=cm.indexFromPos(sel.anchor), range=Math.abs(i0-i1);
-			str += "<hr>Insertion point: line "+pos.line+", col "+pos.ch+", index "+i0;
-			str += (range>0 ? " ("+range+" character"+(range===1?"":"s")+" selected)" : "")
+			if (this.mode === "tests") {
+				if (this._tests.length === 0) {
+					str += "Use the 'Add Test' button to create a new test.";
+				} else if (this._testFails) {
+					str += this._testFails+" out of "+l+" tests failed.";
+				} else {
+					str += "All "+l+" tests passed.";
+				}
+			} else {
+				str += (l||"No")+" match"+(l>1?"es":"")+" found in "+this.value.length+" characters";
+				str += this._emptyCount  ? ", including "+this._emptyCount+" empty matches (* not displayed)." : ".";
+				let cm = this.editor, sel = cm.listSelections()[0], pos = sel.head;
+				let i0 = cm.indexFromPos(pos), i1=cm.indexFromPos(sel.anchor), range=Math.abs(i0-i1);
+				str += "<hr>Insertion point: line "+pos.line+", col "+pos.ch+", index "+i0;
+				str += (range>0 ? " ("+range+" character"+(range===1?"":"s")+" selected)" : "");
+			}
+			
 		}
 		tt.showOn("result", str, this.resultEl, false, -2);
 	}
@@ -253,7 +259,7 @@ export default class Text extends EventDispatcher {
 // Test mode:
 	_initTestUI(el) {
 		const types = [
-			{id:"all", label:"Match All"},
+			{id:"all", label:"Match Full"},
 			{id:"any", label:"Match Any"},
 			{id:"none", label:"Match None"},
 		];
@@ -296,6 +302,8 @@ export default class Text extends EventDispatcher {
 			$.toggleClass(el, "fail", !pass);
 			if (!pass) { fails++; }
 		}
+
+		this._testFails = fails;
 		if (fails) {
 			this._showResult(fails+" FAILED", "fail");
 		} else {
