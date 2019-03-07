@@ -18,12 +18,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /*
 TODO:
-Should optimize the path for changing tests. Right now, it triggers an unnecessary "change", because
-CM.setValue fires a change event.
-Should also not send empty tests to the solver. Doesn't matter now, but no reason to hit the server.
 Add analytics.
 Save / load.
 Server solve.
+Proper UIDs for tests.
 */
 
 import $ from "../utils/DOMUtils";
@@ -56,8 +54,7 @@ export default class Text extends EventDispatcher {
 	set tests(val) {
 		val = val || [];
 		this._tests = this.testList.data = val;
-		// TODO: should this try to preserve the selection?
-		if (val.length) { this.testList.selected = val.id; }
+		if (val.length) { this.testList.selected = val[0].id; }
 	}
 
 	get tests() {
@@ -138,6 +135,8 @@ export default class Text extends EventDispatcher {
 	
 	_setResult(val) {
 		this._result = val;
+		this._testMatches = null;
+
 		if (this.mode !== val.mode) { return; }
 		if (val.mode === "tests") {
 			this._updateTests();
@@ -216,7 +215,7 @@ export default class Text extends EventDispatcher {
 			if (err && err.warning) {
 				str = "<span class='error warning'>WARNING:</span> "+ this._errorText(err) + "<hr>";
 			}
-			let l = res&&res.matches&&res.matches.length;
+			let l = this._tests.length;
 			if (this.mode === "tests") {
 				if (this._tests.length === 0) {
 					str += "Use the 'Add Test' button to create a new test.";
@@ -275,9 +274,9 @@ export default class Text extends EventDispatcher {
 		addTestBtn.addEventListener("click", ()=>this._addTest());
 
 		const template = $.template`<svg class="inline check icon"><use xlink:href="#check"></use></svg> ${"label"}`;
-		this.matchtypesEl = $.query("#library #tooltip-matchtypes");
-		this.matchtypesList = new List($.query("ul.list", this.matchtypesEl), {data:types, template});
-		this.matchtypesList.on("change", ()=> this._handleMatchtypesChange());
+		this.typesEl = $.query("#library #tooltip-testtypes");
+		this.typesList = new List($.query("ul.list", this.typesEl), {data:types, template});
+		this.typesList.on("change", ()=> this._handleTypesChange());
 
 		this.tests = null;
 	}
@@ -286,7 +285,7 @@ export default class Text extends EventDispatcher {
 		let result = this._result;
 		if (result.error) { return this._showResult(); }
 
-		let data = this.testList.data, l=data.length; /* TODO: don't access through testList */
+		let data = this._tests, l=data.length;
 		if (!data || !l) { return this._showResult("No tests."); }
 		
 		let matches = result.matches.reduce((o, t) => { o[t.id] = t; return o; }, {}), fails=0;
@@ -304,27 +303,31 @@ export default class Text extends EventDispatcher {
 		}
 
 		this._testFails = fails;
+		this._testMatches = matches;
 		if (fails) {
 			this._showResult(fails+" FAILED", "fail");
 		} else {
 			this._showResult("PASSED", "pass");
 		}
 		
-		let el = this.testList.selectedEl;
+		this._updateSelTest();
+	}
+
+	_updateSelTest() {
 		if (this._testMark) { this._testMark.clear(); }
-		if (el) {
-			let match = matches[this.testList.selected], cm = this.testEditor;
-			if (match && match.i != null) {
-				let pos = CMUtils.calcRangePos(cm, match.i, match.l);
-				this._testMark = this.testEditor.getDoc().markText(pos.startPos, pos.endPos, {className:"match"});
-			}
+		let matches = this._testMatches, el = this.testList.selectedEl;
+		if (!el || !matches) { return; }
+		let match = matches[this.testList.selected], cm = this.testEditor;
+		if (match && match.i != null) {
+			let pos = CMUtils.calcRangePos(cm, match.i, match.l);
+			this._testMark = this.testEditor.getDoc().markText(pos.startPos, pos.endPos, {className:"match"});
 		}
 	}
 
 	_testItemTemplate(o) {
 		let el = this.testItemEl.cloneNode(true);
-		let typeBtn = $.query("header .button.matchtype", el);
-		typeBtn.addEventListener("click", (evt) => this._showMatchtypes(typeBtn, o));
+		let typeBtn = $.query("header .button.type", el);
+		typeBtn.addEventListener("click", (evt) => this._showTypes(typeBtn, o));
 
 		let delBtn = $.query("header .delete", el);
 		delBtn.addEventListener("click", (evt) => this._deleteTest(o));
@@ -342,7 +345,7 @@ export default class Text extends EventDispatcher {
 		nameFld.value = o.name||"";
 		nameFld.placeholder = o.text && !edit ? o.text.substr(0, 100) : "Untitled Test";
 
-		let typeLbl = $.query("header .button.matchtype .label", el);
+		let typeLbl = $.query("header .button.type .label", el);
 		typeLbl.innerText = this.typeLabels[o.type];
 	}
 
@@ -353,7 +356,7 @@ export default class Text extends EventDispatcher {
 			text: "Enter your test text here.",
 			type: "any"
 		}
-		this.testList.data.push(o); /* TODO: shouldn't access via testList */
+		this._tests.push(o);
 		this.testList.addItem(o, true);
 		this._handleTestChange();
 		this.testEditor.focus();
@@ -376,46 +379,47 @@ export default class Text extends EventDispatcher {
 
 		this._getTestEditor($.query("article .editor .pad", el), o);
 		this._updateTestHeader(o, el, true);
+		this._updateSelTest();
 	}
 
 	_handleTestNameChange(fld, o) {
 		o.name = fld.value;
 	}
 
-	_handleMatchtypesChange() {
+	_handleTypesChange() {
 		let el = this.testList.selectedEl, o = this.testList.selectedItem;
-		o.type = this.matchtypesList.selectedItem.id;
-		app.tooltip.toggle.hide("matchtypes");
+		o.type = this.typesList.selectedItem.id;
+		app.tooltip.toggle.hide("testtypes");
 		this._updateTestHeader(o, el, true);
 		this._change();
 	}
 
-	_handleTestTextChange() {
+	_handleTestTextChange(change) {
 		this._selTest.text = this.testEditor.getValue();
-		this._change();
+		if (change.origin !== "setValue") { this._change(); }
 	}
 
-	_showMatchtypes(el, o) {
-		this.matchtypesList.selected = o.type;
-		app.tooltip.toggle.toggleOn("matchtypes", this.matchtypesEl, el, true, -2);
+	_showTypes(el, o) {
+		this.typesList.selected = o.type;
+		app.tooltip.toggle.toggleOn("testtypes", this.typesEl, el, true, -2);
 	}
 
 	_deleteTest(o) {
-		let data = this.testList.data; /* TODO: don't access through testList */
+		let data = this._tests;
 		let i = data.indexOf(o);
 		data.splice(i, 1);
 		this._selTest = null;
 		this.testList.removeItem(o.id);
 		if (data.length) { this.testList.selected = data[Math.min(i, data.length-1)].id; }
+		this._updateTests();
 		this._handleTestChange();
-		this._change();
 	}
 
 	_getTestEditor(el, o) {
 		let cm = this.testEditor;
 		if (!cm) {
 			cm = this.testEditor = CMUtils.create($.empty(el), {lineWrapping: true}, "100%", "100%");
-			cm.on("change", () => this._handleTestTextChange());
+			cm.on("change", (a, b) => this._handleTestTextChange(b));
 		} else {
 			el.appendChild(cm.getWrapperElement());
 		}

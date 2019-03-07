@@ -149,7 +149,7 @@
 						color: $pass-color;
 					}
 
-					.matchtype {
+					.type {
 						background: transparent;
 						text-transform: uppercase;
 						font-size: 0.75em;
@@ -181,7 +181,7 @@
 				&:not(.selected) {
 					cursor: pointer;
 
-					.matchtype .icon.dropdown {
+					.type .icon.dropdown {
 						opacity: 0;
 					}
 
@@ -204,7 +204,7 @@
 						display: flex;
 					}
 
-					.matchtype {
+					.type {
 						color: $doc-dark;
 
 						&:hover {
