@@ -32,6 +32,7 @@ import Text from "./views/Text";
 import Tools from "./views/Tools";
 import Sidebar from "./views/Sidebar";
 import Account from "./views/Account";
+import Theme from "./views/Theme";
 
 import Reference from "./docs/Reference";
 import reference_content from "./docs/reference_content";
@@ -159,6 +160,8 @@ export default class RegExr extends EventDispatcher {
 			hover: new Tooltip($.query("#library #tooltip").cloneNode(true)),
 			toggle: new Tooltip($.query("#library #tooltip"), true)
 		};
+
+		this.theme = new Theme(this.el);
 		
 		let el = $.query(".app > .doc", this.el);
 		this.expression = new Expression($.query("> section.expression", el));

@@ -19,6 +19,7 @@
 
 	.settings {
 		@extend %link;
+		color: $theme-color;
 		display: flex;
 		min-width: 0;
 		max-width: 20em;
@@ -78,6 +79,19 @@
 					color: $mid;
 				}
 			}
+		}
+	}
+
+	.button.theme {
+		padding: $pad * 0.3755;;
+		background: $darkest;
+
+		&.selected .icon {
+			color: $theme-color;
+		}
+
+		&:hover {
+			background: $darker;
 		}
 	}
 	

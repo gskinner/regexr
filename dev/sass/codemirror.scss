@@ -9,6 +9,7 @@
 
 	div.CodeMirror-cursor {
 		pointer-events: none; /* this doesn't work in IE<11 */
+		border-left: 1px solid $doc-black;
 	}
 }
 

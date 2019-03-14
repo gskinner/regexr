@@ -44,6 +44,10 @@ export default class TextHighlighter {
 		this._selectedMatch = val;
 		this._deferUpdate();
 	}
+
+	redraw() {
+		this._update();
+	}
 	
 	_deferUpdate() {
 		Utils.defer(()=>this._update(), "TextHighlighter._update");

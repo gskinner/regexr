@@ -114,7 +114,9 @@ svg.icon {
 	}
 	
 	> svg.icon {
-		margin-right: 0.25em;
+		& + * {
+			margin-left: 0.25em;
+		}
 		margin-top: -0.125em;
 		
 		&.dropdown {
