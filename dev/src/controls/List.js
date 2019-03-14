@@ -119,16 +119,17 @@ export default class List extends EventDispatcher {
 		if (!this.dispatchEvent("change", false, true)) { this.selected = old; }
 	}
 	
-	scrollTo(id) {
+	scrollTo(id=this.selected) {
 		let el = this.getEl(id);
 		if (!el) { return; }
-		// el.scrollIntoView(); // this is too jumpy, but would handle horizontal.
-		
-		let top = el.offsetTop - this.el.offsetTop;
-		if (top + el.offsetHeight > this.el.scrollTop+this.el.offsetHeight) {
-			this.el.scrollTop = top+el.offsetHeight-this.el.offsetHeight+10;
-		} else if (top < this.el.scrollTop) {
-			this.el.scrollTop = top-10;
+		//el.scrollIntoView(); // this is too jumpy, but would handle horizontal.
+
+		let scrollEl = this.scrollEl || this.el;
+		let top = el.offsetTop - scrollEl.offsetTop;
+		if (top + el.offsetHeight > scrollEl.scrollTop+scrollEl.offsetHeight) {
+			scrollEl.scrollTop = top+el.offsetHeight-scrollEl.offsetHeight+10;
+		} else if (top < scrollEl.scrollTop) {
+			scrollEl.scrollTop = top-10;
 		}
 	}
 

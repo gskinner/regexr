@@ -271,6 +271,7 @@ export default class Text extends EventDispatcher {
 		this.testItemEl = $.query("#library > #tests_item");
 		this.testListEl = $.query(".tests .list", el);
 		this.testList = new List(this.testListEl, {template:(o) => this._testItemTemplate(o)});
+		this.testList.scrollEl = $.query(".tests", el);
 
 		this.testList.on("change", (evt) => this._handleTestChange(evt));
 
