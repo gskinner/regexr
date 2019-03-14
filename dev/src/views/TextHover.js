@@ -17,6 +17,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 import CMUtils from "../utils/CMUtils";
+import $ from "../utils/DOMUtils";
 
 import app from "../app";
 
@@ -61,6 +62,11 @@ export default class TextHover {
 		}
 		let rect = (index != null) && CMUtils.getCharRect(cm, index);
 		if (rect) { rect.right = rect.left = x; }
-		app.tooltip.hover.show("TextHover", app.reference.tipForMatch(match, cm.getValue()), x, rect.bottom, true, 0);
+		let tip = app.reference.tipForMatch(match, cm.getValue());
+		if (tip) {
+			let div = $.create("div", "texthover", tip);
+			app.tooltip.hover.show("TextHover", div, x, rect.bottom, true, 0);
+		}
+		
 	}
 }
