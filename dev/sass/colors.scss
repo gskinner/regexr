@@ -30,7 +30,7 @@ $doc-light: mix($doc-white, $base-color, 50%);
 
 // control colors:
 $title-bg: $doc-light;
-$tooltip-bg: rgba($doc-black,0.9);
+$tooltip-bg: rgba($doc-black,0.85);
 $selected-stroke-color: rgba($doc-black, 0.3);
 $match-color: rgba($theme-color, 0.5);
 

@@ -141,6 +141,7 @@
 		.signoutbtn {
 			cursor: pointer;
 			color: $theme-color;
+			font-weight: bold;
 			
 			&:hover {
 				color: $doc-white;

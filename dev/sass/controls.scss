@@ -179,6 +179,7 @@ svg.icon {
 		max-width: 15rem;
 		box-shadow: 0px 3px 4px $dark-shadow;
 		overflow-wrap: break-word;
+		backdrop-filter: blur(3px);
 		
 		code {
 			font-weight: bold;
