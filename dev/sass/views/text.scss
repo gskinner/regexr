@@ -97,6 +97,21 @@
 			color: $doc-mid;
 		}
 
+		.add.button {
+			box-sizing: border-box;
+			width: 100%;
+			border: 1px dotted $doc-mid;
+			box-shadow: none;
+			opacity: 0.5;
+			padding: $pad * 0.75 $pad*0.5;
+			margin-top: $pad * 0.125;
+			font-weight: bold;
+
+			&:hover {
+				opacity: 0.625;
+			}
+		}
+
 		.list:empty + .default {
 			display: block;
 		}

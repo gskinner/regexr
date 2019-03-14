@@ -25,7 +25,7 @@ export default class ServerSolver {
 		// unescape tool input:
 		if (o.tool.input != null) { o.tool.input = Utils.unescSubstStr(o.tool.input); }
 		if (this._serverPromise) { this._serverPromise.abort(); }
-		Utils.defer(()=>this._solve(o,callback), "ServerSolver._solve", 250);
+		Utils.defer(()=>this._solve(o, callback), "ServerSolver._solve", 250);
 	}
 	
 	_solve(o, callback) {

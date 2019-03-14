@@ -274,8 +274,7 @@ export default class Text extends EventDispatcher {
 
 		this.testList.on("change", (evt) => this._handleTestChange(evt));
 
-		let addTestBtn = $.query("> header .button.add", el);
-		addTestBtn.addEventListener("click", ()=>this._addTest());
+		$.on($.queryAll(".button.add", el), "click", ()=>this._addTest());
 
 		const template = $.template`<svg class="inline check icon"><use xlink:href="#check"></use></svg> ${"label"}`;
 		this.typesEl = $.query("#library #tooltip-testtypes");
