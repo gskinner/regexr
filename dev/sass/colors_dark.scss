@@ -1,7 +1,7 @@
 @import "colors";
 
 // base colors:
-$theme-color: desaturate(darken($theme-color, 20), 22);
+$theme-color: desaturate(darken($theme-color, 18), 20);
 $base-color: mix(#808080, darken($theme-color, 20), 90);
 
 // core colors:
