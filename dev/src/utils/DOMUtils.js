@@ -81,6 +81,16 @@ $.remove = function(element) {
 	return element;
 };
 
+$.on = function(element, event, listener) {
+	if ($._runOnNodeList($.on, element, event, listener)) { return element; }
+	element.addEventListener(event, listener);
+}
+
+$.off = function(element, event, listener) {
+	if ($._runOnNodeList($.off, element, event, listener)) { return element; }
+	element.removeEventListener(event, listener);
+}
+
 /*
  Remove all children from an element.
  When using .innerHTML = ""; IE fails when adding new dom elements via appendChild();
