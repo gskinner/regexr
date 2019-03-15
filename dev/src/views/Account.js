@@ -21,7 +21,6 @@ import EventDispatcher from "../events/EventDispatcher";
 import $ from "../utils/DOMUtils"
 import Track from "../utils/Track"
 
-import Tooltip from "../controls/Tooltip";
 import List from "../controls/List";
 import Server from "../net/Server";
 

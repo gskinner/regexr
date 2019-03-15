@@ -43,7 +43,8 @@ export default class RegExr extends EventDispatcher {
 	constructor () { super(); }
 	
 	init(state, account, config={}) {
-		this.flavor = new Flavor("js");
+		this.prefs = new Prefs();
+		this.flavor = new Flavor();
 		this.reference = new Reference(reference_content, this.flavor, config);
 		this._migrateFavorites();
 		this._initUI();
@@ -160,7 +161,6 @@ export default class RegExr extends EventDispatcher {
 			toggle: new Tooltip($.query("#library #tooltip"), true)
 		};
 
-		this.prefs = new Prefs();
 		this.theme = new Theme(this.el);
 		
 		let el = $.query(".app > .doc", this.el);
