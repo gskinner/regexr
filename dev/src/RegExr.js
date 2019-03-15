@@ -41,7 +41,7 @@ import Prefs from "./helpers/Prefs";
 
 export default class RegExr extends EventDispatcher {
 	constructor () { super(); }
-	
+
 	init(state, account, config={}) {
 		this.prefs = new Prefs();
 		this.flavor = new Flavor();
@@ -64,7 +64,7 @@ export default class RegExr extends EventDispatcher {
 		if (params.expression) { this.expression.value = params.expression; }
 		if (params.text) { this.text.value = params.text; }
 		if (params.tool) { this.tools.value = {id:params.tool, input:params.input}; }
-		
+
 		window.onbeforeunload = (e) => this.unsaved ? "You have unsaved changes." : null;
 		this.resetUnsaved();
 
@@ -83,7 +83,7 @@ export default class RegExr extends EventDispatcher {
 		//Server.verify().then((data) => this.account.value = data);
 		new RefCoverage();
 	}
-	
+
 // getter / setters:
 	get state() {
 		let o = {
@@ -95,7 +95,7 @@ export default class RegExr extends EventDispatcher {
 		// copy share values onto the pattern object:
 		return Utils.copy(this.share.value, o);
 	}
-	
+
 	set state(o) {
 		if (!o) { return; }
 		this.flavor.value = o.flavor;
@@ -130,7 +130,7 @@ export default class RegExr extends EventDispatcher {
 	resetUnsaved() {
 		this._savedHash = this.hash;
 	}
-	
+
 	newDoc(warn=true) {
 		this.load({flavor: this.flavor.value, expression: ".", text:"Text"}, warn);
 		this.expression.selectAll();
@@ -141,7 +141,7 @@ export default class RegExr extends EventDispatcher {
 		if (warn && this.unsaved && !confirm(warn)) { return; }
 		this.state = Utils.clone(state);
 	}
-	
+
 // private methods:
 	_initUI() {
 		// TODO: break into own Device class? Rename mobile.scss too?
@@ -162,16 +162,16 @@ export default class RegExr extends EventDispatcher {
 		};
 
 		this.theme = new Theme(this.el);
-		
+
 		let el = $.query(".app > .doc", this.el);
 		this.expression = new Expression($.query("> section.expression", el));
 		this.text = new Text($.query("> section.text", el));
 		this.tools = new Tools($.query("> section.tools", el));
-		
+
 		this.account = new Account();
 		this.sidebar = new Sidebar($.query(".app > .sidebar", this.el));
 		this.share = this.sidebar.share;
-		
+
 		this.expression.on("change", ()=> this._change());
 		this.text.on("change", ()=> this._change());
 		this.flavor.on("change", ()=> this._change());
@@ -193,18 +193,18 @@ export default class RegExr extends EventDispatcher {
 		if (!ids.length) { ls.setItem("f_v3", "1"); return; }
 		Server.multiFavorite(ids).then(() => ls.setItem("f_v3", "1"));
 	}
-	
+
 	_change() {
 		this.dispatchEvent("change");
 		var solver = this.flavor.solver, exp = this.expression;
 		solver.solve({pattern:exp.pattern, flags:exp.flags, text:this.text.value, tool:this.tools.value}, (result) => this._handleResult(result));
 	}
-	
+
 	_handleResult(result) {
 		this.result = this._processResult(result);;
 		this.dispatchEvent("result");
 	}
-	
+
 	_processResult(result) {
 		result.matches && result.matches.forEach((o, i)=>o.num=i);
 		return result;
