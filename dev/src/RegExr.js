@@ -20,10 +20,8 @@ import EventDispatcher from "./events/EventDispatcher";
 
 import $ from "./utils/DOMUtils";
 import Utils from "./utils/Utils";
-import CMUtils from "./utils/CMUtils";
 
 import Tooltip from "./controls/Tooltip";
-import List from "./controls/List";
 
 import Server from "./net/Server";
 
@@ -39,6 +37,7 @@ import reference_content from "./docs/reference_content";
 import Flavor from "./Flavor";
 
 import RefCoverage from "./RefCoverage";
+import Prefs from "./helpers/Prefs";
 
 export default class RegExr extends EventDispatcher {
 	constructor () { super(); }
@@ -161,6 +160,7 @@ export default class RegExr extends EventDispatcher {
 			toggle: new Tooltip($.query("#library #tooltip"), true)
 		};
 
+		this.prefs = new Prefs();
 		this.theme = new Theme(this.el);
 		
 		let el = $.query(".app > .doc", this.el);
