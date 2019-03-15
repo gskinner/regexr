@@ -75,6 +75,7 @@ o.kids = [
 		token:"."
 		},
 		{
+		id:"matchanyset",
 		label:"match any",
 		desc:"A character set that can be used to match any character, including line breaks, without the dotall flag (<code>s</code>)."+
 			"<p>An alternative is <code>[^]</code>, but it is not supported in all browsers.</p>",

@@ -373,7 +373,10 @@ let core = {
 		"conditionalelse": y, // |
 		"conditionalgroup": y, // (?(1)a|b) (?(-1)a|b) (?(name)a|b)
 		"mode": y, // (?i-x) see modes above
-		"comment": y // (?#comment)
+		"comment": y, // (?#comment)
+
+		// meta:
+		"matchanyset": y // [\s\S]
 	},
 	
 	substTokens: {
