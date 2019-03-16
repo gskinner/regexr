@@ -31,6 +31,7 @@ export default class Text extends EventDispatcher {
 		this.el = el;
 		this._initUI(el);
 		app.on("result", () => this._setResult(app.result));
+		app.theme.on("change", () => this._handleThemeChange());
 	}
 	
 	set value(val) {
@@ -86,12 +87,18 @@ export default class Text extends EventDispatcher {
 		win.onresize = ()=> {
 			let w = win.innerWidth|0, h = win.innerHeight|0;
 			this._startResize();
-			Utils.defer(()=>this._handleResize(w, h), "text_resize", 250);
+			Utils.defer(() => this._handleResize(w, h), "text_resize", 250);
 		};
 		win.onresize();
 		
 		this.highlighter = new TextHighlighter(editor, canvas, $.getCSSValue("match", "color"), $.getCSSValue("selected-stroke", "color"));
 		this.hover = new TextHover(editor, this.highlighter);
+	}
+
+	_handleThemeChange() {
+		this.highlighter.fill = $.getCSSValue("match", "color");
+		this.highlighter.stroke = $.getCSSValue("selected-stroke", "color");
+		this.highlighter.redraw();
 	}
 	
 	_setResult(val) {

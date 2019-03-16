@@ -10,7 +10,7 @@
 		padding: 0.5em 1em 0.5em 2.5em;
 		margin-top: 0.75em;
 		border: solid 1px rgba($doc-light, 0.5);
-		border-left-width: 0.25em;
+		border-left: solid 0.25em rgba($doc-light, 0.5);
 		background: $doc-white;
 		cursor: pointer;
 	}

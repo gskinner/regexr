@@ -1,5 +1,8 @@
+@import "colors";
+
 // base colors:
-$theme-color: darken(#80C0F0, 8);
+// inherit theme-color
+$theme-color: darken($theme-color, 6);
 $base-color: mix(#808080, invert($theme-color), 95);
 
 // core colors:
@@ -31,29 +34,14 @@ $doc-light: mix($doc-white, $base-color, 50%);
 // control colors:
 $title-bg: $doc-light;
 $tooltip-bg: rgba($doc-black,0.9);
-$selected-stroke-color: rgba($black, 0.4);
-$match-color: rgba($theme-color, 0.6);
+$selected-stroke-color: rgba($doc-black, 0.4);
+$match-color: rgba($theme-color, 0.45);
 $dark-shadow: rgba(0,0,0, 0.25);
 $light-shadow: rgba(0,0,0, 0.1);
 $strong-shadow: rgba(0,0,0, 0.35);
 
 // syntax coloring:
-$group-color: #090;
-$groupbg-color: #0E0;
-$set-color: #D70;
-$setbg-color: #FE0;
-$error-color: #C24;
-$anchor-color: #840;
-$quant-color: #58F;
-$alt-color: $group-color;
-$esc-color: #C0C;
-$special-color: $esc-color;
+// inherited
 
 // invisible char color:
-// this isn't bound to the theme color, because it's used in the tab bitmap:
-$invischar-color: rgba(127,127,127,0.5);
-
-// this shares the colors with js:
-#library > #colors {
-	.theme { color: $theme-color; }
-}
+// inherited

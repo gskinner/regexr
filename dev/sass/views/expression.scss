@@ -33,9 +33,12 @@
 #tooltip-flavor, #tooltip-flags {
 	> .list {
 		li {
-			@extend %link;
-			
+			cursor: pointer;
 			color: $doc-light;
+
+			&:hover {
+				color: $doc-white;
+			}
 			
 			+ li {
 				margin-top: 0.5em;

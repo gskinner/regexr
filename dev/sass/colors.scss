@@ -1,5 +1,5 @@
 // base colors:
-$theme-color: #80C0F0; /* #66CCFF */
+$theme-color: #70B0E0; /* #66CCFF */
 $base-color: mix(#808080, $theme-color, 85);
 
 // core colors:
@@ -30,18 +30,24 @@ $doc-light: mix($doc-white, $base-color, 50%);
 
 // control colors:
 $title-bg: $doc-light;
-$tooltip-bg: rgba($doc-black,0.9);
-$selected-stroke-color: rgba($black, 0.4);
-$match-color: rgba($theme-color, 0.6);
+$tooltip-bg: rgba($doc-black,0.85);
+$selected-stroke-color: rgba($doc-black, 0.3);
+$match-color: rgba($theme-color, 0.5);
+
 $dark-shadow: rgba(0,0,0, 0.25);
 $light-shadow: rgba(0,0,0, 0.1);
 $strong-shadow: rgba(0,0,0, 0.45);
 
-// syntax coloring:
-$error-color: #C22;
-$warning-color: $error-color;
+$details-group-alpha: 0.5;
 
-$group-color: #090;
+// notice colors:
+$error-color: #D22;
+$warning-color: $error-color;
+$fail-color: $error-color;
+$pass-color: #0A0;
+
+// syntax colors:
+$group-color: #0A0;
 $groupbg-color: #0E0;
 $alt-color: $group-color;
 

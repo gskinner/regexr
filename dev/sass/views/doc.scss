@@ -51,4 +51,26 @@
 			}
 		}
 	}
+
+	// overwrite colors:
+	input, textarea {
+		background:  rgba($doc-white, $input-opacity);
+		border-color: rgba($doc-white, $input-opacity);
+	}
+
+	.control {
+		background: rgba($doc-white, $control-opacity);
+	}
+
+	.button, .buttonbar > *, .segcontrol > * {
+		background: rgba($doc-white, $button-opacity);
+
+		&:hover, &.selected {
+			background: rgba($doc-white, $button-hover-opacity);
+		}
+
+		&.default:hover {
+			background: $doc-white;
+		}
+	}
 }

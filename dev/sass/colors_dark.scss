@@ -1,59 +1,39 @@
+@import "colors";
+
 // base colors:
-$theme-color: darken(#80C0F0, 15);
-$base-color: mix(#808080, adjust-hue($theme-color, 20), 85);
+$theme-color: desaturate(darken($theme-color, 18), 20);
+$base-color: mix(#808080, darken($theme-color, 20), 90);
 
 // core colors:
-$black: darken($base-color, 44%);
-$darkest: mix($black, $base-color, 80%);
-$darker: mix($black, $base-color, 64%);
-$dark: mix($black, $base-color, 35%);
-
-$mid: $base-color;
-
-$white: lighten($base-color, 45%);
-$lightest: mix($white, $base-color, 92%);
-$lighter: mix($white, $base-color, 78%);
-$light: mix($white, $base-color, 50%);
+// inherited
 
 // doc colors:
-$doc-black: $white;
+$doc-black: $lighter;
 $doc-darkest: mix($doc-black, $base-color, 90%);
 $doc-darker: mix($doc-black, $base-color, 72%);
 $doc-dark: mix($doc-black, $base-color, 50%);
 
-$doc-mid: $base-color;
+$doc-mid: $mid;
 
-$doc-white: $darkest;
+$doc-white: mix($black, $darkest, 30%);
 $doc-lightest: mix($doc-white, $base-color, 92%);
-$doc-lighter: mix($doc-white, $base-color, 78%);
-$doc-light: mix($doc-white, $base-color, 50%);
+$doc-lighter: mix($doc-white, $base-color, 80%);
+$doc-light: mix($doc-white, $base-color, 60%);
 
 // control colors:
 $title-bg: $doc-light;
-$tooltip-bg: rgba($doc-black,0.9);
-$selected-stroke-color: rgba($black, 0.4);
+$tooltip-bg: rgba($doc-black, 0.85);
+$selected-stroke-color: rgba($doc-black, 0.4);
 $match-color: rgba($theme-color, 0.6);
-$dark-shadow: rgba(0,0,0, 0.35);
-$light-shadow: rgba(0,0,0, 0.15);
-$strong-shadow: rgba(0,0,0, 0.55);
+
+$details-group-alpha: 0.33;
+
+// shadows inherited
+
+// notice colors:
 
 // syntax coloring:
-$group-color: #090;
-$groupbg-color: #0E0;
-$set-color: #D70;
-$setbg-color: #FE0;
-$error-color: #C24;
-$anchor-color: #840;
-$quant-color: #58F;
-$alt-color: $group-color;
-$esc-color: #C0C;
-$special-color: $esc-color;
+// inherited
 
 // invisible char color:
-// this isn't bound to the theme color, because it's used in the tab bitmap:
-$invischar-color: rgba(127,127,127,0.5);
-
-// this shares the colors with js:
-#library > #colors {
-	.theme { color: $theme-color; }
-}
+// inherited

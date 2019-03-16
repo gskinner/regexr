@@ -23,21 +23,24 @@ import BrowserSolver from "./helpers/BrowserSolver.js";
 import ServerSolver from "./helpers/ServerSolver.js";
 import profiles from "./profiles/profiles.js";
 
+import app from "./app";
+
 export default class Flavor extends EventDispatcher {
 	
 	constructor(flavor) {
 		super();
-		this.value = flavor;
+		this.value = app.prefs.read("flavor");
 		this._browserSolver = new BrowserSolver();
 		this._serverSolver = new ServerSolver();
 	}
 	
 	set value(id) {
-		let profile = profiles[id.toLowerCase() || "js"];
+		let profile = profiles[(id && id.toLowerCase()) || "js"];
 		if (!profile || profile === this._profile) { return; }
 		Track.page("flavor/"+id);
 		this._profile = profile;
 		this._buildSupportMap(profile);
+		app.prefs.write("flavor", id);
 		this.dispatchEvent("change");
 	}
 	

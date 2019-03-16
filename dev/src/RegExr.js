@@ -20,10 +20,8 @@ import EventDispatcher from "./events/EventDispatcher";
 
 import $ from "./utils/DOMUtils";
 import Utils from "./utils/Utils";
-import CMUtils from "./utils/CMUtils";
 
 import Tooltip from "./controls/Tooltip";
-import List from "./controls/List";
 
 import Server from "./net/Server";
 
@@ -32,18 +30,21 @@ import Text from "./views/Text";
 import Tools from "./views/Tools";
 import Sidebar from "./views/Sidebar";
 import Account from "./views/Account";
+import Theme from "./views/Theme";
 
 import Reference from "./docs/Reference";
 import reference_content from "./docs/reference_content";
 import Flavor from "./Flavor";
 
 import RefCoverage from "./RefCoverage";
+import Prefs from "./helpers/Prefs";
 
 export default class RegExr extends EventDispatcher {
 	constructor () { super(); }
 	
 	init(state, account, config={}) {
-		this.flavor = new Flavor("js");
+		this.prefs = new Prefs();
+		this.flavor = new Flavor();
 		this.reference = new Reference(reference_content, this.flavor, config);
 		this._migrateFavorites();
 		this._initUI();
@@ -159,6 +160,8 @@ export default class RegExr extends EventDispatcher {
 			hover: new Tooltip($.query("#library #tooltip").cloneNode(true)),
 			toggle: new Tooltip($.query("#library #tooltip"), true)
 		};
+
+		this.theme = new Theme(this.el);
 		
 		let el = $.query(".app > .doc", this.el);
 		this.expression = new Expression($.query("> section.expression", el));

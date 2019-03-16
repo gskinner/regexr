@@ -19,6 +19,7 @@
 
 	.settings {
 		@extend %link;
+		color: $theme-color;
 		display: flex;
 		min-width: 0;
 		max-width: 20em;
@@ -80,6 +81,19 @@
 			}
 		}
 	}
+
+	.button.theme {
+		padding: $pad * 0.3755;;
+		background: $darkest;
+
+		&.selected .icon {
+			color: $theme-color;
+		}
+
+		&:hover {
+			background: $darker;
+		}
+	}
 	
 	ul.etc {
 		flex: 1;
@@ -98,19 +112,22 @@
 		@extend .button;
 		margin: $pad*0.25 0;
 		padding: $pad*0.625;
+		color: $lightest;
 
-		background: $dark;
 		opacity: 0.85;
 		&:hover {
-			background: $dark;
 			opacity: 1;
 		}
 
+		&[data-id='GitHub'] {
+			background: #777777 !important;
+		}
+
 		&[data-id='Facebook'] {
-			background: #4267B2;
+			background: #4267B2 !important;
 		}
 		&[data-id='Google'] {
-			background: #C94130;
+			background: #C94130 !important;
 		}
 		
 		>svg.icon {
@@ -122,7 +139,13 @@
 		display: none;
 
 		.signoutbtn {
-			@extend %link;
+			cursor: pointer;
+			color: $theme-color;
+			font-weight: bold;
+			
+			&:hover {
+				color: $doc-white;
+			}
 		}
 	}
 	
