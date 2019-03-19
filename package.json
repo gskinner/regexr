@@ -1,7 +1,7 @@
 {
   "name": "regexr",
   "version": "3.6.1",
-  "description": "DESCRIPTION",
+  "description": "Regular expression tester with syntax highlighting, PHP / PCRE & JS Support, contextual help, cheat sheet, reference, and searchable community patterns.",
   "author": "Grant Skinner",
   "license": "GPL-3.0",
 	"private": true,
