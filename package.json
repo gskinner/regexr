@@ -1,9 +1,10 @@
 {
   "name": "regexr",
-  "version": "3.0.0",
+  "version": "3.6.1",
   "description": "DESCRIPTION",
   "author": "Grant Skinner",
   "license": "GPL-3.0",
+	"private": true,
   "devDependencies": {
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
@@ -23,7 +24,8 @@
     "rollup": "^1.6.0",
     "rollup-plugin-babel": "4.3.2",
     "rollup-plugin-replace": "^2.1.0",
-    "rollup-plugin-uglify": "^6.0.2"
+    "rollup-plugin-uglify": "^6.0.2",
+    "vinyl": "^2.2.0",
   },
   "babel": {
     "presets": [

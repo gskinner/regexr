@@ -14,9 +14,14 @@ const babel = require("rollup-plugin-babel");
 const uglify = require("rollup-plugin-uglify").uglify;
 const replace = require("rollup-plugin-replace");
 const browser = require("browser-sync").create();
+const Vinyl = require("vinyl");
+const Buffer = require("buffer").Buffer;
 const del = require("del");
-const crypto = require("crypto");
+const Readable = require("stream").Readable;
+const createHash = require("crypto").createHash;
 const fs = require("fs");
+const basename = require("path").basename;
+const CSSDiff = require("./CSSDiff").default;
 
 // constants
 const isProduction = () => process.env.NODE_ENV === "production";
@@ -27,8 +32,8 @@ const babelPlugin = babel({
 });
 const replacePlugin = replace({
 	delimiters: ["<%= ", " %>"],
-	"build-version": pkg.version,
-	"build-date": getDateString()
+	"build_version": pkg.version,
+	"build_date": getDateString()
 });
 const uglifyPlugin = uglify();
 let bundleCache;
@@ -44,9 +49,12 @@ gulp.task("serve", () => {
 gulp.task("watch", () => {
 	gulp.watch("./dev/src/**/*.js", gulp.series("js", browser.reload));
 	gulp.watch("./index.html", gulp.series(browser.reload));
-	gulp.watch("./dev/sass/**/*.scss", gulp.series("sass"));
 	gulp.watch("./dev/icons/*.svg", gulp.series("icons"));
 	gulp.watch("./dev/inject/*", gulp.series("inject", browser.reload));
+	// sass watch ignores colors_* files (themes)
+	gulp.watch(["./dev/sass/**/*.scss", "!**/colors_*.scss"], gulp.series("sass"));
+	// set up chokidar watcher to re-render themes
+	gulp.watch("./dev/sass/colors_*.scss").on("change", renderTheme);
 });
 
 gulp.task("js", () => {
@@ -58,9 +66,14 @@ gulp.task("js", () => {
 		moduleContext: {
 			"./dev/lib/codemirror.js": "window",
 			"./dev/lib/clipboard.js": "window",
-			"./dev/lib/native.js": "window",
+			"./dev/lib/native.js": "window"
 		},
 		plugins,
+		onwarn: (warning, warn) => {
+			// ignore circular dependency warnings
+			if (warning.code === "CIRCULAR_DEPENDENCY") { return; }
+			warn(warning);
+		}
 	}).then(bundle => {
 		bundleCache = bundle.cache;
 		return bundle.write({
@@ -73,21 +86,37 @@ gulp.task("js", () => {
 });
 
 gulp.task("sass", () => {
-	return gulp.src(["dev/lib/**.css", "dev/lib/**.scss", "dev/sass/regexr.scss"])
-		.pipe(sass().on("error", sass.logError))
-		.pipe(autoprefixer({remove:false}))
-		.pipe(cleanCSS())
+	const str = buildSass("default")
 		.pipe(rename("regexr.css"))
-		.pipe(gulp.dest("deploy"))
-		.pipe(browser.stream());
+		.pipe(gulp.dest("deploy"));
+
+	return isProduction()
+		? str
+		: str.pipe(browser.stream());
 });
 
-gulp.task("html", done => {
-	if (!isProduction()) { return done(); }
-	return gulp.src("build/index.html")
+// create tasks for all themes
+fs.readdirSync("./dev/sass").filter(f => /colors_\w+\.scss/.test(f)).forEach(f => {
+	const theme = getThemeFromPath(f);
+	gulp.task(`sass-${theme}`, () => {
+		return diffTheme(theme).then(() => {
+			return gulp.src(`./assets/themes/${theme}.css`)
+				.pipe(browser.stream());
+		})
+	});
+});
+// manually render a theme via task, called from the chokidar listener in the watch task
+const renderTheme = filename => {
+	const theme = getThemeFromPath(basename(filename));
+	// wrapped in series() so it shows in the console
+	gulp.series(gulp.task(`sass-${theme}`))();
+};
+
+gulp.task("html", () => {
+	return gulp.src("./index.html")
 		.pipe(template({
-			"js-version": createFileHash("build/deploy/regexr.js"),
-			"css-version": createFileHash("build/deploy/regexr.css")
+			js_version: createFileHash("deploy/regexr.js"),
+			css_version: createFileHash("deploy/regexr.css")
 		}))
 		.pipe(htmlmin({
 			collapseWhitespace: true,
@@ -132,8 +161,9 @@ gulp.task("clean", () => {
 });
 
 gulp.task("copy", () => {
+	// index.html is copied in by the html task
 	return gulp.src([
-		"deploy/**", "assets/**", "index.*", "server/**",
+		"deploy/**", "assets/**", "index.php", "server/**",
 		"!deploy/*.map",
 		"!server/**/composer.*",
 		"!server/**/*.sql",
@@ -148,7 +178,7 @@ gulp.task("copy", () => {
 	.pipe(gulp.dest("./build/"));
 });
 
-gulp.task("build", gulp.parallel("js", "sass", "html"));
+gulp.task("build", gulp.parallel("js", "sass"));
 
 gulp.task("default",
 	gulp.series("build",
@@ -159,140 +189,70 @@ gulp.task("default",
 gulp.task("deploy",
 	gulp.series(
 		cb => (process.env.NODE_ENV = "production") && cb(),
-		"clean", "build", "copy"
+		"clean", "build", "html", "copy"
 	)
 );
 
 // helpers
 function createFileHash(filename) {
-	const hash = crypto.createHash("sha256");
-
+	const hash = createHash("sha256");
 	const fileContents = fs.readFileSync(filename, "utf-8");
 	hash.update(fileContents);
 	return hash.digest("hex").slice(0, 9);
 }
 
-function getBuildVersion() {
-	let i = process.argv.indexOf("--v")
-	let v = i === -1 ? null : process.argv[i+1];
-	if (!v || !/^\d+\.\d+\.\d+/.test(v)) {
-		throw("You must specify a version number with `--v x.x.x`.")
-	}
-	return v;
-}
-
 function getDateString() {
-	var now = new Date();
-	var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-	return months[now.getMonth()]+" "+now.getDate()+", "+now.getFullYear();
+	const now = new Date();
+	const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	return `${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
 }
 
-// dark theme:
-// TODO: this whole approach can be cleaned up, ideally when moving to gulp v4
-var dark = "", root = "";
-gulp.task("build-sass-dark0", function(cb) {
-	root = fs.readFileSync("dev/sass/regexr.scss", "utf-8");
-	fs.writeFile("dev/sass/regexr.scss", root.replace("@import 'colors';", "@import 'colors_dark';"), cb);
-});
-gulp.task("build-sass-dark1", function(cb) {
-	dark = fs.readFileSync("deploy/regexr.css", "utf-8");
-	fs.writeFile("dev/sass/regexr.scss", root, cb);
-});
-gulp.task("build-sass-dark2", function(cb) {
-	var def = fs.readFileSync("deploy/regexr.css", "utf-8");
-	var diff = (new CSSDiff()).diff(def, dark, false);
-	fs.writeFile("assets/themes/dark.css", diff, cb);
-	dark = root = ""; // clean up.
-});
+// theme "default", "light", "dark"
+function buildSass(theme) {
+	// read (s)css dependencies for the temp file
+	const libs = fs.readdirSync("./dev/lib").filter(file => /\.s?css$/.test(file));
+	const base = "./dev/sass/";
+	// sass file that is piped into the stream from memory
+	const tmpSass = `
+		${libs.map(f => `@import "../lib/${basename(f)}";`).join("\n")}
+		@import "./colors${theme === "default" ? "" : "_" + theme}.scss";
+		@import "./regexr.scss";
+	`;
+	const tmpFile = new Vinyl({
+		cwd: "/",
+		base,
+		path: `${base + theme}.scss`,
+		contents: Buffer.from(tmpSass)
+	});
+	// open an object stream and read the vinyl file in, piping thru the sass compilation
+	const src = Readable({ objectMode: true });
+	src._read = () => {
+		src.push(tmpFile);
+		src.push(null); // required for gulp to close properly
+	};
+	return src
+		.pipe(sass().on("error", sass.logError))
+		.pipe(autoprefixer({remove: false}))
+		.pipe(cleanCSS());
+}
 
-gulp.task("build-sass-dark", function(cb) {
-	runSequence("build-sass-dark0", "build-sass", "build-sass-dark1", "build-sass", "build-sass-dark2", cb);
-});
+function diffTheme(theme) {
+	const css = {};
+	return Promise.all(
+		// render both the default styles and the theme styles, saving the results
+		["default", theme].map(type => new Promise((resolve, reject) => {
+			buildSass(type).on("data", file => {
+				css[type] = file.contents.toString();
+				resolve();
+			});
+		}))
+	).then(() => new Promise((resolve, reject) => {
+		// diff the results, writing the results as the theme to override defaults
+		const diff = (new CSSDiff()).diff(css.default, css[theme]);
+		fs.writeFile(`./assets/themes/${theme}.css`, diff, resolve);
+	}));
+}
 
-
-// CSSDiff:
-class CSSDiff {
-	constructor() {}
-
-	diff(base, targ, pretty=false) {
-		let diff = this.compare(this.parse(base), this.parse(targ));
-		return this._writeDiff(diff, pretty);
-	}
-
-	parse(s, o={}) {
-		this._parse(s, /([^\n\r\{\}]+?)\s*\{\s*/g, /\}/g, o);
-		for (let n in o) {
-			if (n === " keys") { continue; }
-			o[n] = this.parseBlock(o[n]);
-		}
-		return o;
-	}
-
-	parseBlock(s, o={}) {
-		return this._parse(s, /([^\s:]+)\s*:/g, /(?:;|$)/g, o);
-	}
-
-	compare(o0, o1, o={}) {
-		let keys = o1[" keys"], l=keys.length, arr=[];
-		for (let i=0; i<l; i++) {
-			let n = keys[i];
-			if (!o0[n]) { o[n] = o1[n]; arr.push(n); continue; }
-			let diff = this._compareBlock(o0[n], o1[n]);
-			if (diff) { o[n] = diff; arr.push(n); }
-		}
-		o[" keys"] = arr;
-		return o;
-	}
-
-	_compareBlock(o0, o1) {
-		let keys = o1[" keys"], l=keys.length, arr=[], o;
-		for (let i=0; i<l; i++) {
-			let n = keys[i];
-			if (o0[n] === o1[n]) { continue; }
-			if (!o) { o = {}; }
-			o[n] = o1[n];
-			arr.push(n);
-		}
-		if (o) { o[" keys"] = arr; }
-		return o;
-	}
-
-	_parse(s, keyRE, closeRE, o) {
-		let i, match, arr=[];
-		while (match = keyRE.exec(s)) {
-			let key = match[1];
-			i = closeRE.lastIndex = keyRE.lastIndex;
-			if (!(match = closeRE.exec(s))) { console.log("couldn't find close", key); break; }
-			o[key] = s.substring(i, closeRE.lastIndex-match[0].length).trim();
-			i = keyRE.lastIndex = closeRE.lastIndex;
-			arr.push(key);
-		}
-		o[" keys"] = arr;
-		return o;
-	}
-
-	_writeDiff(o, pretty=false) {
-		let diff = "", ln="\n", s=" ";
-		if (!pretty) { ln = s = ""; }
-		let keys = o[" keys"], l=keys.length;
-		for (let i=0; i<l; i++) {
-			let n = keys[i];
-			if (diff) { diff += ln + ln; }
-			diff += n + s + "{" + ln;
-			diff += this._writeBlock(o[n], pretty);
-			diff += "}";
-		}
-		return diff;
-	}
-
-	_writeBlock(o, pretty=false) {
-		let diff = "", ln="\n", t="\t", s=" ";
-		if (!pretty) { ln = t = s = ""; }
-		let keys = o[" keys"], l=keys.length;
-		for (let i=0; i<l; i++) {
-			let n = keys[i];
-			diff += t + n + ":" + s + o[n] + ";" + ln;
-		}
-		return diff;
-	}
+function getThemeFromPath(filename) {
+	return filename.match(/_(\w+)\.scss/)[1];
 }
