@@ -13,7 +13,7 @@
 		color: rgba($doc-black, 0.25);
 		z-index: 10;
 		&:hover {
-			color: $theme-color;
+			color: $doc-darkest !important;
 		}
 	}
 	
