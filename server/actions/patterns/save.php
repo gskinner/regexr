@@ -44,6 +44,8 @@ class save extends \core\AbstractAction {
         $parentId = convertFromURL($this->getValue('parentId'));
         $access = $this->getValue('access');
         $access = empty($access)?null:$access;
+        $mode = $this->getValue('mode');
+        $tests = $this->getValue('tests');
 
         $patternId = convertFromURL($id);
 
@@ -61,23 +63,46 @@ class save extends \core\AbstractAction {
             } else {
                 $accessUpdate = '';
                 if (!is_null($access)) {
-                    $accessUpdate = ",visibility='{$access}'";
+                    $accessUpdate = ",visibility=?";
                 }
+
                 $sql = "UPDATE patterns SET
-                            name='{$name}',
-                            content='{$content}',
-                            `pattern`='{$pattern}',
-                            author='{$author}',
-                            keywords='{$keywords}',
-                            description='{$description}',
-                            state='{$tool}',
-                            flavor='{$flavor}'
+                            `name`=?,
+                            content=?,
+                            `pattern`=?,
+                            author=?,
+                            keywords=?,
+                            `description`=?,
+                            `state`=?,
+                            flavor=?,
+                            mode=?,
+                            tests=?
                             $accessUpdate
-                        WHERE id='{$patternId}'";
-                $this->db->query($sql);
+                        WHERE id=?";
+
+                $sqlParams = [
+                    ["s", $name],
+                    ["s", $content],
+                    ["s", $pattern],
+                    ["s", $author],
+                    ["s", $keywords],
+                    ["s", $description],
+                    ["s", $tool],
+                    ["s", $flavor],
+                    ["s", $mode],
+                    ["s", $tests],
+                ];
+
+                if (!is_null($access)) {
+                    array_push($sqlParams, ["s", $access]);
+                }
+
+                array_push($sqlParams, ["i", $patternId]);
+
+                $this->db->execute($sql, $sqlParams);
             }
         } else if (is_null($parentId)) { // Not a fork
-            $patternId = savePattern($this->db, $name, $content, $pattern, $author, $description, $keywords, $tool, $flavor, $userProfile->userId, $access);
+            $patternId = savePattern($this->db, $name, $content, $pattern, $author, $description, $keywords, $tool, $flavor, $userProfile->userId, $access, $mode, $tests);
         } else { // Fork
             $existingPattern = $this->db->query("SELECT visibility, owner FROM patterns WHERE id='{$patternId}'", true);
             if (!is_null($existingPattern)) {
@@ -119,6 +144,7 @@ class save extends \core\AbstractAction {
     public function getSchema() {
         return array(
             "id" => array("type"=>self::STRING, "required"=>false),
+            "mode" => array("type"=>self::ENUM, "values"=>["text", "tests"], "required"=>false, "default" => "text"),
             "keywords" => array("type"=>self::STRING, "required"=>false, "length"=>2056),
             "name" => array("type"=>self::STRING, "required"=>false, "length"=>30),
             "expression" => array("type"=>self::STRING, "required"=>false, "length"=>2048),
@@ -126,6 +152,7 @@ class save extends \core\AbstractAction {
             "description" => array("type"=>self::STRING, "required"=>false, "length"=>250),
             "token" => array("type"=>self::STRING, "required"=>false),
             "tool" => array("type"=>self::STRING, "required"=>false, "length"=>1024),
+            "tests" => array("type"=>self::STRING, "required"=>false),
             "flavor" => array("type"=>self::ENUM, "values"=>$this->getTypeValues(), "required"=>false),
             "parentId" => array("type"=>self::STRING, "required"=>false),
             "access" => array("type"=>self::ENUM, "values"=>$this->getVisibilityValues(), "required"=>false)

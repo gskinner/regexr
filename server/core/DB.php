@@ -44,6 +44,30 @@ class DB {
         }
     }
 
+    public function execute($sql, $params) {
+        $stmt = $this->mysqli->prepare($sql);
+
+        if ($stmt == true) {
+            $types = "";
+            $values = [];
+
+            foreach ($params as $i => $value) {
+                $types .= $value[0];
+                $values[] = &$value[1];
+            }
+
+            $stmt->bind_param($types, ...$values);
+
+            if (!$stmt->execute()) {
+                throw new \core\APIError(\core\ErrorCodes::MYSQL_QUERY_ERR, $stmt->error);
+            }
+
+            $stmt->close();
+        } else {
+            throw new \core\APIError(\core\ErrorCodes::MYSQL_QUERY_ERR, $this->mysqli->error);
+        }
+    }
+
     public function isConnected() {
         return $this->_isConnected;
     }
