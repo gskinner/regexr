@@ -34,11 +34,11 @@ class solve extends \core\AbstractAction {
 
             $id = property_exists($data, "id")?$data->id:null;
             $pattern = $data->pattern;
-            $modifiers = $data->flags;
-            $text = $data->text;
-            $tool = $data->tool;
-            $mode = $data->mode;
-            $tests = $data->tests;
+            $modifiers = idx($data, "flags");
+            $text = idx($data, "text");
+            $tool = idx($data, "tool");
+            $mode = idx($data, "mode");
+            $tests = idx($data, "tests");
 
             if (strrpos($modifiers, 'g') !== false) {
                 $global = true;
@@ -62,36 +62,45 @@ class solve extends \core\AbstractAction {
 
         function runTests($tests, $pattern, $modifiers, $global) {
             $testResults = [];
+            $startTime = now();
             for ($i=0; $i < count($tests); $i++) {
                 $id = $tests[$i]->id;
                 $text = $tests[$i]->text;
                 $matches = [];
 
+                // PCRE functions throw warnings if something is malformed or errors out.
+                set_error_handler(array($this, 'pcreWarningHandler'), E_WARNING);
                 if ($global === true) {
                     $match = preg_match_all("/{$pattern}/{$modifiers}", $text, $matches, PREG_OFFSET_CAPTURE|PREG_SET_ORDER);
                 } else {
                     $match = preg_match("/{$pattern}/{$modifiers}", $text, $matches, PREG_OFFSET_CAPTURE);
                 }
+                // Stop capturing warnings.
+                restore_error_handler();
 
                 if ($match === 1) {
                     $testResults[] = [
                         "id" => $id,
-                        "i" => "TODO",
-                        "l" => "TODO",
+                        "i" => $matches[0][1][1],
+                        "l" => \realStringLength($matches[0][1][0]),
                     ];
                 } else if ($match === 0) {
                     $testResults[] = ["id" => $id];
                 } else if ($match === false) {
                     $testResults[] = [
                         "id" => $id,
-                        "error" => "TODO"
+                        "error" => $this->getLastError()
                     ];
                 }
             }
+
+            $endTime = now();
+            $totalTime = floatval(number_format($endTime - $startTime, 4, '.', ''));
+
             return [
                 'id' => $id,
                 'timestamp' => time(),
-                'time' => "TODO",
+                'time' => $totalTime,
                 'mode' => "tests",
                 'matches' => $testResults
             ];
@@ -133,15 +142,25 @@ class solve extends \core\AbstractAction {
                 ]
             ];
 
+            $error = $this->getLastError();
+
+            if (!is_null($error)) {
+                $result['error'] = $error;
+            }
+
+            return $result;
+        }
+
+        function getLastError() {
             if (!is_null($this->errorMessage) || !is_null($this->errorCode)) {
-                $result['error'] = [
+                return [
                     'message' => $this->errorMessage,
                     'name' => $this->getRegexErrorCodeString($this->errorCode),
                     'id' => $this->pcreErrorCodeToJS($this->errorCode)
                 ];
             }
 
-            return $result;
+            return null;
         }
 
 		function pcreList($pattern, $modifiers, $source, $str) {
