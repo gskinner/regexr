@@ -257,7 +257,7 @@ function getThemeFromPath(filename) {
 }
 
 // appended here to keep the build process as a single file:
-export default class CSSDiff {
+class CSSDiff {
 	constructor() {}
 
 	diff(base, targ, pretty = false) {
