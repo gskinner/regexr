@@ -24,7 +24,7 @@ home.label = "Menu";
 home.desc = "[from HTML]";
 home.kids = [
 
-	
+
 	{
 	label: "Pattern Settings",
 	id: "share",
@@ -32,7 +32,7 @@ home.kids = [
 	list: false,
 	kids: [
 		{
-		label: "Save to my Favorites", 
+		label: "Save to my Favorites",
 		id: "share_favorites",
 		el:"#share_favorites"
 		},
@@ -43,7 +43,7 @@ home.kids = [
 		}
 	]
 	},
-	
+
 	{
 	label: "My Patterns",
 	id:"favorites",
@@ -52,17 +52,17 @@ home.kids = [
 	search: true,
 	kids: []
 	},
-	
+
 	{
 	label: "Cheatsheet",
 	id:"cheatsheet",
 	el: "#cheatsheet"
 	},
-	
+
 	{ // injected from Reference
 	id:"reference"
 	},
-	
+
 	{
 	label: "Community Patterns",
 	id: "community",
@@ -81,7 +81,7 @@ home.kids = [
 
 		{
 		label:"About",
-		desc:"RegExr v[build-version] ([build-date])."+
+		desc:"RegExr v<%= build_version %> (<%= build_date %>)."+
 			"<p>Created by <a href='http://twitter.com/gskinner/' target='_blank'>Grant Skinner</a> and the <a href='http://gskinner.com/' target='_blank'>gskinner</a> team, using the <a href='http://createjs.com/' target='_blank'>CreateJS</a> & <a href='http://codemirror.net/' target='_blank'>CodeMirror</a> libraries.</p>"+
 			"<p>You can provide feedback or log bugs on <a href='http://github.com/gskinner/regexr/' target='_blank'>GitHub</a>.</p>"
 		},
