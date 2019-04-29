@@ -3,7 +3,7 @@
 	align-items: center;
 	padding: 0 $pad 0 $pad;
 	flex: 0 $title-height;
-	
+
 	h1 {
 		flex: 1;
 	}
@@ -15,16 +15,16 @@
 
 	&:not(.inactive) {
 		cursor: pointer;
-	
+
 		&:hover {
 			color: $lightest;
-			
+
 			svg.icon {
 				color: currentColor;
 			}
 		}
 	}
-	
+
 	svg.icon {
 		transition: fill $transition-t;
 	}
@@ -62,13 +62,13 @@ html, body {
 
 	// This shouldn't be necessary if everything is working correctly
 	// overflow: hidden;
-	
+
 	> .container {
 		/* wraps all content, since flex layouts don't work reliably on body */
 		height: 100%;
 		display: flex;
 		flex-flow: column;
-		
+
 		> .app {
 			/* wraps the sidebar and doc */
 			flex: 1;
@@ -122,7 +122,7 @@ h1, h2 {
 	flex-direction: column;
 	margin: 0;
 	padding: 0;
-	
+
 	li {
 		display: block;
 	}
@@ -157,7 +157,7 @@ span.error {
 	from {
 		transform: rotate(0deg);
 	}
-	
+
 	to {
 		transform: rotate(360deg);
 	}
