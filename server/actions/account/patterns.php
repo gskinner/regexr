@@ -23,42 +23,47 @@ class patterns extends \core\AbstractAction {
     public $description = 'Returns all the patterns either created or favorited by the current user. Favorite patterns are flagged with isFavorite.';
 
     public function execute() {
-				$userProfile = $this->getUserProfile();
+        $userProfile = $this->getUserProfile();
 
-                // When using a single query performance is awful, so we run favorites and created separate.
-				$createdResult = $this->db->query("SELECT patterns.*, ur.rating as userRating
-                                    FROM patterns
-                                    LEFT JOIN userRatings as ur ON ur.userId='{$userProfile->userId}' AND ur.patternId=patterns.id
-                                    WHERE patterns.owner = '{$userProfile->userId}'
-                                ");
+        // When using a single query performance is awful, so we run favorites and created separate.
+        $createdResult = $this->db->execute("SELECT patterns.*, ur.rating as userRating
+                            FROM patterns
+                            LEFT JOIN userRatings as ur ON ur.userId=? AND ur.patternId=patterns.id
+                            WHERE patterns.owner = ?", [
+                                ["s", $userProfile->userId],
+                                ["s", $userProfile->userId],
+                            ]);
 
-                $favoriteResult = $this->db->query("SELECT patterns.*, favorites.patternId = patterns.id as favorite, ur.rating as userRating
-                                    FROM patterns
-                                    LEFT JOIN userRatings as ur ON ur.userId='{$userProfile->userId}' AND ur.patternId=patterns.id
-                                    LEFT JOIN favorites ON favorites.userId = '{$userProfile->userId}'
-                                    WHERE favorites.patternId = patterns.id");
+        $favoriteResult = $this->db->execute("SELECT patterns.*, favorites.patternId = patterns.id as favorite, ur.rating as userRating
+                            FROM patterns
+                            LEFT JOIN userRatings as ur ON ur.userId=? AND ur.patternId=patterns.id
+                            LEFT JOIN favorites ON favorites.userId = ?
+                            WHERE favorites.patternId = patterns.id", [
+                                ["s", $userProfile->userId],
+                                ["s", $userProfile->userId],
+                            ]);
 
-				// Merge everything and filter out duplicate results.
-                $result = \array_merge(\is_array($createdResult)?$createdResult:[], \is_array($favoriteResult)?$favoriteResult:[]);
+        // Merge everything and filter out duplicate results.
+        $result = \array_merge(\is_array($createdResult)?$createdResult:[], \is_array($favoriteResult)?$favoriteResult:[]);
 
-				$cleanResult = [];
-				if (!is_null($result)) {
-						$keys = [];
-						foreach ($result as $value) {
-								$id = $value->id;
-								if (!array_key_exists($id, $keys)) {
-										$cleanResult[] = $value;
-										$value->favorite = property_exists($value, "favorite")?true:null;
-										$keys[$id] = true;
-								}
-						}
+        $cleanResult = [];
+        if (!is_null($result)) {
+            $keys = [];
+            foreach ($result as $value) {
+                $id = $value->id;
+                if (!array_key_exists($id, $keys)) {
+                    $cleanResult[] = $value;
+                    $value->favorite = property_exists($value, "favorite")?true:null;
+                    $keys[$id] = true;
+                }
+            }
 
-						usort($cleanResult, function ($a, $b) {
-								return $a->rating > $b->rating?1:-1;
-						});
-				}
+            usort($cleanResult, function ($a, $b) {
+                return $a->rating > $b->rating?1:-1;
+            });
+        }
 
-				return new \core\Result(createPatternSet($cleanResult));
+        return new \core\Result(createPatternSet($cleanResult));
     }
 
     public function getSchema() {

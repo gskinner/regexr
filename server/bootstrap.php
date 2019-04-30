@@ -72,13 +72,13 @@ function shutdown_handler() {
 
 spl_autoload_extensions('.php');
 spl_autoload_register(function ($class) {
-        $className = str_replace('\\', '/', $class) . '.php';
-        $fileName = __DIR__ . '/' . $className;
-        $actionsFilename = __DIR__ . '/actions/' . $className;
+    $className = str_replace('\\', '/', $class) . '.php';
+    $fileName = __DIR__ . '/' . $className;
+    $actionsFilename = __DIR__ . '/actions/' . $className;
 
-        if (file_exists($actionsFilename)) {
-            include $actionsFilename;
-        } else if (file_exists($fileName)) {
-            include $fileName;
-        }
+    if (file_exists($actionsFilename)) {
+        include $actionsFilename;
+    } else if (file_exists($fileName)) {
+        include $fileName;
+    }
 });

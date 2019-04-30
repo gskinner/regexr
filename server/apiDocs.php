@@ -34,7 +34,7 @@ class apiDocs {
         $actions = [];
 
         $db = new \core\DB();
-				$db->connect(DB_HOST, DB_USER_NAME, DB_PASSWORD, DB_NAME);
+        $db->connect(DB_HOST, DB_USER_NAME, DB_PASSWORD, DB_NAME);
 
         $Directory = new RecursiveDirectoryIterator($base);
         $Iterator = new RecursiveIteratorIterator($Directory);

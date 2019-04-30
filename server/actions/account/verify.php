@@ -24,96 +24,103 @@ class verify extends \core\AbstractAction {
     public $description = "Verifies the current users session is valid, and returns their username and userId.";
 
     public function execute() {
-				$username = null;
-				$authorName = null;
-				$userId = null;
-				$type = null;
-				$isAuthenticated = false;
+        $username = null;
+        $authorName = null;
+        $userId = null;
+        $type = null;
+        $isAuthenticated = false;
 
-				$session = new \core\Session($this->db, SESSION_NAME);
+        $session = new \core\Session($this->db, SESSION_NAME);
 
-				$sessionId = session_id();
-				$sessionData = idx($_SESSION, 'data');
+        $sessionId = session_id();
+        $sessionData = idx($_SESSION, 'data');
 
-				if (DEBUG === true && idx($_REQUEST, 'userId') !== null) {
-						$tempUserId = intval(idx($_REQUEST, 'userId'));
-						$sessionData = [
-								'userId' => $tempUserId,
-								'type' => 'temporary'
-						];
-						$isAuthenticated = true;
-				}
+        if (DEBUG === true && idx($_REQUEST, 'userId') !== null) {
+            $tempUserId = intval(idx($_REQUEST, 'userId'));
+            $sessionData = [
+                'userId' => $tempUserId,
+                'type' => 'temporary'
+            ];
+            $isAuthenticated = true;
+        }
 
-				if (!is_null($sessionData)) {
-						$sessionData = (object)$sessionData;
-				}
+        if (!is_null($sessionData)) {
+            $sessionData = (object)$sessionData;
+        }
 
-				if (!is_null($sessionData) && $sessionData->type != 'temporary') {
-						$auth = new \core\Authentication();
-						$adapter = $auth->connect($sessionData->type);
+        if (!is_null($sessionData) && $sessionData->type != 'temporary') {
+            $auth = new \core\Authentication();
+            $adapter = $auth->connect($sessionData->type);
 
-						if (!is_null($adapter)) {
-								try {
-										$userProfile = $adapter->getUserProfile();
-										$username = idx($userProfile, 'displayName');
-										$authorName = idx($userProfile, 'authorName');
-										$userId = $sessionData->userId;
-										$isAuthenticated = true;
-								} catch (\Exception $ex) {
-										$user = $this->db->query("SELECT * FROM users WHERE id='{$sessionData->userId}'", true);
+            if (!is_null($adapter)) {
+                try {
+                    $userProfile = $adapter->getUserProfile();
+                    $username = idx($userProfile, 'displayName');
+                    $authorName = idx($userProfile, 'authorName');
+                    $userId = $sessionData->userId;
+                    $isAuthenticated = true;
+                } catch (\Exception $ex) {
+                    $user = $this->db->execute("SELECT * FROM users WHERE id=?", ["s", $sessionData->userId], true);
 
-										if (is_null($user)) {
-												$isAuthenticated = false;
-										} else {
-												$username = $user->username;
-												$authorName = $user->authorName;
-												$isAuthenticated = true;
-										}
-								}
-						}
-				} else if (is_null($sessionData)) {
-						// Create a new user, with a temporary flag.
-						$tempUserEmail = uniqid();
-						$tempOauthId = uniqid();
+                    if (is_null($user)) {
+                        $isAuthenticated = false;
+                    } else {
+                        $username = $user->username;
+                        $authorName = $user->authorName;
+                        $isAuthenticated = true;
+                    }
+                }
+            }
+        } else if (is_null($sessionData)) {
+            // Create a new user, with a temporary flag.
+            $tempUserEmail = uniqid();
+            $tempOauthId = uniqid();
 
-						$this->db->query("INSERT INTO users
-										(email, username, authorName, type, oauthUserId, lastLogin)
-										VALUES ('{$tempUserEmail}', '', '', 'temporary', '{$tempOauthId}', NOW())
-						");
+            $sql = "INSERT INTO users
+                (email, username, authorName, type, oauthUserId, lastLogin)
+                VALUES (?, '', '', 'temporary', ?, NOW())";
 
-						$userId = $this->db->getLastId();
-						$sessionData = (object)[
-								'userId' => $userId,
-								'userEmail' => $tempUserEmail,
-								'type' => 'temporary'
-						];
+            $this->db->execute($sql, [
+                ["s", $tempUserEmail],
+                ["s", $tempOauthId]
+            ]);
 
-						$isAuthenticated = false;
+            $userId = $this->db->getLastId();
+            $sessionData = (object)[
+                'userId' => $userId,
+                'userEmail' => $tempUserEmail,
+                'type' => 'temporary'
+            ];
 
-						$_SESSION['data'] = $sessionData;
-				}
+            $isAuthenticated = false;
 
-				$userDetails = $this->db->query("SELECT * FROM users WHERE id='{$sessionData->userId}'", true);
+            $_SESSION['data'] = $sessionData;
+        }
 
-				$result = array(
-						'authenticated' => $isAuthenticated,
-						'username'=> $username,
-						'author' => $authorName,
-						'userId' => intval($sessionData->userId),
-						'type' => $sessionData->type
-				);
+        $userDetails = $this->db->execute("SELECT * FROM users WHERE id=?",["s", $sessionData->userId], true);
 
-				if (idx($userDetails, 'admin') == 1) {
-								$result['admin'] = true;
-				}
+        $result = array(
+            'authenticated' => $isAuthenticated,
+            'username'=> $username,
+            'author' => $authorName,
+            'userId' => intval($sessionData->userId),
+            'type' => $sessionData->type
+        );
 
-				session_write_close();
+        if (idx($userDetails, 'admin') == 1) {
+            $result['admin'] = true;
+        }
 
-				if (!empty($userId)) {
-						$this->db->query("UPDATE sessions SET userId='$userId' WHERE id='$sessionId'");
-				}
+        @session_write_close();
 
-				return new \core\Result($result);
+        if (!empty($userId)) {
+            $this->db->execute("UPDATE sessions SET userId=? WHERE id=?", [
+                ["s", $userId],
+                ["s", $sessionId],
+            ]);
+        }
+
+        return new \core\Result($result);
     }
 
     public function getSchema() {

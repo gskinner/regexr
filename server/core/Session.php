@@ -52,7 +52,7 @@ class Session {
 
     public function read($id) {
         try {
-            $result = $this->db->query("SELECT data FROM sessions WHERE id = '$id'", true);
+            $result = $this->db->execute("SELECT data FROM sessions WHERE id = ?", ["s", $id], true);
         } catch (\Exception $ex) {
             return '';
         }
@@ -63,10 +63,18 @@ class Session {
         $lastAccess = time();
 
         try {
-            $result = $this->db->query("INSERT INTO sessions (id, access, data)
-                                        VALUES ('$id', '$lastAccess', '$data')
-                                        ON DUPLICATE KEY UPDATE `access`='$lastAccess', `data`='$data'
-                                        ");
+            $sql = "INSERT INTO sessions (id, access, data)
+                VALUES (?, ?, ?)
+                ON DUPLICATE KEY UPDATE `access`=?, `data`=?
+            ";
+
+            $result = $this->db->execute($sql, [
+                ["s", $id],
+                ["s", $lastAccess],
+                ["s", $data],
+                ["s", $lastAccess],
+                ["s", $data],
+            ]);
         } catch(\Exception $ex) {
             return false;
         }
@@ -75,7 +83,7 @@ class Session {
 
     public function destroy($id) {
         try {
-            $result = $this->db->query("DELETE FROM sessions WHERE id = '$id'");
+            $result = $this->db->execute("DELETE FROM sessions WHERE id = ?", ["s", $id]);
         } catch (\Exception $ex) {
             return false;
         }
@@ -86,11 +94,10 @@ class Session {
         $old = time() - $max;
 
         try {
-            $result = $this->db->query("DELETE FROM sessions WHERE access < '$old'");
+            $result = $this->db->execute("DELETE FROM sessions WHERE access < ?", ["s", $old]);
         } catch (\Exception $ex) {
             return false;
         }
         return !is_null($result);
     }
-
 }

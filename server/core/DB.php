@@ -44,28 +44,50 @@ class DB {
         }
     }
 
-    public function execute($sql, $params) {
+    public function execute($sql, $params = null, $single = false) {
         $stmt = $this->mysqli->prepare($sql);
+        $returnValue = null;
 
-        if ($stmt == true) {
-            $types = "";
-            $values = [];
+        if ($stmt !== false) {
+            if (!is_null($params)) {
+                $types = "";
+                $values = [];
 
-            foreach ($params as $i => $value) {
-                $types .= $value[0];
-                $values[] = &$value[1];
+                if (\count($params) == 2 && is_string($params[0])) {
+                    $params = [$params];
+                }
+
+                foreach ($params as $i => $value) {
+                    $types .= $value[0];
+                    $values[] = &$value[1];
+                }
+
+                $stmt->bind_param($types, ...$values);
             }
 
-            $stmt->bind_param($types, ...$values);
-
             if (!$stmt->execute()) {
-                throw new \core\APIError(\core\ErrorCodes::MYSQL_QUERY_ERR, $stmt->error);
+                throw new \core\APIError(\core\ErrorCodes::MYSQL_QUERY_ERR, $stmt->error, DEBUG == true?$sql:"");
+            }
+
+            $result = $stmt->get_result();
+
+            if ($result !== false) {
+                $returnValue = [];
+                while ($row = $result->fetch_object()) {
+                    $returnValue[] = $row;
+                }
+
+                if ($single == true) {
+                    $returnValue = count($returnValue)>0?$returnValue[0]:null;
+                }
             }
 
             $stmt->close();
         } else {
-            throw new \core\APIError(\core\ErrorCodes::MYSQL_QUERY_ERR, $this->mysqli->error);
+            throw new \core\APIError(\core\ErrorCodes::MYSQL_QUERY_ERR, $this->mysqli->error, DEBUG == true?$sql:"");
         }
+
+        return $returnValue;
     }
 
     public function isConnected() {
@@ -90,31 +112,6 @@ class DB {
         $this->_inTransaction = false;
     }
 
-    function insert($table, $values, $updateOnDuplicateValues = null) {
-        $k = implode(',', array_keys($values));
-        $v = quoteStringArray(array_values($values));
-        $updateOnConflictValues = null;
-
-        if (!is_null($updateOnDuplicateValues)) {
-            $updateValueList = [];
-            foreach ($updateOnDuplicateValues as $key => $value) {
-                $updateValueList[] = "$key='$value'";
-            }
-            $updateOnConflictValues = implode(",", $updateValueList);
-        }
-
-        $q = "INSERT INTO $table ($k) VALUES ($v)";
-        if (!is_null($updateOnConflictValues)) {
-            $q .= " ON DUPLICATE KEY UPDATE $updateOnConflictValues";
-        }
-
-        return $this->query($q);
-    }
-
-    function selectQuery($sql, $single = false) {
-        return $this->query($sql, $single);
-    }
-
     /**
      * @param $table Table to check for values.
      * @param $values Array of values to check, used in an WHERE AND query.
@@ -125,15 +122,17 @@ class DB {
      * Checks to see if a value exists, based on one or multiple values.
      */
     function exists($table, $values, &$result = null) {
+        $params = [];
         $where = array();
         foreach ($values as $key => $value) {
-            $where[] = "$key='$value'";
+            $where[] = "$key=?";
+            $params[] = ["s", $value];
         }
 
-        $where = implode(' && ', $where);
+        $where = implode(" && ", $where);
 
         $q = "SELECT * FROM $table WHERE {$where} LIMIT 1";
-        $result = $this->query($q, true);
+        $result = $this->execute($q, $params);
 
         return !is_null($result);
     }
@@ -142,42 +141,8 @@ class DB {
         return $this->mysqli->error;
     }
 
-    function query($sql, $single = false) {
-        $result = $this->mysqli->query($sql);
-
-        if (is_null($result) || $result == false) {
-            $error = array( );
-
-            // Only insert our query when debugging.
-            if (DEBUG) {
-                $error['query'] = $sql;
-                $error['stack'] = print_r(debug_backtrace(), true);
-                $error['error'] = print_r($this->mysqli->error, true);
-            }
-
-            throw new \core\APIError(\core\ErrorCodes::MYSQL_QUERY_ERR, $error);
-        } else if (!is_bool($result)) {
-            $results = array();
-            while ($row = $result->fetch_object()) {
-                $results[] = $row;
-            }
-
-            if (!is_null($results) && count($results) > 0) {
-                if ($single) {
-                    return $results[0];
-                } else {
-                    return $results;
-                }
-            } else {
-                return null;
-            }
-        } else {
-            return $result;
-        }
-    }
-
     function getEnumValues($table, $field) {
-        $row = $this->query("SHOW COLUMNS FROM {$table} WHERE Field = '{$field}'", true);
+        $row = $this->execute("SHOW COLUMNS FROM {$table} WHERE Field = ?", ["s", $field] ,true);
         if (!is_null($row)) {
             $type = $row->Type;
             preg_match("/^enum\(\'(.*)\'\)$/", $type, $matches);
@@ -190,17 +155,5 @@ class DB {
 
     function getLastId() {
         return $this->mysqli->insert_id;
-    }
-
-    public function sanitize($value) {
-        if (is_null($value)) {
-            return '';
-        }
-
-        if (is_string($value)) {
-            return $this->mysqli->real_escape_string($value);
-        } else {
-            return $value;
-        }
     }
 }

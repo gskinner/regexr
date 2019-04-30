@@ -27,8 +27,9 @@ class delete extends \core\AbstractAction {
         $urlId = $this->getValue("patternId");
         $patternId = convertFromURL($urlId);
 
-        if (!$this->db->exists("patterns", ["id"=>$patternId])) {
-						throw new \core\APIError(\core\ErrorCodes::API_PATTERN_NOT_FOUND);
+        $exists = $this->db->exists("patterns", ["id"=>$patternId]);
+        if (!$exists) {
+            throw new \core\APIError(\core\ErrorCodes::API_PATTERN_NOT_FOUND);
         }
 
         $userProfile = $this->getUserProfile();
@@ -37,21 +38,25 @@ class delete extends \core\AbstractAction {
             $privateConst = \core\PatternVisibility::PRIVATE;
             $protectedConst = \core\PatternVisibility::PROTECTED;
 
-            $exists = $this->db->query("SELECT id FROM patterns
-                WHERE id='{$patternId}'
-                && owner='{$userProfile->userId}'
-                && visibility IN ('$privateConst', '$protectedConst')"
-            );
+            $sql = "SELECT id FROM patterns
+                    WHERE id=?
+                    && owner=?
+                    && visibility IN ('$privateConst', '$protectedConst')";
+
+            $exists = $this->db->execute($sql, [
+                ["i", $patternId],
+                ["s", $userProfile->userId]
+            ], true);
 
             if (!is_null($exists)) {
-                $result = $this->db->query("DELETE IGNORE FROM patterns WHERE id='$patternId'");
+                $this->db->execute("DELETE IGNORE FROM patterns WHERE id=?", ["i", $patternId]);
                 $this->clean($patternId);
             } else {
                 throw new \core\APIError(\core\ErrorCodes::API_NOT_ALLOWED);
             }
         } else {
             // Admins can delete anything.
-            $this->db->query("DELETE IGNORE FROM patterns WHERE id='$patternId'");
+            $this->db->execute("DELETE IGNORE FROM patterns WHERE id=?", ["i", $patternId]);
             $this->clean($patternId);
         }
 
@@ -63,8 +68,8 @@ class delete extends \core\AbstractAction {
     */
     private function clean($patternId) {
         $this->db->begin();
-        $this->db->query("DELETE IGNORE FROM favorites WHERE patternId='{$patternId}'");
-        $this->db->query("DELETE IGNORE FROM userRatings WHERE patternId='{$patternId}'");
+        $this->db->execute("DELETE IGNORE FROM favorites WHERE patternId=?", ["s", $patternId]);
+        $this->db->execute("DELETE IGNORE FROM userRatings WHERE patternId=?", ["s", $patternId]);
         $this->db->commit();
         // We also have `patternLink` .. but not sure its required to delete this, since if we do use it we can check for a `null` pattern and assume it was deleted.
     }

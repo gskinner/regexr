@@ -32,7 +32,10 @@ class setAccess extends \core\AbstractAction {
 
         $exists = $this->db->exists("patterns", ['id' => $patternId, 'owner' => $userProfile->userId]);
         if ($exists == true) {
-            $result = $this->db->query("UPDATE patterns SET visibility='$visibility' WHERE id='$patternId'");
+            $result = $this->db->execute("UPDATE patterns SET visibility=? WHERE id=?", [
+                ["s", $visibility],
+                ["i", $patternId]
+            ], true);
         } else {
             throw new \core\APIError(\core\ErrorCodes::API_PATTERN_NOT_FOUND);
         }

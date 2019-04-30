@@ -57,7 +57,14 @@ class save extends \core\AbstractAction {
             $protectedState = \core\PatternVisibility::PROTECTED;
             $privateState = \core\PatternVisibility::PRIVATE;
 
-            $existingPattern = $this->db->query("SELECT * FROM patterns WHERE id='$patternId' && owner={$userProfile->userId} && visibility IN ('$protectedState', '$privateState')", true);
+            $sql = "SELECT * FROM patterns WHERE id=? && owner=? && visibility IN (?, ?) LIMIT 1";
+            $existingPattern = $this->db->execute($sql, [
+                ["s", $patternId],
+                ["s", $userProfile->userId],
+                ["s", $protectedState],
+                ["s", $privateState]
+            ], true);
+
             if (is_null($existingPattern)) {
                 throw new \core\APIError(\core\ErrorCodes::API_NOT_ALLOWED);
             } else {
@@ -68,15 +75,15 @@ class save extends \core\AbstractAction {
 
                 $sql = "UPDATE patterns SET
                             `name`=?,
-                            content=?,
+                            `content`=?,
                             `pattern`=?,
-                            author=?,
-                            keywords=?,
+                            `author`=?,
+                            `keywords`=?,
                             `description`=?,
                             `state`=?,
-                            flavor=?,
-                            mode=?,
-                            tests=?
+                            `flavor`=?,
+                            `mode`=?,
+                            `tests`=?
                             $accessUpdate
                         WHERE id=?";
 
@@ -104,7 +111,10 @@ class save extends \core\AbstractAction {
         } else if (is_null($parentId)) { // Not a fork
             $patternId = savePattern($this->db, $name, $content, $pattern, $author, $description, $keywords, $tool, $flavor, $userProfile->userId, $access, $mode, $tests);
         } else { // Fork
-            $existingPattern = $this->db->query("SELECT visibility, owner FROM patterns WHERE id='{$patternId}'", true);
+            $existingPattern = $this->db->execute("SELECT visibility, owner FROM patterns WHERE id=? LIMIT 1", [
+                ["s", $patternId]
+            ], true);
+
             if (!is_null($existingPattern)) {
                if ($existingPattern->visibility == \core\PatternVisibility::PRIVATE && $existingPattern->owner != $userProfile->userId) {
                    throw new \core\APIError(\core\ErrorCodes::API_NOT_ALLOWED);
@@ -112,17 +122,30 @@ class save extends \core\AbstractAction {
             }
 
             $patternId = savePattern($this->db, $name, $content, $pattern, $author, $description, $keywords, $tool, $flavor, $userProfile->userId, $access);
-            $this->db->query("INSERT INTO patternLink (patternId, parentId, userId) VALUES ('{$patternId}', '{$parentId}', '{$userProfile->userId}')");
+
+            $sql = "INSERT INTO patternLink (patternId, parentId, userId) VALUES (?, ?, ?)";
+            $this->db->execute($sql, [
+                    ["s", $patternId],
+                    ["s", $parentId],
+                    ["s", $userProfile->userId]
+                ]
+            );
         }
 
         // Send back the new pattern.
-        $sql = "SELECT * FROM patterns WHERE id='{$patternId}' LIMIT 1";
-        $result = $this->db->query($sql, true);
+        $result = $this->db->execute("SELECT * FROM patterns WHERE id=? LIMIT 1", [
+            ["s", $patternId]
+        ], true);
 
         // Default the name, if we don't have one.
         if (empty($result->name)) {
             $name = "Untitled " . convertToURL($result->id);
-            $this->db->query("UPDATE patterns SET name='{$name}' WHERE id='{$result->id}'");
+
+            $sql = "UPDATE patterns SET name=? WHERE id=?";
+            $this->db->execute($sql, [
+                ["s", $name],
+                ["s", $result->id]
+            ]);
             $result->name = $name;
         }
 
