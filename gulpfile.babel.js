@@ -37,6 +37,19 @@ const replacePlugin = replace({
 const uglifyPlugin = uglify();
 let bundleCache;
 
+const serverCopyAndWatchGlob = [
+	"index.php", "server/**",
+	"!server/**/composer.*",
+	"!server/**/*.sql",
+	"!server/**/*.md",
+	"!server/gulpfile.js",
+	"!server/Config*.php",
+	"!server/**/*package*.json",
+	"!server/{.git*,.git/**}",
+	"!server/node_modules/",
+	"!server/node_modules/**",
+];
+
 // tasks
 gulp.task("serve", () => {
 	browser.init({
@@ -54,6 +67,10 @@ gulp.task("watch", () => {
 	gulp.watch(["./dev/sass/**/*.scss", "!**/colors_*.scss"], gulp.series("sass"));
 	// set up chokidar watcher to re-render themes
 	gulp.watch("./dev/sass/colors_*.scss").on("change", renderTheme);
+});
+
+gulp.task("watch-server", () => {
+	return gulp.watch(serverCopyAndWatchGlob, gulp.series("copy-server"));
 });
 
 gulp.task("js", () => {
@@ -162,22 +179,20 @@ gulp.task("clean", () => {
 gulp.task("copy", () => {
 	// index.html is copied in by the html task
 	return gulp.src([
-		"deploy/**", "assets/**", "index.php", "server/**",
-		"!deploy/*.map",
-		"!server/**/composer.*",
-		"!server/**/*.sql",
-		"!server/**/*.md",
-		"!server/gulpfile.js",
-		"!server/Config*.php",
-		"!server/**/*package*.json",
-		"!server/{.git*,.git/**}",
-		"!server/node_modules/",
-		"!server/node_modules/**",
+		"deploy/**", "assets/**", "!deploy/*.map", ...serverCopyAndWatchGlob
 	], {base: "./"})
 	.pipe(gulp.dest("./build/"));
 });
 
+gulp.task("copy-server", () => {
+	// index.html is copied in by the html task
+	return gulp.src(serverCopyAndWatchGlob, {base: "./"})
+	.pipe(gulp.dest("./build/"));
+});
+
+
 gulp.task("build", gulp.parallel("js", "sass"));
+gulp.task("server", gulp.series("copy-server", "watch-server"));
 
 gulp.task("default",
 	gulp.series("build",
