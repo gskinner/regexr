@@ -184,7 +184,7 @@ export default class ExpressionLexer {
 
 	addJSWarnings(token) {
 		if ((token.type === "neglookbehind" || token.type === "poslookbehind") ||
-			(token.type === "sticky" || token.type === "unicode")) {
+			(token.type === "sticky" || token.type === "unicode" || token.type == "dotall")) {
 				token.error = {id: "jsfuture", warning:true};
 		}
 	}

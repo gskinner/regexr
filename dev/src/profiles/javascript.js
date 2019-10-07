@@ -18,12 +18,18 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /*
 The javascript profile disables a large number of features.
+s
+Note that JS warnings are currently added in addJSWarnings in the ExpresssionLexer.s
 */
 
 let y=true, n=false;
-function testFlag(flag) { try { new RegExp(".",flag); } catch (e) { return n; } }
+function test(expr, flag) { try { return new RegExp(expr, flag) && undefined; } catch (e) { return n; } }
+function testFlag(flag) { return test(".", flag); }
 let unicodeFlag = testFlag("u");
 let stickyFlag = testFlag("y");
+let dotallFlag = testFlag("s");
+let lookbehind = test("(?<=A)");
+
 
 let javascript = {
 	id: "js",
@@ -31,10 +37,10 @@ let javascript = {
 	browser: true,
 	
 	flags: {
-		"s": n,
+		"s": dotallFlag, // warning
 		"x": n,
-		"u": unicodeFlag,
-		"y": stickyFlag,
+		"u": unicodeFlag, // warning
+		"y": stickyFlag, // warning
 		"U": n
 	},
 
@@ -89,8 +95,8 @@ let javascript = {
 		"branchreset": n, // (?|(a)|(b))
 
 		// lookaround:
-		"poslookbehind" : n, // (?<=foo)
-		"neglookbehind": n, // (?<!foo)
+		"poslookbehind": lookbehind, // (?<=foo) // warning
+		"neglookbehind": lookbehind, // (?<!foo) // warning
 
 		// ref:
 		"namedref": n, // \k<name> \k'name' \k{name} (?P=name)  \g{name}
