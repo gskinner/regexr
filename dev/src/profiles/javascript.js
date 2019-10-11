@@ -135,8 +135,16 @@ let javascript = {
 	},
 	
 	docs: {
-		"subst_group": {ext:""} // remove other syntaxes.
+		"subst_group": {ext:""}, // remove other syntaxes.
+		"namedgroup": {ext:""}, // remove other syntaxes.
+		"unicodecat": {
+			ext: "<p>Requires the <code>u</code> flag.</p>"+
+			"<p>For a list of values, see this <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Unicode_Property_Escapes'>MDN page</a>.</p>"
+		},
+		// notunicodecat, unicodescript, notunicodescript are copied from unicodecat below.
 	}
 };
+
+javascript.docs.notunicodecat = javascript.docs.unicodescript = javascript.docs.notunicodescript = javascript.docs.unicodecat;
 
 export default javascript;

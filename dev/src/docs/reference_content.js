@@ -361,7 +361,7 @@ o.kids = [
 		tip:"Creates a capturing group named '{{name}}'.",
 		desc:"Creates a capturing group that can be referenced via the specified name.",
 		ext:"<p>There are multiple syntaxes for this feature:</p><p><code>(?'name'ABC)</code> <code>(?P&lt;name>ABC)</code> <code>(?&lt;name>ABC)</code></p>",
-		token:"(?'name'ABC)"
+		token:"(?<name>ABC)"
 		},
 		{
 		id:"namedref",

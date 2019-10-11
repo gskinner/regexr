@@ -207,7 +207,7 @@ export default class Reference {
 	tipForToken(token) {
 		if (!token) { return null; }
 
-		let node = this.getNodeForToken(token), label, tip
+		let node = this.getNodeForToken(token), label, tip;
 
 		if (token.error) {
 			if (token.error.warning) { label = "<span class='error warning'>WARNING: </span>"; }
