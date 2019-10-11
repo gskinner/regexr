@@ -18,8 +18,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /*
 The javascript profile disables a large number of features.
-s
-Note that JS warnings are currently added in addJSWarnings in the ExpresssionLexer.s
+
+Note that JS warnings are currently added in addJSWarnings in the ExpresssionLexer.
 */
 
 let y=true, n=false;
@@ -29,6 +29,7 @@ let unicodeFlag = testFlag("u");
 let stickyFlag = testFlag("y");
 let dotallFlag = testFlag("s");
 let lookbehind = test("(?<=A)");
+let namedgroup = test("(?<A>B)");
 let unicodecat = test("\\p{Ll}", "u"); // disabled when `u` flag is not set
 
 
@@ -90,7 +91,7 @@ let javascript = {
 		"escoctalo": n, // \o{377}
 
 		// group:
-		"namedgroup": n, // (?P<name>foo) (?<name>foo) (?'name'foo)
+		"namedgroup": namedgroup, // (?P<name>foo) (?<name>foo) (?'name'foo)
 		"atomic": n, // (?>foo|bar)
 		"define": n, // (?(DEFINE)foo)
 		"branchreset": n, // (?|(a)|(b))
@@ -123,7 +124,8 @@ let javascript = {
 		"forwardref": n, // \1(a)
 		"nestedref": n, // (\1a|b)+
 		"ctrlcodeerr": n, // does \c error, or decompose?
-		"unicodenegated": n // \p{^etc}
+		"unicodenegated": n, // \p{^etc}
+		"namedgroupalt": n, // if false, only support (?<name>foo)
 	},
 	
 	substTokens: {

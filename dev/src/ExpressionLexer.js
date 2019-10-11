@@ -427,8 +427,11 @@ export default class ExpressionLexer {
 				token.related = [token.prv];
 			}
 			token.l = s.length + 2;
-		} else if ((match = sub.match(/^'(\w+)'/)) || (match = sub.match(/^P?<(\w+)>/))) {
-			// (?'name'foo) (?P<name>foo) (?<name>foo)
+		} else if (
+			(match = sub.match(/^<(\w+)>/)) ||
+			(this._profile.config.namedgroupalt && ((match = sub.match(/^'(\w+)'/)) || (match = sub.match(/^P<(\w+)>/))))
+			) {
+			// (?<name>foo) (?'name'foo) (?P<name>foo)
 			token.type = "namedgroup";
 			token.close = null;
 			token.name = match[1];
