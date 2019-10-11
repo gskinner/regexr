@@ -29,6 +29,7 @@ let unicodeFlag = testFlag("u");
 let stickyFlag = testFlag("y");
 let dotallFlag = testFlag("s");
 let lookbehind = test("(?<=A)");
+let unicodecat = test("\\p{Ll}", "u"); // disabled when `u` flag is not set
 
 
 let javascript = {
@@ -64,9 +65,9 @@ let javascript = {
 		"z": n  // abseos
 	},
 
-	unicodeScripts: n,
+	unicodeScripts: unicodecat,
 
-	unicodeCategories: n,
+	unicodeCategories: unicodecat,
 
 	posixCharClasses: n,
 
@@ -75,10 +76,10 @@ let javascript = {
 	tokens: {
 		// classes:
 		// also in escCharSpecials and specialChars
-		"unicodecat": n, // \p{Ll} \P{^Ll} \pL
-		"notunicodecat": n, // \P{Ll} \p{^Ll} \PL
-		"unicodescript": n, // \p{Cherokee} \P{^Cherokee}
-		"notunicodescript": n, // \P{Cherokee} \p{^Cherokee}
+		"unicodecat": unicodecat, // \p{Ll} \P{^Ll} \pL
+		"notunicodecat": unicodecat, // \P{Ll} \p{^Ll} \PL
+		"unicodescript": unicodecat, // \p{Cherokee} \P{^Cherokee}
+		"notunicodescript": unicodecat, // \P{Cherokee} \p{^Cherokee}
 		"posixcharclass": n, // [[:alpha:]]
 
 		// esc:
@@ -121,7 +122,8 @@ let javascript = {
 	config: {
 		"forwardref": n, // \1(a)
 		"nestedref": n, // (\1a|b)+
-		"ctrlcodeerr": n // does \c error, or decompose?
+		"ctrlcodeerr": n, // does \c error, or decompose?
+		"unicodenegated": n // \p{^etc}
 	},
 	
 	substTokens: {

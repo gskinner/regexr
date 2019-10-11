@@ -401,7 +401,8 @@ let core = {
 		"ctrlcodeerr": y, // does \c error? (vs decompose)
 		"reftooctalalways": y, // does a single digit reference \1 become an octal? (vs remain an unmatched ref)
 		"substdecomposeref": y, // will a subst reference decompose? (ex. \3 becomes "\" & "3" if < 3 groups)
-		"looseesc": y // should unrecognized escape sequences match the character (ex. \u could match "u") // disabled when `u` flag is set
+		"looseesc": y, // should unrecognized escape sequences match the character (ex. \u could match "u") // disabled when `u` flag is set
+		"unicodenegated": y // \p{^etc}"
 	},
 	
 	docs: {

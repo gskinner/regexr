@@ -183,8 +183,10 @@ export default class ExpressionLexer {
 	}
 
 	addJSWarnings(token) {
+		if (token.error) { return; }
 		if ((token.type === "neglookbehind" || token.type === "poslookbehind") ||
-			(token.type === "sticky" || token.type === "unicode" || token.type == "dotall")) {
+			(token.type === "sticky" || token.type === "unicode" || token.type == "dotall") ||
+			(token.type === "unicodecat" || token.type === "unicodescript") ) {
 				token.error = {id: "jsfuture", warning:true};
 		}
 	}
@@ -485,7 +487,7 @@ export default class ExpressionLexer {
 			return this.parseRef(token, sub);
 		}
 	
-		if (profile.tokens.unicodecat && (c === "p" || c === "P")) {
+		if (profile.tokens.unicodecat && (!profile.flags.u || this._modes.u) && (c === "p" || c === "P")) {
 			// unicode: \p{Ll} \pL
 			return this.parseUnicode(token, sub);
 		} else if (profile.tokens.escsequence && c === "Q") {
@@ -626,7 +628,9 @@ export default class ExpressionLexer {
 			val = null;
 		}
 		if (not) { token.type = "not"+token.type; }
-		if (!val) { token.error = {id: "unicodebad"}; }
+		if ((!this._profile.config.unicodenegated && sub[2] === "^") || !val) {
+			token.error = {id: "unicodebad"}
+		}
 		token.value = val;
 		token.clss = "charclass"
 		return token;
