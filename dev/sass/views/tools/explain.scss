@@ -46,6 +46,11 @@
 		.error-title {
 			font-weight: bold;
 		}
+
+		.warningtext {
+			color: $doc-mid;
+			margin-left: 0.5rem;
+		}
 	}
 
 	code {

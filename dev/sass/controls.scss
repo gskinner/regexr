@@ -184,6 +184,12 @@ svg.icon {
 		code {
 			font-weight: bold;
 		}
+
+		> .warningtext {
+			display: block;
+			color: $doc-light;
+			margin-top: 0.5rem;
+		}
 	}
 	
 	header {
