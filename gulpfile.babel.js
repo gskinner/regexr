@@ -46,14 +46,19 @@ gulp.task("serve", () => {
 });
 
 gulp.task("watch", () => {
-	gulp.watch("./dev/src/**/*.js", gulp.series("js", browser.reload));
-	gulp.watch("./index.html", gulp.series(browser.reload));
+	gulp.watch("./dev/src/**/*.js", gulp.series("js", "browserreload"));
+	gulp.watch("./index.html", gulp.series("browserreload"));
 	gulp.watch("./dev/icons/*.svg", gulp.series("icons"));
-	gulp.watch("./dev/inject/*", gulp.series("inject", browser.reload));
+	gulp.watch("./dev/inject/*", gulp.series("inject", "browserreload"));
 	// sass watch ignores colors_* files (themes)
 	gulp.watch(["./dev/sass/**/*.scss", "!**/colors_*.scss"], gulp.series("sass"));
 	// set up chokidar watcher to re-render themes
 	gulp.watch("./dev/sass/colors_*.scss").on("change", renderTheme);
+});
+
+gulp.task("browserreload", (done) => {
+	browser.reload();
+	done();
 });
 
 gulp.task("js", () => {
