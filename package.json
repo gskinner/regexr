@@ -1,10 +1,10 @@
 {
   "name": "regexr",
-  "version": "3.6.1",
+  "version": "3.6.2",
   "description": "Regular expression tester with syntax highlighting, PHP / PCRE & JS Support, contextual help, cheat sheet, reference, and searchable community patterns.",
   "author": "Grant Skinner",
   "license": "GPL-3.0",
-	"private": true,
+  "private": true,
   "devDependencies": {
     "@babel/core": "^7.3.4",
     "@babel/preset-env": "^7.3.4",
