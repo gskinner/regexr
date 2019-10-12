@@ -186,7 +186,9 @@ export default class ExpressionLexer {
 		if (token.error) { return; }
 		if ((token.type === "neglookbehind" || token.type === "poslookbehind") ||
 			(token.type === "sticky" || token.type === "unicode" || token.type == "dotall") ||
-			(token.type === "unicodecat" || token.type === "unicodescript") ) {
+			(token.type === "unicodecat" || token.type === "unicodescript") ||
+			(token.type === "namedgroup")
+			) {
 				token.error = {id: "jsfuture", warning:true};
 		}
 	}
