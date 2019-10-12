@@ -61,6 +61,7 @@
 	
 	.content {
 		flex: 1 1 0%; // fix for FireFox (vs just `1`)
+		min-height: 0; // fix for Chrome 72+
 		overflow-y: auto;
 		display: block;
 		padding: $pad;

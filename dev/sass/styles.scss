@@ -72,6 +72,7 @@ html, body {
 		> .app {
 			/* wraps the sidebar and doc */
 			flex: 1;
+			min-height: 0; // fix for Chrome 72+
 			display: flex;
 			align-items: stretch;
 		}
