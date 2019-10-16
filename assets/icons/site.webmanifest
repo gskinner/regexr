@@ -1,5 +1,6 @@
 {
-    "name": "",
+    "name": "RegExr",
+    "short_name": "RegExr",
     "icons": [
         {
             "src": "/assets/icons/android-chrome-192x192.png",
@@ -12,7 +13,7 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#80c0f0",
-    "background_color": "#80c0f0",
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff",
     "display": "standalone"
 }
