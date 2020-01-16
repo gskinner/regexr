@@ -102,10 +102,10 @@ function convertToURL($id) {
 }
 
 function convertFromURL($id) {
-		if (!empty($id)) {
-				return base_convert($id, 32, 10) / 3 - 1000000;
-		}
-		return null;
+    if (!empty($id)) {
+        return base_convert($id, 32, 10) / 3 - 1000000;
+    }
+    return null;
 }
 
 function createPatternNode($row) {
@@ -151,6 +151,8 @@ function createPatternNode($row) {
         'userRating' => idx($row, 'userRating') ?? '0',
         'favorite' => !is_null(idx($row, 'favorite')),
         'access' => idx($row, 'visibility'),
+        'mode' => idx($row, 'mode'),
+        'tests' => idx($row, 'tests')
     );
 
     return $result;
@@ -171,7 +173,7 @@ function createPatternSet($result, $total = -1, $startIndex = 0, $limit = 100) {
 }
 
 
-function savePattern($db, $name, $content, $pattern, $author, $description, $keywords, $state, $type, $userId, $visibility=null) {
+function savePattern($db, $name, $content, $pattern, $author, $description, $keywords, $state, $type, $userId, $visibility=null, $mode = "text", $tests = null) {
     if (is_null($visibility)) {
         $visibility = \core\PatternVisibility::PROTECTED;
     }
@@ -188,24 +190,41 @@ function savePattern($db, $name, $content, $pattern, $author, $description, $key
         state,
         flavor,
         owner,
-        visibility
+        visibility,
+        mode,
+        tests
     )
         VALUES
     (
-        '{$name}',
-        '{$content}',
-        '{$pattern}',
-        '{$author}',
+        ?,
+        ?,
+        ?,
+        ?,
         NOW(),
-        '{$description}',
-        '{$keywords}',
-        '{$state}',
-        '{$type}',
-        '{$userId}',
-        '{$visibility}'
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?,
+        ?
     )";
 
-    $db->query($sql);
+    $db->execute($sql, [
+        ["s", $name],
+        ["s", $content],
+        ["s", $pattern],
+        ["s", $author],
+        ["s", $description],
+        ["s", $keywords],
+        ["s", $state],
+        ["s", $type],
+        ["s", $userId],
+        ["s", $visibility],
+        ["s", $mode],
+        ["s", $tests]
+    ]);
 
     return $db->getLastId();
 }

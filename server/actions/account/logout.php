@@ -33,7 +33,7 @@ class logout extends \core\AbstractAction {
             setcookie(SESSION_NAME, '', time() - 3600, '/');
         }
 
-        session_write_close();
+        @session_write_close();
 
         session_start();
         // Return the new temporary user.

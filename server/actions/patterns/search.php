@@ -56,21 +56,30 @@ class search extends \core\AbstractAction {
     public function searchCommunity($query, $startIndex, $limit, $type) {
         // Build the search query.
         $whereStatements = array();
+        $searchSqlParams = [];
 
         // Search everything using the query.
         if (!empty($query)) {
-            $whereStatements[] = " p.name LIKE '%{$query}%'";
-            $whereStatements[] = " p.description LIKE '%{$query}%'";
-            $whereStatements[] = " p.author LIKE  '%{$query}%'";
+            $whereStatements[] = " p.name LIKE ?";
+            $whereStatements[] = " p.description LIKE ?";
+            $whereStatements[] = " p.author LIKE  ?";
+
+            $preparedQuery = "%{$query}%";
+            $searchSqlParams[] = ["s", $preparedQuery];
+            $searchSqlParams[] = ["s", $preparedQuery];
+            $searchSqlParams[] = ["s", $preparedQuery];
         }
 
         // Do the actual search.
         $q = "SELECT SQL_CALC_FOUND_ROWS p.*, urJoin.rating AS userRating, fJoin.patternId as favorite
         FROM patterns p
-        LEFT JOIN userRatings urJoin ON urJoin.patternId = p.id AND urJoin.userId = '{$this->userProfile->userId}'
-        LEFT JOIN favorites as fJoin ON fJoin.userId='{$this->userProfile->userId}' AND fJoin.patternId=p.id
+        LEFT JOIN userRatings urJoin ON urJoin.patternId = p.id AND urJoin.userId = ?
+        LEFT JOIN favorites as fJoin ON fJoin.userId = ? AND fJoin.patternId=p.id
         WHERE p.visibility='public'
         ";
+
+        $searchSqlParams[] = ["s", $this->userProfile->userId];
+        $searchSqlParams[] = ["s", $this->userProfile->userId];
 
         if (!is_null($type)) {
             $typeArray = quoteStringArray($type);
@@ -81,12 +90,14 @@ class search extends \core\AbstractAction {
             $q .= " && (" . implode("||", $whereStatements) . ")";
         }
 
-        $q .= " GROUP BY p.id ORDER by p.ratingSort DESC LIMIT {$startIndex}, {$limit}";
+        $q .= " GROUP BY p.id ORDER by p.ratingSort DESC LIMIT ?, ?";
+        $searchSqlParams[] = ["d", $startIndex];
+        $searchSqlParams[] = ["d", $limit];
 
-        $result = $this->db->selectQuery($q);
+        $result = $this->db->execute($q, $searchSqlParams);
 
         // Returns the total results.
-        $countQuery = (object)$this->db->selectQuery("SELECT FOUND_ROWS() as count", true);
+        $countQuery = (object)$this->db->execute("SELECT FOUND_ROWS() as count", null, true);
         $total = $countQuery->count;
 
         $json = createPatternSet($result, $total, $startIndex, $limit);

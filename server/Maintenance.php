@@ -38,7 +38,7 @@ $runCount = 0;
 $deletedCount = 0;
 while (true) {
     // Delete temporary users, and their private patterns, when they have no session.
-    $users = $db->query("SELECT u.id as userId
+    $users = $db->execute("SELECT u.id as userId
                 FROM users as u
                 LEFT JOIN sessions as s ON s.userId=u.id
                 WHERE u.type='temporary' && s.id IS NULL LIMIT 100000");
@@ -56,9 +56,9 @@ while (true) {
     $usersToDelete = quoteStringArray(array_column($users, "userId"));
 
     $db->begin();
-    $db->query("DELETE FROM patterns WHERE visibility='private' && owner IN ($usersToDelete)");
-    $db->query("DELETE FROM favorites WHERE userId IN ($usersToDelete)");
-    $db->query("DELETE FROM users WHERE id IN ($usersToDelete)");
+    $db->execute("DELETE FROM patterns WHERE visibility='private' && owner IN ($usersToDelete)");
+    $db->execute("DELETE FROM favorites WHERE userId IN ($usersToDelete)");
+    $db->execute("DELETE FROM users WHERE id IN ($usersToDelete)");
     $db->commit();
 
     sleep(3);
