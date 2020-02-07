@@ -560,7 +560,7 @@ o.kids = [
 		{
 		id:"recursion",
 		desc:"Attempts to match the full expression again at the current position.",
-		ext:"<p>For example, <code>/a(?R)?b/</code> will match any number of <code>a</code> followed by the same number of <code>z</code>: the full text of <code>az</code> or <code>aaaazzzz</code>, but not <code>azzz</code>.</p>"+
+		ext:"<p>For example, <code>/a(?R)?z/</code> will match any number of <code>a</code> followed by the same number of <code>z</code>: the full text of <code>az</code> or <code>aaaazzzz</code>, but not <code>azzz</code>.</p>"+
 			"<p>There are multiple syntaxes for this feature:</p><p><code>(?R)</code> <code>(?0)</code> <code>\\g<0></code> <code>\\g'0'</code></p>",
 		token:"(?R)"
 		},
