@@ -77,9 +77,9 @@ class rate extends \core\AbstractAction {
         $this->db->execute($saveRatingSql, [
             ["s", $userProfile->userId],
             ["i", $patternId],
-            ["d", $rating],
+            ["s", $rating],
             ["s", $ip],
-            ["d", $rating],
+            ["s", $rating],
             ["s", $ip]
         ], $saveRatingSql);
 
