@@ -49,12 +49,13 @@ class solve extends \core\AbstractAction {
 
         $result = null;
 
-        if ($mode == "text") {
-            $result = $this->parseText($pattern, $modifiers, $text, $tool, $global, $id);
-        } else if ($mode == "tests") {
-            $result = $this->runTests($tests, $pattern, $modifiers, $global, $id);
-        } else {
-            throw new \core\APIError(\core\ErrorCodes::API_ERROR, "Invalid mode.");
+        switch ($mode) {
+            case 'tests':
+                $result = $this->runTests($tests, $pattern, $modifiers, $global, $id);
+                break;
+            case 'text':
+            default:
+                $result = $this->parseText($pattern, $modifiers, $text, $tool, $global, $id);
         }
 
         return new \core\Result($result);
