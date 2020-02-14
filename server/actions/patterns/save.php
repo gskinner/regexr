@@ -149,6 +149,14 @@ class save extends \core\AbstractAction {
             $result->name = $name;
         }
 
+        // If we have a new username, save it back to the profile
+        if ($userProfile->username != $author) {
+            $this->db->execute("UPDATE users SET username=? WHERE id=?", [
+                ["s", $author],
+                ["s", $userProfile->userId]
+            ]);
+        }
+
         $json = (object)createPatternNode($result);
         // If this item was previously cached, delete it (patterns/load) will re-cache if needed.
         \core\Cache::DeleteItem(\core\Cache::PatternKey($patternId));
