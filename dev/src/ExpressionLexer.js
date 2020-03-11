@@ -183,8 +183,12 @@ export default class ExpressionLexer {
 	}
 
 	addJSWarnings(token) {
+		if (token.error) { return; }
 		if ((token.type === "neglookbehind" || token.type === "poslookbehind") ||
-			(token.type === "sticky" || token.type === "unicode")) {
+			(token.type === "sticky" || token.type === "unicode" || token.type == "dotall") ||
+			(token.type === "unicodecat" || token.type === "unicodescript") ||
+			(token.type === "namedgroup")
+			) {
 				token.error = {id: "jsfuture", warning:true};
 		}
 	}
@@ -425,8 +429,11 @@ export default class ExpressionLexer {
 				token.related = [token.prv];
 			}
 			token.l = s.length + 2;
-		} else if ((match = sub.match(/^'(\w+)'/)) || (match = sub.match(/^P?<(\w+)>/))) {
-			// (?'name'foo) (?P<name>foo) (?<name>foo)
+		} else if (
+			(match = sub.match(/^<(\w+)>/)) ||
+			(this._profile.config.namedgroupalt && ((match = sub.match(/^'(\w+)'/)) || (match = sub.match(/^P<(\w+)>/))))
+			) {
+			// (?<name>foo) (?'name'foo) (?P<name>foo)
 			token.type = "namedgroup";
 			token.close = null;
 			token.name = match[1];
@@ -485,7 +492,7 @@ export default class ExpressionLexer {
 			return this.parseRef(token, sub);
 		}
 	
-		if (profile.tokens.unicodecat && (c === "p" || c === "P")) {
+		if (profile.tokens.unicodecat && (!profile.flags.u || this._modes.u) && (c === "p" || c === "P")) {
 			// unicode: \p{Ll} \pL
 			return this.parseUnicode(token, sub);
 		} else if (profile.tokens.escsequence && c === "Q") {
@@ -626,7 +633,9 @@ export default class ExpressionLexer {
 			val = null;
 		}
 		if (not) { token.type = "not"+token.type; }
-		if (!val) { token.error = {id: "unicodebad"}; }
+		if ((!this._profile.config.unicodenegated && sub[2] === "^") || !val) {
+			token.error = {id: "unicodebad"}
+		}
 		token.value = val;
 		token.clss = "charclass"
 		return token;

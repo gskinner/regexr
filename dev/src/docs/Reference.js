@@ -207,11 +207,10 @@ export default class Reference {
 	tipForToken(token) {
 		if (!token) { return null; }
 
-		let node = this.getNodeForToken(token), label, tip
+		let node = this.getNodeForToken(token), label, tip;
 
-		if (token.error) {
-			if (token.error.warning) { label = "<span class='error warning'>WARNING: </span>"; }
-			else { label = "<span class='error'>ERROR: </span>"; }
+		if (token.error && !token.error.warning) {
+			label = "<span class='error'>ERROR: </span>";
 			tip = this.getError(token.error, token);
 		} else {
 			label = node ? node.label || node.id || "" : token.type;
@@ -219,6 +218,10 @@ export default class Reference {
 			tip = this.fillTags(tip, token, this, 20);
 			if (token.type === "group") { label += " #" + token.num; }
 			label = "<b>" + label[0].toUpperCase() + label.substr(1) + ".</b> ";
+
+			if (token.error) {
+				tip += "<span class='warningtext'><span class='error warning'>WARNING: </span>" + this.getError(token.error, token) + "</span>";
+			}
 		}
 		
 		return tip ? label + tip :  "no docs for id='" + this.idForToken(token) + "'";

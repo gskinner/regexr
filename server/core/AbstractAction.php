@@ -257,7 +257,7 @@ abstract class AbstractAction {
 
     function getValue($key) {
         $value = idx($this->values, $key);
-        $value = is_null($this->db)?$value:$this->db->sanitize($value);
+        $value = is_null($this->db)?$value:$value;
         return $value;
     }
 

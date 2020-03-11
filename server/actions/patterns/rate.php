@@ -35,7 +35,11 @@ class rate extends \core\AbstractAction {
         $userProfile = $this->getUserProfile();
         $voteQuery = null;
 
-        $existing = $this->db->query("SELECT * FROM userRatings WHERE patternId='{$patternId}' && userId='{$userProfile->userId}'", true);
+        $sql = "SELECT * FROM userRatings WHERE patternId=? && userId=? LIMIT 1";
+        $existing = $this->db->execute($sql, [
+            ["s", $patternId],
+            ["s", $userProfile->userId]
+        ], true);
 
         if (is_null($existing)) {
             if ($rating == 1) {
@@ -63,42 +67,57 @@ class rate extends \core\AbstractAction {
             }
         }
 
-				// Tag that the user rated this pattern.
-				$ip = $this->db->sanitize(getClientIpAddr());
-        $this->db->query("INSERT INTO userRatings (userId, patternId, rating, ip)
-                            VALUES ('$userProfile->userId', '$patternId', '$rating', '$ip')
-                            ON DUPLICATE KEY UPDATE `rating`='$rating', `lastUpdated`=NOW(), `ip`='$ip'
-                        ");
+        // Tag that the user rated this pattern.
+        $ip = getClientIpAddr();
+        // Save rating
+        $saveRatingSql = "INSERT INTO userRatings (userId, patternId, rating, ip)
+            VALUES (?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE `rating`=?, `lastUpdated`=NOW(), `ip`=?
+        ";
+        $this->db->execute($saveRatingSql, [
+            ["s", $userProfile->userId],
+            ["i", $patternId],
+            ["s", $rating],
+            ["s", $ip],
+            ["s", $rating],
+            ["s", $ip]
+        ], $saveRatingSql);
 
         if (!is_null($voteQuery)) {
-
             $this->db->begin();
             // Change the vote count
-            $this->db->query("UPDATE patterns SET {$voteQuery} WHERE id='$patternId'");
+            $changeSql = "UPDATE patterns SET {$voteQuery} WHERE id=?";
+            $this->db->execute($changeSql, ["i", $patternId], true);
 
             // Calculate the rating sort value (based on http://www.evanmiller.org/how-not-to-sort-by-average-rating.html)
-            $this->db->query("UPDATE patterns AS src JOIN patterns as dest ON src.id = dest.id SET dest.ratingSort=((src.numPositiveVotes + 1.9208)
+            $this->db->execute("UPDATE patterns AS src JOIN patterns as dest ON src.id = dest.id SET dest.ratingSort=((src.numPositiveVotes + 1.9208)
                             / (src.numPositiveVotes + src.numNegativeVotes) - 1.96 * SQRT((src.numPositiveVotes * src.numNegativeVotes)
                             / (src.numPositiveVotes + src.numNegativeVotes) + 0.9604)
                             / (src.numPositiveVotes + src.numNegativeVotes))
-                            / (1 + 3.8416 / (src.numPositiveVotes + src.numNegativeVotes)) WHERE src.id='$patternId' AND src.numPositiveVotes + src.numNegativeVotes > 0");
+                            / (1 + 3.8416 / (src.numPositiveVotes + src.numNegativeVotes)) WHERE src.id=? AND src.numPositiveVotes + src.numNegativeVotes > 0",
+                            ["i", '$patternId']);
 
             // Update the human rating.
-            $this->db->query("UPDATE patterns p,
-                                (SELECT id, TRUNCATE((ratingSort / (SELECT MAX(ratingSort) FROM patterns))*5, 2) as rating FROM patterns WHERE id={$patternId}) r
-                                SET p.rating=r.rating WHERE r.id = p.id");
+            $humanRatingSql = "UPDATE patterns p,
+                                (SELECT id, TRUNCATE((ratingSort / (SELECT MAX(ratingSort) FROM patterns))*5, 2) as rating FROM patterns WHERE id=?) r
+                                SET p.rating=r.rating WHERE r.id = p.id
+            ";
 
-            $this->db->query("UPDATE patterns
-                                SET ratingSort=0 WHERE id={$patternId}
-                                AND (
-                                        (numPositiveVotes + numNegativeVotes = 0) OR (numPositiveVotes = 0 AND numNegativeVotes > 0)
-                                    )
-                            ");
+            $this->db->execute($humanRatingSql, ["i", $patternId]);
+
+            // Update the sort
+            $sortSql = "UPDATE patterns
+                        SET ratingSort=0 WHERE id=?
+                        AND (
+                                (numPositiveVotes + numNegativeVotes = 0) OR (numPositiveVotes = 0 AND numNegativeVotes > 0)
+                            )
+            ";
+            $this->db->execute($sortSql, ["i", $patternId]);
 
             $this->db->commit();
         }
 
-        $newRating = $this->db->query("SELECT rating FROM patterns WHERE id = '{$patternId}'", true);
+        $newRating = $this->db->execute("SELECT rating FROM patterns WHERE id = ?", ["i", $patternId], true);
 
         return new \core\Result(['id' => $urlId, 'userRating' => $rating, 'rating' => $newRating->rating]);
     }

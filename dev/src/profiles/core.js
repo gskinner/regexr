@@ -373,7 +373,10 @@ let core = {
 		"conditionalelse": y, // |
 		"conditionalgroup": y, // (?(1)a|b) (?(-1)a|b) (?(name)a|b)
 		"mode": y, // (?i-x) see modes above
-		"comment": y // (?#comment)
+		"comment": y, // (?#comment)
+
+		// meta:
+		"matchanyset": y // [\s\S]
 	},
 	
 	substTokens: {
@@ -398,7 +401,9 @@ let core = {
 		"ctrlcodeerr": y, // does \c error? (vs decompose)
 		"reftooctalalways": y, // does a single digit reference \1 become an octal? (vs remain an unmatched ref)
 		"substdecomposeref": y, // will a subst reference decompose? (ex. \3 becomes "\" & "3" if < 3 groups)
-		"looseesc": y // should unrecognized escape sequences match the character (ex. \u could match "u") // disabled when `u` flag is set
+		"looseesc": y, // should unrecognized escape sequences match the character (ex. \u could match "u") // disabled when `u` flag is set
+		"unicodenegated": y, // \p{^etc}"
+		"namedgroupalt": y, // if false, only support (?<name>foo)
 	},
 	
 	docs: {

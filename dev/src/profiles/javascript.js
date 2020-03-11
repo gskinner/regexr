@@ -18,12 +18,20 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 /*
 The javascript profile disables a large number of features.
+
+Note that JS warnings are currently added in addJSWarnings in the ExpresssionLexer.
 */
 
 let y=true, n=false;
-function testFlag(flag) { try { new RegExp(".",flag); } catch (e) { return n; } }
+function test(expr, flag) { try { return new RegExp(expr, flag) && undefined; } catch (e) { return n; } }
+function testFlag(flag) { return test(".", flag); }
 let unicodeFlag = testFlag("u");
 let stickyFlag = testFlag("y");
+let dotallFlag = testFlag("s");
+let lookbehind = test("(?<=A)");
+let namedgroup = test("(?<A>B)");
+let unicodecat = test("\\p{Ll}", "u"); // disabled when `u` flag is not set
+
 
 let javascript = {
 	id: "js",
@@ -31,10 +39,10 @@ let javascript = {
 	browser: true,
 	
 	flags: {
-		"s": n,
+		"s": dotallFlag, // warning
 		"x": n,
-		"u": unicodeFlag,
-		"y": stickyFlag,
+		"u": unicodeFlag, // warning
+		"y": stickyFlag, // warning
 		"U": n
 	},
 
@@ -58,9 +66,9 @@ let javascript = {
 		"z": n  // abseos
 	},
 
-	unicodeScripts: n,
+	unicodeScripts: unicodecat,
 
-	unicodeCategories: n,
+	unicodeCategories: unicodecat,
 
 	posixCharClasses: n,
 
@@ -69,10 +77,10 @@ let javascript = {
 	tokens: {
 		// classes:
 		// also in escCharSpecials and specialChars
-		"unicodecat": n, // \p{Ll} \P{^Ll} \pL
-		"notunicodecat": n, // \P{Ll} \p{^Ll} \PL
-		"unicodescript": n, // \p{Cherokee} \P{^Cherokee}
-		"notunicodescript": n, // \P{Cherokee} \p{^Cherokee}
+		"unicodecat": unicodecat, // \p{Ll} \P{^Ll} \pL
+		"notunicodecat": unicodecat, // \P{Ll} \p{^Ll} \PL
+		"unicodescript": unicodecat, // \p{Cherokee} \P{^Cherokee}
+		"notunicodescript": unicodecat, // \P{Cherokee} \p{^Cherokee}
 		"posixcharclass": n, // [[:alpha:]]
 
 		// esc:
@@ -83,14 +91,14 @@ let javascript = {
 		"escoctalo": n, // \o{377}
 
 		// group:
-		"namedgroup": n, // (?P<name>foo) (?<name>foo) (?'name'foo)
+		"namedgroup": namedgroup, // (?P<name>foo) (?<name>foo) (?'name'foo)
 		"atomic": n, // (?>foo|bar)
 		"define": n, // (?(DEFINE)foo)
 		"branchreset": n, // (?|(a)|(b))
 
 		// lookaround:
-		"poslookbehind" : n, // (?<=foo)
-		"neglookbehind": n, // (?<!foo)
+		"poslookbehind": lookbehind, // (?<=foo) // warning
+		"neglookbehind": lookbehind, // (?<!foo) // warning
 
 		// ref:
 		"namedref": n, // \k<name> \k'name' \k{name} (?P=name)  \g{name}
@@ -115,7 +123,9 @@ let javascript = {
 	config: {
 		"forwardref": n, // \1(a)
 		"nestedref": n, // (\1a|b)+
-		"ctrlcodeerr": n // does \c error, or decompose?
+		"ctrlcodeerr": n, // does \c error, or decompose?
+		"unicodenegated": n, // \p{^etc}
+		"namedgroupalt": n, // if false, only support (?<name>foo)
 	},
 	
 	substTokens: {
@@ -125,8 +135,16 @@ let javascript = {
 	},
 	
 	docs: {
-		"subst_group": {ext:""} // remove other syntaxes.
+		"subst_group": {ext:""}, // remove other syntaxes.
+		"namedgroup": {ext:""}, // remove other syntaxes.
+		"unicodecat": {
+			ext: "<p>Requires the <code>u</code> flag.</p>"+
+			"<p>For a list of values, see this <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions/Unicode_Property_Escapes'>MDN page</a>.</p>"
+		},
+		// notunicodecat, unicodescript, notunicodescript are copied from unicodecat below.
 	}
 };
+
+javascript.docs.notunicodecat = javascript.docs.unicodescript = javascript.docs.notunicodescript = javascript.docs.unicodecat;
 
 export default javascript;

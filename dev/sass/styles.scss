@@ -1,57 +1,9 @@
-html, body {
-	margin: 0;
-	width: 100%;
-	height: 100%;
-	min-height: 540px;
-	min-width: 500px;
-	font-family: $font-family;
-	font-size: $font-size;
-	color: $white;
-	user-select: none;
-	cursor: default;
-	
-	// This shouldn't be necessary if everything is working correctly
-	// overflow: hidden;
-	
-	> .container {
-		/* wraps all content, since flex layouts don't work reliably on body */
-		height: 100%;
-		display: flex;
-		flex-flow: column;
-		
-		> .app {
-			/* wraps the sidebar and doc */
-			flex: 1;
-			display: flex;
-			align-items: stretch;
-		}
-	}
-}
-
-.app .sidebar, .container .header, .tooltip  {
-	-moz-osx-font-smoothing: grayscale;
-	-webkit-font-smoothing: antialiased;
-}
-
-a {
-	@extend %link;
-	text-decoration: none;
-}
-
-code, pre {
-	font-family: $monospace;
-}
-
-pre {
-	margin: 0;
-}
-
 %title {
 	display: flex;
 	align-items: center;
 	padding: 0 $pad 0 $pad;
 	flex: 0 $title-height;
-	
+
 	h1 {
 		flex: 1;
 	}
@@ -59,20 +11,20 @@ pre {
 
 %link {
 	transition: color $transition-t;
-	color: $theme-color;
+	color: $lighter;
 
 	&:not(.inactive) {
 		cursor: pointer;
-	
+
 		&:hover {
 			color: $lightest;
-			
+
 			svg.icon {
 				color: currentColor;
 			}
 		}
 	}
-	
+
 	svg.icon {
 		transition: fill $transition-t;
 	}
@@ -96,6 +48,70 @@ pre {
 	z-index: 9;
 }
 
+html, body {
+	margin: 0;
+	width: 100%;
+	height: 100%;
+	min-height: 540px;
+	min-width: 500px;
+	font-family: $font-family;
+	font-size: $font-size;
+	color: $white;
+	user-select: none;
+	cursor: default;
+
+	// This shouldn't be necessary if everything is working correctly
+	// overflow: hidden;
+
+	> .container {
+		/* wraps all content, since flex layouts don't work reliably on body */
+		height: 100%;
+		display: flex;
+		flex-flow: column;
+
+		> .app {
+			/* wraps the sidebar and doc */
+			flex: 1;
+			min-height: 0; // fix for Chrome 72+
+			display: flex;
+			align-items: stretch;
+		}
+	}
+}
+
+// TODO: revisit for support in browsers other than Chrome & Safari:
+*::-webkit-scrollbar {
+	width: 0.5em;
+	height: 0.5em;
+}
+*::-webkit-scrollbar-track {
+	background: rgba($mid, 0.25);
+}
+
+*::-webkit-scrollbar-thumb {
+	background-color: $mid;
+	border-radius: 0.5em;
+}
+
+.app .sidebar, .container .header, .tooltip  {
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+}
+
+code, pre {
+	font-family: $monospace;
+}
+
+pre {
+	margin: 0;
+}
+
+a {
+	@extend %link;
+	color: $theme-color;
+	text-decoration: none;
+}
+
 h1, h2 {
 	font-size: 1rem;
 	font-weight: bold;
@@ -107,16 +123,16 @@ h1, h2 {
 	flex-direction: column;
 	margin: 0;
 	padding: 0;
-	
+
 	li {
 		display: block;
 	}
 }
 
 hr {
-	border: 1px solid rgba($mid, 0.25);
+	border: 0;
+	border-top: 1px solid rgba($mid, 0.25);
 	margin: 0.75em 0 1em 0;
-	border-bottom: 0;
 }
 
 
@@ -142,7 +158,7 @@ span.error {
 	from {
 		transform: rotate(0deg);
 	}
-	
+
 	to {
 		transform: rotate(360deg);
 	}

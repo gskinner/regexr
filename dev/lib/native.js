@@ -96,18 +96,16 @@ window._native_go = function (json) {
 
 	selectedClass.forEach(function (className, index) {
 		var selectedTarget = document.getElementsByClassName(options['targetClass'])[index];
-		var adElement = selectedTarget.innerHTML;
+		var adElement = selectedTarget.innerHTML||"";
 		var prefix = options['prefix'];
 		var ad = ads[index];
 
 		if (ad && className) {
 			var adInnerHtml = adElement.replace(new RegExp('#' + prefix + '_bg_color#', 'g'), ad['backgroundColor']).replace(new RegExp('#' + prefix + '_bg_color_hover#', 'g'), ad['backgroundHoverColor']).replace(new RegExp('#' + prefix + '_company#', 'g'), ad['company']).replace(new RegExp('#' + prefix + '_cta#', 'g'), ad['callToAction']).replace(new RegExp('#' + prefix + '_cta_bg_color#', 'g'), ad['ctaBackgroundColor']).replace(new RegExp('#' + prefix + '_cta_bg_color_hover#', 'g'), ad['ctaBackgroundHoverColor']).replace(new RegExp('#' + prefix + '_cta_color#', 'g'), ad['ctaTextColor']).replace(new RegExp('#' + prefix + '_cta_color_hover#', 'g'), ad['ctaTextColorHover']).replace(new RegExp('#' + prefix + '_desc#', 'g'), ad['description']).replace(new RegExp('#' + prefix + '_index#', 'g'), prefix + '-' + ad['i']).replace(new RegExp('#' + prefix + '_img#', 'g'), ad['image']).replace(new RegExp('#' + prefix + '_small_img#', 'g'), ad['smallImage']).replace(new RegExp('#' + prefix + '_link#', 'g'), ad['statlink']).replace(new RegExp('#' + prefix + '_logo#', 'g'), ad['logo']).replace(new RegExp('#' + prefix + '_color#', 'g'), ad['textColor']).replace(new RegExp('#' + prefix + '_color_hover#', 'g'), ad['textColorHover']).replace(new RegExp('#' + prefix + '_title#', 'g'), ad['title']);
-
-			selectedTarget.innerHTML = null;
-			selectedTarget.innerHTML += adInnerHtml + _native.pixel(ad['pixel'], ad['timestamp']);
+			selectedTarget.innerHTML = adInnerHtml + _native.pixel(ad['pixel'], ad['timestamp']);
 			selectedTarget.setAttribute('data-state', 'visible');
 		} else {
-			selectedTarget.innerHTML = null;
+			selectedTarget.innerHTML = "";
 		}
 	});
 };

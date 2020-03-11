@@ -29,6 +29,41 @@
 	}
 }
 
+// tooltips:
+#tooltip-flavor, #tooltip-flags {
+	> .list {
+		li {
+			cursor: pointer;
+			color: $doc-light;
+
+			&:hover {
+				color: $doc-white;
+			}
+			
+			+ li {
+				margin-top: 0.5em;
+			}
+			
+			.check.icon {
+				color: $doc-dark; 
+				margin-right: 0.25em;
+			}
+			
+			&.selected .check.icon {
+				color: $theme-color;
+			}
+			
+			em {
+				font-style: normal;
+				font-weight: bold;
+				color: $doc-white;
+				padding: 0 0.15em;
+				background: rgba($doc-mid, 0.3);
+				border-radius: $control-radius;
+			}
+		}
+	}
+}
 
 
 

@@ -16,7 +16,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
-
 namespace patterns;
 
 class favorite extends \core\AbstractAction {
@@ -34,9 +33,17 @@ class favorite extends \core\AbstractAction {
         $userProfile = $this->getUserProfile();
 
         if ($favorite) {
-            $this->db->query("INSERT IGNORE INTO favorites (userId, patternId) VALUES ('{$userProfile->userId}', '{$patternId}')");
+            $sql = "INSERT IGNORE INTO favorites (userId, patternId) VALUES (?, ?)";
+            $this->db->execute($sql, [
+                ["s", $userProfile->userId],
+                ["s", $patternId],
+            ]);
         } else {
-            $this->db->query("DELETE IGNORE FROM favorites WHERE patternId='{$patternId}' && userId='{$userProfile->userId}'");
+            $sql = "DELETE IGNORE FROM favorites WHERE patternId=? && userId=?";
+            $this->db->execute($sql, [
+                ["s", $patternId],
+                ["s", $userProfile->userId],
+            ]);
         }
 
         return new \core\Result(['id' => $urlId, "favorite" => $favorite]);

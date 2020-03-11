@@ -28,11 +28,12 @@ class multiFavorite extends \core\AbstractAction {
 
         // Each id needs to be a number.
         $idList = quoteStringArray(array_map(function($id) {
-            return intval($id);
+            return \convertFromURL($id);
         }, $urlIds));
 
-        $existingIds = $this->db->query("SELECT id FROM patterns WHERE id IN ($idList)");
+        $existingIds = $this->db->execute("SELECT id FROM patterns WHERE id IN ($idList)");
         $cleanIds = [];
+        $vars = [];
 
         if (!is_null($existingIds)) {
             $idList = [];
@@ -41,9 +42,13 @@ class multiFavorite extends \core\AbstractAction {
             for ($i=0; $i < count($existingIds); $i++) {
                 $id = $existingIds[$i]->id;
                 $cleanIds[] = convertToURL($id);
-                $idList[] = "('{$userProfile->userId}', '{$id}')";
-                $this->db->query("INSERT IGNORE INTO favorites (userId, patternId) VALUES ". implode(",", $idList));
+
+                $vars[] = ["s", $userProfile->userId];
+                $vars[] = ["s", $id];
+                $idList[] = "(?, ?)";
             }
+
+            $this->db->execute("INSERT IGNORE INTO favorites (userId, patternId) VALUES ". implode(",", $idList), $vars);
         }
 
         return new \core\Result($cleanIds);
