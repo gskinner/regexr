@@ -4,6 +4,7 @@ const inject = require("gulp-inject");
 const rename = require("gulp-rename");
 const template = require("gulp-template");
 const sass = require("gulp-sass");
+sass.compiler = require('sass');
 const cleanCSS = require("gulp-clean-css");
 const htmlmin = require("gulp-htmlmin");
 const svgstore = require("gulp-svgstore");
