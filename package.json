@@ -21,7 +21,6 @@
     "gulp-svgmin": "^2.2.0",
     "gulp-svgstore": "^7.0.1",
     "gulp-template": "^5.0.0",
-    "node-sass": "npm:sass",
     "rollup": "^1.32.1",
     "rollup-plugin-babel": "4.3.2",
     "rollup-plugin-replace": "^2.2.0",
