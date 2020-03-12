@@ -4,7 +4,7 @@ const inject = require("gulp-inject");
 const rename = require("gulp-rename");
 const template = require("gulp-template");
 const sass = require("gulp-sass");
-sass.compiler = require('sass');
+sass.compiler = require("sass");
 const cleanCSS = require("gulp-clean-css");
 const htmlmin = require("gulp-htmlmin");
 const svgstore = require("gulp-svgstore");
@@ -35,6 +35,7 @@ const replacePlugin = replace({
 	"build_version": pkg.version,
 	"build_date": getDateString()
 });
+const themes = fs.readdirSync("./dev/sass").filter(f => /colors_\w+\.scss/.test(f)).map(t => getThemeFromPath(t));
 const uglifyPlugin = uglify();
 let bundleCache;
 
@@ -64,10 +65,7 @@ gulp.task("watch", () => {
 	gulp.watch("./index.html", gulp.series("browserreload"));
 	gulp.watch("./dev/icons/*.svg", gulp.series("icons"));
 	gulp.watch("./dev/inject/*", gulp.series("inject", "browserreload"));
-	// sass watch ignores colors_* files (themes)
-	gulp.watch(["./dev/sass/**/*.scss", "!**/colors_*.scss"], gulp.series("sass"));
-	// set up chokidar watcher to re-render themes
-	gulp.watch("./dev/sass/colors_*.scss").on("change", renderTheme);
+	gulp.watch("./dev/sass/**/*.scss", gulp.series("sass"));
 });
 
 gulp.task("browserreload", (done) => {
@@ -107,19 +105,8 @@ gulp.task("js", () => {
 	});
 });
 
-gulp.task("sass", () => {
-	const str = buildSass("default")
-		.pipe(rename("regexr.css"))
-		.pipe(gulp.dest("deploy"));
-
-	return isProduction()
-		? str
-		: str.pipe(browser.stream());
-});
-
 // create tasks for all themes
-fs.readdirSync("./dev/sass").filter(f => /colors_\w+\.scss/.test(f)).forEach(f => {
-	const theme = getThemeFromPath(f);
+themes.forEach(theme => {
 	gulp.task(`sass-${theme}`, () => {
 		return diffTheme(theme).then(() => {
 			return gulp.src(`./assets/themes/${theme}.css`)
@@ -127,12 +114,22 @@ fs.readdirSync("./dev/sass").filter(f => /colors_\w+\.scss/.test(f)).forEach(f =
 		})
 	});
 });
-// manually render a theme via task, called from the chokidar listener in the watch task
-const renderTheme = filename => {
-	const theme = getThemeFromPath(basename(filename));
-	// wrapped in series() so it shows in the console
-	gulp.series(gulp.task(`sass-${theme}`))();
+
+// render all themes
+gulp.task("sass-themes", gulp.parallel(themes.map(theme => `sass-${theme}`)));
+
+const defaultSass = () => {
+	const str = buildSass("default")
+		.pipe(rename("regexr.css"))
+		.pipe(gulp.dest("deploy"));
+
+	return isProduction()
+		? str
+		: str.pipe(browser.stream());
 };
+defaultSass.displayName = "sass-default";
+
+gulp.task("sass", gulp.series(defaultSass, "sass-themes"));
 
 gulp.task("html", () => {
 	return gulp.src("./index.html")
@@ -185,7 +182,10 @@ gulp.task("clean", () => {
 gulp.task("copy", () => {
 	// index.html is copied in by the html task
 	return gulp.src([
-		"deploy/**", "assets/**", "!deploy/*.map", ...serverCopyAndWatchGlob
+		"deploy/**",
+		"assets/**",
+		"!deploy/*.map",
+		...serverCopyAndWatchGlob
 	], {base: "./"})
 	.pipe(gulp.dest("./build/"));
 });
