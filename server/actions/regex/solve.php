@@ -82,8 +82,8 @@ class solve extends \core\AbstractAction {
             if ($match === 1) {
                 $testResults[] = [
                     "id" => $id,
-                    "i" => $matches[0][1][1],
-                    "l" => \realStringLength($matches[0][1][0]),
+                    "i" => $matches[0][0][1],
+                    "l" => \realStringLength($matches[0][0][0])
                 ];
             } else if ($match === 0) {
                 $testResults[] = ["id" => $id];
