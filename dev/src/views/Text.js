@@ -271,6 +271,7 @@ export default class Text extends EventDispatcher {
 		const types = [
 			{id:"all", label:"Match Full"},
 			{id:"any", label:"Match Any"},
+			// {id:"start", label:"Match Start"},
 			{id:"none", label:"Match None"},
 		];
 		this.typeLabels = types.reduce((o, t) => { o[t.id] = t.label; return o; }, {});
@@ -306,6 +307,8 @@ export default class Text extends EventDispatcher {
 				pass = (match.i == null);
 			} else if (test.type === "all") {
 				pass = (match.l === test.text.length);
+			} else if (test.type === "start") {
+				pass = (match.i === 0);
 			} else { // any
 				pass = (match.i != null);
 			}
