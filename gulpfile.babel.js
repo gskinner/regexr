@@ -154,7 +154,8 @@ gulp.task("icons", () => {
 		.pipe(svgmin({
 			plugins: [
 				{removeAttrs: {attrs: "fill"}},
-				{removeStyleElement: true}
+				{removeStyleElement: true},
+				{removeViewBox: false},
 			]}
 		))
 		.pipe(svgstore({inlineSvg: true}))
