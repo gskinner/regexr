@@ -165,7 +165,7 @@ export default class Text extends EventDispatcher {
 	
 	_update() {
 		let result = this._result, matches = result && result.matches;
-		if (result.mode === "tests") {
+		if (result && result.mode === "tests") {
 			this._updateTests();
 		} else { // mode === "text"
 			this.hover.matches = this.highlighter.matches = matches;
