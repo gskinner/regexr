@@ -23,7 +23,7 @@ export default class ServerSolver {
 	
 	solve(o, callback) {
 		// unescape tool input:
-		if (o.tool.input != null) { o.tool.input = Utils.unescSubstStr(o.tool.input); }
+		if (o.tool && o.tool.input != null) { o.tool.input = Utils.unescSubstStr(o.tool.input); }
 		if (this._serverPromise) { this._serverPromise.abort(); }
 		Utils.defer(()=>this._solve(o, callback), "ServerSolver._solve", 250);
 	}
