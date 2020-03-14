@@ -398,6 +398,7 @@ export default class Text extends EventDispatcher {
 
 	_handleTestNameChange(fld, o) {
 		o.name = fld.value;
+		this._change();
 	}
 
 	_handleTypesChange() {
@@ -427,6 +428,7 @@ export default class Text extends EventDispatcher {
 		if (data.length) { this.testList.selected = data[Math.min(i, data.length-1)].id; }
 		this._updateTests();
 		this._handleTestChange();
+		this._change();
 	}
 
 	_getTestEditor(el, o) {
