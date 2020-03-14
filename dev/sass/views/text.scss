@@ -11,15 +11,12 @@
 		}
 
 		.button.add {
-			display: none;
+			display: none !important; // hiding this all the time for now.
 		}
 
 		.result {
 			font-weight: bold;
 			
-			&.matches {
-				//background: $theme-color;
-			}
 			&.error {
 				background: $error-color;
 				color: $doc-lightest;
@@ -28,12 +25,12 @@
 					background: $warning-color;
 				}
 			}
-			//*
+			
 			&.pass {
 				background: $pass-color;
 				color: $doc-lightest;
 			}
-			//*/
+			
 			&.fail {
 				background: $fail-color;
 				color: $doc-lightest;
@@ -94,26 +91,29 @@
 
 		.default {
 			display: none;
-			color: $doc-mid;
+			padding: $pad $pad * 0.5;
+			color: $doc-dark;
+		}
+
+		.list:empty ~ .default {
+			display: block;
 		}
 
 		.add.button {
 			box-sizing: border-box;
 			width: 100%;
-			border: 1px dotted $doc-mid;
 			box-shadow: none;
 			opacity: 0.5;
-			padding: $pad * 0.75 $pad*0.5;
+			background: rgba($doc-light, 0.75);
+			color: $doc-black;
+			padding: $pad * 0.75 $pad*0.625;
 			margin-top: $pad * 0.125;
 			font-weight: bold;
+			border-radius: $control-radius;
 
 			&:hover {
-				opacity: 0.625;
+				opacity: 1.0;
 			}
-		}
-
-		.list:empty + .default {
-			display: block;
 		}
 
 		.list {
@@ -208,7 +208,7 @@
 				&.selected {
 					outline: $selected-stroke;
 					background: $doc-white;
-					box-shadow: 0 3px 4px $dark-shadow;
+					box-shadow: 0 2px 3px $dark-shadow;
 					margin: $pad*0.75 0;
 
 					&:first-child {
