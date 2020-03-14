@@ -54,7 +54,7 @@ export default class Text extends EventDispatcher {
 	}
 
 	set tests(val) {
-		val = val || [];
+		val = val instanceof Array ? val : [];
 		this._tests = this.testList.data = val;
 		this._testMatches = this._selTest = null;
 		if (val.length) { this.testList.selected = val[0].id; }

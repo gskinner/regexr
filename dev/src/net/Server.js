@@ -116,7 +116,8 @@ export default class Server {
 		if (!o.id) { delete(o.id); }
 		if (!o.parentId) { delete(o.parentId); }
 		delete(o.userId); // this gets added by the server
-		o.tool = JSON.stringify(o.tool);
+		o.tool = o.tool && JSON.stringify(o.tool);
+		o.tests = o.tests && JSON.stringify(o.tests);
 		return o;
 	}
 
