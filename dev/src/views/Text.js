@@ -54,12 +54,13 @@ export default class Text extends EventDispatcher {
 	}
 
 	set tests(val) {
+		// TODO: determine if it's the same tests. If not, then clear selection.
 		val = val instanceof Array ? val : [];
 		this._tests = this.testList.data = val;
-		this._testMatches = this._selTest = null;
-		if (val.length) { this.testList.selected = val[0].id; }
-		this._handleTestChange();
-		//if (this.mode === "tests") { this._change(); }
+		this._testMatches = null;
+		// this._selTest = null;
+		//if (val.length) { this.testList.selected = val[0].id; }
+		this._reselectTest();
 	}
 
 	get tests() {
@@ -376,6 +377,13 @@ export default class Text extends EventDispatcher {
 		this.testEditor.focus();
 		this.testEditor.execCommand("selectAll");
 		this._change();
+	}
+
+	_reselectTest() {
+		if (!this._selTest) { return; }
+		this.testList.selected = this._selTest.id;
+		this._selTest = null;
+		this._handleTestChange();
 	}
 
 	_handleTestChange() {
