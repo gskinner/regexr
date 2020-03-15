@@ -115,7 +115,7 @@ export default class RegExr extends EventDispatcher {
 			+ this.text.value+"\t"
 			+ this.flavor.value+"\t"
 			+ share.author+"\t" + share.name+"\t" + share.description+"\t" + share.keywords+"\t"
-			+ this.text.tests+"\t"
+			+ JSON.stringify(this.text.tests)+"\t"
 			//+ this.tools.value.input+"\t"
 			//+ this.tools.value.id+"\t"
 		)
