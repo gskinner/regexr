@@ -152,7 +152,7 @@ function createPatternNode($row) {
         'favorite' => !is_null(idx($row, 'favorite')),
         'access' => idx($row, 'visibility'),
         'mode' => idx($row, 'mode'),
-        'tests' => idx($row, 'tests')
+        'tests' => json_decode(idx($row, 'tests'))
     );
 
     return $result;
