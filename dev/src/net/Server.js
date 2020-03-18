@@ -103,7 +103,6 @@ export default class Server {
 		o.flavor = o.flavor || "js";
 		o.text = o.text || null;
 		if (o.tool && o.tool.id) { o.tool.id = o.tool.id.toLowerCase(); }
-		if (typeof o.tests === "string") { o.tests = JSON.parse(o.tests); } // TODO: remove.
 	}
 
 	static _prepPattern(o, fork) {
