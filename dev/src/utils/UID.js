@@ -16,28 +16,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import Utils from "../utils/Utils";
-import Server from "../net/Server";
+let UID = {
+	_next: 0,
+	get id() { return this._next++; }
+};
+export default UID;
 
-export default class ServerSolver {
-	
-	solve(o, callback) {
-		// unescape tool input:
-		if (o.tool && o.tool.input != null) { o.tool.input = Utils.unescSubstStr(o.tool.input); }
-		if (this._serverPromise) { this._serverPromise.abort(); }
-		Utils.defer(()=>this._solve(o, callback), "ServerSolver._solve", 250);
-	}
-	
-	_solve(o, callback) {
-		this._callback = callback;
-		this._serverPromise = Server.solve(o).then((o) => this._onLoad(o)).catch((o) => this._onError(o));
-	}
-	
-	_onLoad(data) {
-		this._callback(data);
-	}
-	
-	_onError(msg) {
-		this._callback({error:{id:msg}});
-	}
-}
