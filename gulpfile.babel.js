@@ -10,9 +10,9 @@ const htmlmin = require("gulp-htmlmin");
 const svgstore = require("gulp-svgstore");
 const svgmin = require("gulp-svgmin");
 const autoprefixer = require("gulp-autoprefixer");
-const rollup = require("rollup");
+const rollup = require("rollup").rollup;
 const babel = require("rollup-plugin-babel");
-const uglify = require("rollup-plugin-uglify").uglify;
+const terser = require("rollup-plugin-terser").terser;
 const replace = require("rollup-plugin-replace");
 const browser = require("browser-sync").create();
 const Vinyl = require("vinyl");
@@ -36,7 +36,7 @@ const replacePlugin = replace({
 	"build_date": getDateString()
 });
 const themes = fs.readdirSync("./dev/sass").filter(f => /colors_\w+\.scss/.test(f)).map(t => getThemeFromPath(t));
-const uglifyPlugin = uglify();
+const terserPlugin = terser();
 let bundleCache;
 
 const serverCopyAndWatchGlob = [
@@ -79,8 +79,8 @@ gulp.task("watch-server", () => {
 
 gulp.task("js", () => {
 	const plugins = [babelPlugin, replacePlugin];
-	if (isProduction()) { plugins.push(uglifyPlugin); }
-	return rollup.rollup({
+	if (isProduction()) { plugins.push(terserPlugin); }
+	return rollup({
 		input: "./dev/src/app.js",
 		cache: bundleCache,
 		moduleContext: {
