@@ -68,8 +68,9 @@ export default class Text extends EventDispatcher {
 	}
 
 	set mode(val) {
-		this.modeList.selected = val;
-		this._updateMode();
+		if (val === this.mode) { return; }
+		this.modeList.selected = val || "text";
+		this._handleModeChange();
 	}
 
 	get mode() {

@@ -86,12 +86,14 @@ export default class RegExr extends EventDispatcher {
 
 // getter / setters:
 	get state() {
+		console.log(this.text.mode);
 		let o = {
 			expression: this.expression.value,
 			text: this.text.value,
 			tests: this.text.tests,
 			flavor: this.flavor.value,
-			tool: this.tools.value
+			tool: this.tools.value,
+			mode: this.text.mode,
 		};
 		// copy share values onto the pattern object:
 		return Utils.copy(this.share.value, o);
@@ -103,6 +105,7 @@ export default class RegExr extends EventDispatcher {
 		this.expression.value = o.expression;
 		this.text.value = o.text;
 		this.text.tests = o.tests;
+		this.text.mode = o.mode;
 		this.tools.value = o.tool;
 		this.share.pattern = o;
 		this.resetUnsaved();

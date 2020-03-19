@@ -101,6 +101,7 @@ export default class Server {
 		o.rating = Number(o.rating);
 		o.userRating = Number(o.userRating);
 		o.flavor = o.flavor || "js";
+		o.mode = o.mode || "text";
 		o.text = o.text || null;
 		if (o.tool && o.tool.id) { o.tool.id = o.tool.id.toLowerCase(); }
 	}
