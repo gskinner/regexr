@@ -23,8 +23,6 @@ class save extends \core\AbstractAction {
     public $description = 'If no id is passed a new pattern is saved.  If id is passed, and the user has access, the existing pattern is updated.';
 
     public function execute() {
-        $result = null;
-
         $userProfile = $this->getUserProfile();
 
         return $this->savePattern($userProfile);
@@ -37,7 +35,6 @@ class save extends \core\AbstractAction {
         $content = $this->getValue('text');
         $description = $this->getValue('description');
         $id = $this->getValue('id');
-        $token = $this->getValue('token');
         $tool = $this->getValue('tool');
         $flavor = $this->getValue('flavor');
         $savedAuthor = $this->getValue('author');
@@ -52,7 +49,7 @@ class save extends \core\AbstractAction {
         $author = empty($savedAuthor)?$userProfile->username:$savedAuthor;
 
         // Check to see if the user wants to edit this pattern.
-        if (!empty($id)) { // Update
+        if (!empty($id)) {
             // Make sure the user has access to edit this pattern.
             $protectedState = \core\PatternVisibility::PROTECTED;
             $privateState = \core\PatternVisibility::PRIVATE;
@@ -108,9 +105,9 @@ class save extends \core\AbstractAction {
 
                 $this->db->execute($sql, $sqlParams);
             }
-        } else if (is_null($parentId)) { // Not a fork
+        } else if (is_null($parentId)) {
             $patternId = savePattern($this->db, $name, $content, $pattern, $author, $description, $keywords, $tool, $flavor, $userProfile->userId, $access, $mode, $tests);
-        } else { // Fork
+        } else {
             $existingPattern = $this->db->execute("SELECT visibility, owner FROM patterns WHERE id=? LIMIT 1", [
                 ["s", $patternId]
             ], true);
@@ -121,7 +118,7 @@ class save extends \core\AbstractAction {
                }
             }
 
-            $patternId = savePattern($this->db, $name, $content, $pattern, $author, $description, $keywords, $tool, $flavor, $userProfile->userId, $access);
+            $patternId = savePattern($this->db, $name, $content, $pattern, $author, $description, $keywords, $tool, $flavor, $userProfile->userId, $access, $mode, $tests);
 
             $sql = "INSERT INTO patternLink (patternId, parentId, userId) VALUES (?, ?, ?)";
             $this->db->execute($sql, [
@@ -181,7 +178,6 @@ class save extends \core\AbstractAction {
             "expression" => array("type"=>self::STRING, "required"=>false, "length"=>2048),
             "text" => array("type"=>self::STRING, "required"=>false),
             "description" => array("type"=>self::STRING, "required"=>false, "length"=>250),
-            "token" => array("type"=>self::STRING, "required"=>false),
             "tool" => array("type"=>self::STRING, "required"=>false, "length"=>1024),
             "tests" => array("type"=>self::STRING, "required"=>false),
             "flavor" => array("type"=>self::ENUM, "values"=>$this->getTypeValues(), "required"=>false),
