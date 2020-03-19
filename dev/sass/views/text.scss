@@ -8,6 +8,19 @@
 			font-size: 1rem;
 			padding-top: $pad*0.275;
 			padding-bottom: $pad*0.275;
+
+			&:last-child::after {
+				font-size: 0.625rem;
+				padding: 0.25em 0.5em;
+				margin-left: 0.25rem;
+				display: inline-block;
+				position: absolute;
+				color: $doc-black;
+				background: $theme-color;
+				letter-spacing: 0.075em;
+				transform: translate(0, -0.25rem);
+				content: "NEW";
+			}
 		}
 
 		.button.add {
