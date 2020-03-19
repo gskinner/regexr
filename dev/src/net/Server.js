@@ -39,9 +39,9 @@ export default class Server {
 		return Server._getRequest("patterns/load", {patternId:id}, (data) => this._processPattern(data));
 	}
 	
-	static save(pattern, fork) {
+	static save(pattern, fork, community) {
 		// clone and prep the pattern object:
-		let o = this._prepPattern(pattern, fork);
+		let o = this._prepPattern(pattern, fork, community);
 		return Server._getRequest("patterns/save", o, (data) => this._processPattern(data));
 	}
 
@@ -105,12 +105,12 @@ export default class Server {
 		if (o.tool && o.tool.id) { o.tool.id = o.tool.id.toLowerCase(); }
 	}
 
-	static _prepPattern(o, fork) {
+	static _prepPattern(o, fork, community) {
 		o = Utils.clone(o);
 		if (fork) {
 			o.parentId = o.id;
 			delete(o.id);
-			o.name = Utils.getForkName(o.name);
+			if (!community) { o.name = Utils.getForkName(o.name); }
 		}
 		// clear null values:
 		if (!o.id) { delete(o.id); }

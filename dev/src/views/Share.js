@@ -339,7 +339,7 @@ export default class Share extends EventDispatcher {
 		o.access = "public";
 		$.addClass($.query(".buttons", this.communityEl), "wait");
 		this.comSaveStatus.distract();
-		Server.save(o, true)
+		Server.save(o, true, true)
 			.then((data) => this._handleComSave(data))
 			.catch((err) => this._handleComSaveErr(err));
 	}
