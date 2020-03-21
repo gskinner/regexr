@@ -54,12 +54,9 @@ export default class Text extends EventDispatcher {
 	}
 
 	set tests(val) {
-		// TODO: determine if it's the same tests. If not, then clear selection.
 		val = val instanceof Array ? val : [];
 		this._tests = this.testList.data = val;
 		this._testMatches = null;
-		// this._selTest = null;
-		//if (val.length) { this.testList.selected = val[0].id; }
 		this._reselectTest();
 	}
 
@@ -367,7 +364,7 @@ export default class Text extends EventDispatcher {
 
 	_addTest() {
 		const o = {
-			id: "t"+UID.id,
+			id: UID.id,
 			name: "",
 			text: "Enter your test text here.",
 			type: "any"
