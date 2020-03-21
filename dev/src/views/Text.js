@@ -381,8 +381,12 @@ export default class Text extends EventDispatcher {
 	}
 
 	_reselectTest() {
-		if (!this._selTest) { return; }
-		this.testList.selected = this._selTest.id;
+		if (this._selTest) {
+			this.testList.selected = this._selTest.id;
+		}
+		if (!this._selTest || this.testList.selected == null) {
+			this.testList.selectedIndex = 0;
+		}
 		this._selTest = null;
 		this._handleTestChange();
 	}
