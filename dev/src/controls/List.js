@@ -58,6 +58,16 @@ export default class List extends EventDispatcher {
 		for (let i=0, l=els.length; i<l; i++) { ids.push(els[i].dataset.id); }
 		return ids;
 	}
+
+	set selectedIndex(index) {
+		let data = this.data;
+		this.selected = data && data[index] && data[index].id;
+	}
+
+	get selectedIndex() {
+		let el = this.selectedEl, id = el && el.dataset.id;
+		return id === null ? -1 : this.data.findIndex((o) => o.id === id);
+	}
 	
 	get selectedItem() {
 		let el = this.selectedEl;
