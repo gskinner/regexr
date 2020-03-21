@@ -154,6 +154,8 @@ Utils.getPatternURL = function(pattern) {
 	return url+id;
 }
 
+Utils.isLocal = (window.location.hostname === "localhost");
+
 Utils.getPatternURLStr = function(pattern) {
 	if (!pattern || !pattern.id) { return null; }
 	let url = window.location.host+"/", id=pattern.id;
