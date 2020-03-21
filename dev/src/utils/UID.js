@@ -18,7 +18,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 let UID = {
 	_next: 0,
-	get id() { return this._next++; }
+	get id() { return Date.now() + "_" + this._next++; },
+	assign(list, force=false) {
+		list.forEach((o) => o.id = o.id == null || force ? this.id : o.id );
+	}
 };
 export default UID;
 
