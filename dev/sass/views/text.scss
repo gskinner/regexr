@@ -12,13 +12,12 @@
 			&:last-child::after {
 				font-size: 0.625rem;
 				padding: 0.25em 0.5em;
-				margin-left: 0.25rem;
 				display: inline-block;
 				position: absolute;
-				color: $doc-black;
+				color: $doc-white;
 				background: $theme-color;
 				letter-spacing: 0.075em;
-				transform: translate(0, -0.25rem);
+				transform: translate(0.25rem, -0.125rem);
 				content: "NEW";
 			}
 		}
