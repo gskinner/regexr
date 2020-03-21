@@ -150,16 +150,18 @@ Utils.getHashCode = function(s) {
 };
 
 Utils.getPatternURL = function(pattern) {
-	let url = window.location.origin+"/", id=pattern&&pattern.id||"";
-	return url+id;
+	let a = Utils.isLocal ? "?id=" : "/";
+	let url = window.location.origin, id=pattern&&pattern.id||"";
+	return url+a+id;
 }
 
 Utils.isLocal = (window.location.hostname === "localhost");
 
 Utils.getPatternURLStr = function(pattern) {
 	if (!pattern || !pattern.id) { return null; }
-	let url = window.location.host+"/", id=pattern.id;
-	return url+id;
+	let a = Utils.isLocal ? "?id=" : "/";
+	let url = window.location.host, id=pattern.id;
+	return url+a+id;
 }
 
 Utils.getForkName = function(name) {
