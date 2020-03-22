@@ -141,6 +141,7 @@ export default class Text extends EventDispatcher {
 
 	_handleModeChange(evt) {
 		this.dispatchEvent("modechange");
+		if (this.mode === "text") { this.editor.refresh(); }
 	}
 	
 	_setResult(val) {
