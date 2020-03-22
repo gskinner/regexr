@@ -373,7 +373,6 @@ export default class Text extends EventDispatcher {
 		this._tests.push(o);
 		this.testList.addItem(o, true);
 		this._handleTestChange();
-		this.testEditor.focus();
 		this.testEditor.execCommand("selectAll");
 		this._change();
 	}
@@ -405,6 +404,8 @@ export default class Text extends EventDispatcher {
 		this._getTestEditor($.query("article .editor .pad", el), o);
 		this._updateTestHeader(o, el, true);
 		this._updateSelTest();
+		this.testEditor.focus();
+		this.testEditor.setCursor(this.testEditor.lineCount(), 0);
 	}
 
 	_handleTestNameChange(fld, o) {
