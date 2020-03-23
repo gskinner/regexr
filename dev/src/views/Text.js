@@ -54,7 +54,10 @@ export default class Text extends EventDispatcher {
 	}
 
 	set tests(val) {
-		val = val instanceof Array ? val : [];
+		if (!(val instanceof Array)) {
+			val = [];
+			$.removeClass(this.testsEl, "tests-added");
+		}
 		this._tests = this.testList.data = val;
 		this._testMatches = null;
 		this._reselectTest();
@@ -95,6 +98,15 @@ export default class Text extends EventDispatcher {
 			return match;
 		}
 		return null;
+	}
+
+	getEmptyTest() {
+		return {
+			id: UID.id,
+			name: "",
+			text: "Enter your test text here.",
+			type: "any"
+		}
 	}
 	
 // private methods:
@@ -142,6 +154,7 @@ export default class Text extends EventDispatcher {
 	_handleModeChange(evt) {
 		this.dispatchEvent("modechange");
 		if (this.mode === "text") { this.editor.refresh(); }
+		else { $.addClass(this.el, "tests-viewed"); }
 	}
 	
 	_setResult(val) {
@@ -276,10 +289,11 @@ export default class Text extends EventDispatcher {
 		];
 		this.typeLabels = types.reduce((o, t) => { o[t.id] = t.label; return o; }, {});
 
+		this.testsEl = $.query(".tests", el);
 		this.testItemEl = $.query("#library > #tests_item");
-		this.testListEl = $.query(".tests .list", el);
+		this.testListEl = $.query(".list", this.testsEl);
 		this.testList = new List(this.testListEl, {template:(o) => this._testItemTemplate(o)});
-		this.testList.scrollEl = $.query(".tests", el);
+		this.testList.scrollEl = this.testsEl;
 
 		this.testList.on("change", (evt) => this._handleTestChange(evt));
 
@@ -364,16 +378,12 @@ export default class Text extends EventDispatcher {
 	}
 
 	_addTest() {
-		const o = {
-			id: UID.id,
-			name: "",
-			text: "Enter your test text here.",
-			type: "any"
-		}
+		const o = this.getEmptyTest();
 		this._tests.push(o);
 		this.testList.addItem(o, true);
 		this._handleTestChange();
 		this.testEditor.execCommand("selectAll");
+		$.addClass(this.testsEl, "tests-added");
 		this._change();
 	}
 
