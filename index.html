@@ -13,7 +13,7 @@
 	gtag('config', 'UA-3579542-6');
 	</script>
 
-	<link rel="stylesheet" type="text/css" href="deploy/regexr.css?v=<%= css_version %>">
+	<link rel="stylesheet" type="text/css" href="<%= css_file %>">
 
 	<!-- basic meta tags -->
 	<meta name="title" content="RegExr: Learn, Build, & Test RegEx" />
@@ -442,8 +442,8 @@ Explore results with the Tools below. Replace & List output custom results. Deta
 			</article>
 		</div>
 	</div>
-	
-	<script src="deploy/regexr.js?v=<%= js_version %>"></script>
+
+	<script src="<%= js_file %>"></script>
 	<script id="phpinject">
 		/** INJECTED BY PHP **/
 		// first param false indicates a local init.
