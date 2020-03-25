@@ -65,7 +65,7 @@ class Authentication  {
 
         if (function_exists("curl_init")) {
             $auth = new \Hybridauth\Hybridauth($config);
-            return $auth->getAdapter($type);
+            return $auth->authenticate($type);
         } else {
             throw new \core\APIError(\core\ErrorCodes::API_MISSING_REQUIREMENTS, "curl is required for login.");
         }
