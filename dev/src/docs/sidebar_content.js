@@ -105,6 +105,12 @@ home.kids = [
 				"<p>Lighter colored caps at the start or end of a line indicate the match continues between lines.</p>"
 			},
 			{
+			label:"Tests panel",
+			desc:"This allows you to create a suite of tests that you can use to validate your <b>Expression</b> in real time."+
+				"<p>A test can check if the pattern matches anything, matches everything, or matches nothing in the test text.</p>"+
+				"<p>Access this panel with the toggle at the top of the <b>Text</b> panel. When you save, both your Text and Tests will be saved.</p>"
+			},
+			{
 			label:"Tools panel",
 			desc:"Click the <b>Tools</b> title bar below the <b>Text</b> panel to show or hide the <b>Tools</b> panel."+
 				"<p>Tools provide different ways of working with or exploring your results.</p>",

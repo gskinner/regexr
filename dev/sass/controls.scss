@@ -219,6 +219,41 @@ svg.icon {
 			order: 1;
 		}
 	}
+
+	
+	.list {
+		li {
+			@extend %link;
+			
+			color: $doc-light;
+			
+			+ li {
+				margin-top: 0.5em;
+			}
+			
+			.check.icon {
+				color: $doc-dark; 
+				margin-right: 0.25em;
+			}
+			
+			&.selected .check.icon {
+				color: $theme-color;
+			}
+
+			&:not(.inactive):hover {
+				color: $doc-lightest;
+			}
+			
+			em {
+				font-style: normal;
+				font-weight: bold;
+				color: $doc-white;
+				padding: 0 0.15em;
+				background: rgba($doc-mid, 0.3);
+				border-radius: $control-radius;
+			}
+		}
+	}
 }
 
 .example {

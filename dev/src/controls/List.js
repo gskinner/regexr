@@ -30,27 +30,11 @@ export default class List extends EventDispatcher {
 	}
 	
 	set data(data) {
-		// TODO: retain selection?
 		$.empty(this.el);
 		this._data = data;
 		if (!data || !data.length) { return; }
-		let f=(evt) => this.handleClick(evt), template=this.template;
 		for (let i=0, l=data.length; i<l; i++) {
-			let o=data[i], label, id, selected;
-			if (typeof o === "string") {
-				id = o;
-				label = template ? template(o) : o;
-			} else {
-				if (o.hide) { continue; }
-				id = o.id || o.label;
-				label = template ? template(o) : o.label;
-				selected = o.selected;
-			}
-			let item = $.create("li", selected ? "selected" : null, label, this.el);
-			item.dataset.id = id;
-			item.item = o;
-			item.addEventListener("click", f);
-			item.addEventListener("dblclick", f);
+			this.addItem(data[i]);
 		}
 	}
 
@@ -74,10 +58,24 @@ export default class List extends EventDispatcher {
 		for (let i=0, l=els.length; i<l; i++) { ids.push(els[i].dataset.id); }
 		return ids;
 	}
+
+	set selectedIndex(index) {
+		let data = this.data;
+		this.selected = data && data[index] && data[index].id;
+	}
+
+	get selectedIndex() {
+		let el = this.selectedEl, id = el && el.dataset.id;
+		return id === null ? -1 : this.data.findIndex((o) => o.id === id);
+	}
 	
 	get selectedItem() {
-		let el = $.query("li.selected", this.el);
+		let el = this.selectedEl;
 		return el && el.item;
+	}
+
+	get selectedEl() {
+		return $.query("li.selected", this.el);
 	}
 	
 	refresh() {
@@ -86,8 +84,37 @@ export default class List extends EventDispatcher {
 		this.selected = sel;
 	}
 
+	addItem(o, selected=null) {
+		let label, id, sel;
+		let f=(evt) => this.handleClick(evt), template=this.template;
+		if (typeof o === "string") {
+			id = o;
+			label = template ? template(o) : o;
+		} else {
+			if (o.hide) { return; }
+			id = o.id || o.label;
+			label = template ? template(o) : o.label;
+			if (selected === null) { sel = o.selected; }
+		}
+		let item = $.create("li", sel ? "selected" : null, label, this.el);
+		item.dataset.id = id;
+		item.item = o;
+		item.addEventListener("click", f);
+		item.addEventListener("dblclick", f);
+
+		if (selected) {
+			this.selected = o.id;
+		}
+	}
+
+	removeItem(id) {
+		let el = $.query("[data-id='"+id+"']",this.el);
+		el && el.remove();
+	}
+
 	handleClick(evt) {
 		let id = evt.currentTarget.dataset.id, old = this.selected;
+		if (!this.getEl(id)) { return; }
 		if (evt.type === "dblclick") {
 			if (id != null) { this.dispatchEvent("dblclick"); }
 			return;
@@ -102,16 +129,21 @@ export default class List extends EventDispatcher {
 		if (!this.dispatchEvent("change", false, true)) { this.selected = old; }
 	}
 	
-	scrollTo(id) {
-		let el = $.query("[data-id='"+id+"']",this.el);
+	scrollTo(id=this.selected) {
+		let el = this.getEl(id);
 		if (!el) { return; }
-		// el.scrollIntoView(); // this is too jumpy, but would handle horizontal.
-		
-		let top = el.offsetTop - this.el.offsetTop;
-		if (top + el.offsetHeight > this.el.scrollTop+this.el.offsetHeight) {
-			this.el.scrollTop = top+el.offsetHeight-this.el.offsetHeight+10;
-		} else if (top < this.el.scrollTop) {
-			this.el.scrollTop = top-10;
+		//el.scrollIntoView(); // this is too jumpy, but would handle horizontal.
+
+		let scrollEl = this.scrollEl || this.el;
+		let top = el.offsetTop - scrollEl.offsetTop;
+		if (top + el.offsetHeight > scrollEl.scrollTop+scrollEl.offsetHeight) {
+			scrollEl.scrollTop = top+el.offsetHeight-scrollEl.offsetHeight+10;
+		} else if (top < scrollEl.scrollTop) {
+			scrollEl.scrollTop = top-10;
 		}
+	}
+
+	getEl(id) {
+		return $.query("[data-id='"+id+"']", this.el);
 	}
 };

@@ -36,7 +36,6 @@
 			min-height: 0; // fix for Chrome 72+
 		}
 		
-		
 		&.closed {
 			flex: 0 $title-height;
 			
@@ -51,6 +50,12 @@
 					transform: rotate(45deg);
 				}
 			}
+		}
+	}
+
+	&.tests-mode {
+		section.tools {
+			display: none;
 		}
 	}
 

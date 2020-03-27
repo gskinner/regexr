@@ -39,9 +39,9 @@ export default class Server {
 		return Server._getRequest("patterns/load", {patternId:id}, (data) => this._processPattern(data));
 	}
 	
-	static save(pattern, fork) {
+	static save(pattern, fork, community) {
 		// clone and prep the pattern object:
-		let o = this._prepPattern(pattern, fork);
+		let o = this._prepPattern(pattern, fork, community);
 		return Server._getRequest("patterns/save", o, (data) => this._processPattern(data));
 	}
 
@@ -101,22 +101,24 @@ export default class Server {
 		o.rating = Number(o.rating);
 		o.userRating = Number(o.userRating);
 		o.flavor = o.flavor || "js";
+		o.mode = o.mode || "text";
 		o.text = o.text || null;
 		if (o.tool && o.tool.id) { o.tool.id = o.tool.id.toLowerCase(); }
 	}
 
-	static _prepPattern(o, fork) {
+	static _prepPattern(o, fork, community) {
 		o = Utils.clone(o);
 		if (fork) {
 			o.parentId = o.id;
 			delete(o.id);
-			o.name = Utils.getForkName(o.name);
+			if (!community) { o.name = Utils.getForkName(o.name); }
 		}
 		// clear null values:
 		if (!o.id) { delete(o.id); }
 		if (!o.parentId) { delete(o.parentId); }
 		delete(o.userId); // this gets added by the server
-		o.tool = JSON.stringify(o.tool);
+		o.tool = o.tool && JSON.stringify(o.tool);
+		o.tests = o.tests && JSON.stringify(o.tests);
 		return o;
 	}
 
@@ -193,7 +195,7 @@ class ServerPromise {
 	}
 }
 
-Server.isLocal = (window.location.hostname === "localhost");
+Server.isLocal = Utils.isLocal;
 Server.useBeta = Server.isLocal || (window.location.hostname === "beta.regexr.com");
 Server.host = "https://" + (Server.useBeta ? "beta." : "") + "regexr.com"
 Server.url =  Server.host + "/server/api.php";

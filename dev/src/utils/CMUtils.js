@@ -116,3 +116,10 @@ CMUtils.selectAll = function(cm) {
 	cm.focus();
 	cm.setSelection({ch:0,line:0},{ch:0, line:cm.lineCount()});
 }
+
+CMUtils.calcRangePos = function(cm, i, l=0, o={}) {
+	let doc = cm.getDoc();
+	o.startPos = doc.posFromIndex(i);
+	o.endPos = doc.posFromIndex(i+l);
+	return o;
+}

@@ -25,7 +25,7 @@ export default class BrowserSolver {
 		this._callback = callback;
 		this._req = o;
 		
-		let text=o.text, regex;
+		let regex, text=o.text, tests=o.tests, mode = o.mode;
 		try {
 			this._regex = regex = new RegExp(o.pattern, o.flags);
 		} catch(e) {
@@ -49,42 +49,55 @@ export default class BrowserSolver {
 					}, 250);
 				} else {
 					clearTimeout(this._timeoutId);
-					this._onRegExComplete(evt.data.error, evt.data.matches);
+					this._onRegExComplete(evt.data.error, evt.data.matches, evt.data.mode);
 				}
 			};
 			
 			// we need to pass the pattern and flags as text, because Safari strips the unicode flag when passing a RegExp to a Worker
-			worker.postMessage({pattern:o.pattern, flags:o.flags, text});
+			worker.postMessage({pattern:o.pattern, flags:o.flags, text, tests, mode});
 		} else {
 			this._startTime = Utils.now();
 			
 			// shared between BrowserSolver & RegExWorker
 			var matches = [], match, index, error;
-			while (match = regex.exec(text)) {
-				if (index === regex.lastIndex) { error = {id:"infinite", warning:true}; ++regex.lastIndex; }
-				index = regex.lastIndex;
-				var groups = match.reduce(function (arr, s, i) { return (i===0 || arr.push({s:s})) && arr },[]);
-				matches.push({i:match.index, l:match[0].length, groups:groups});
-				if (!regex.global) { break; } // or it will become infinite.
+			if (mode === "tests") {
+				for (var i=0, l=tests.length; i<l; i++) {
+					let test = tests[i];
+					text = test.text;
+					regex.lastIndex = 0;
+					match = regex.exec(text);
+					matches[i] = match ? {i:match.index, l:match[0].length, id:test.id} : {id:test.id};
+				}
+			} else {
+				while (match = regex.exec(text)) {
+					if (index === regex.lastIndex) { error = {id:"infinite", warning:true}; ++regex.lastIndex; }
+					index = regex.lastIndex;
+					var groups = match.reduce(function (arr, s, i) { return (i===0 || arr.push({s:s})) && arr },[]);
+					matches.push({i:match.index, l:match[0].length, groups:groups});
+					if (!regex.global) { break; } // or it will become infinite.
+				}
 			}
 			// end share
 			
-			this._onRegExComplete(error, matches);
+			this._onRegExComplete(error, matches, mode);
 		}
 	}
 	
-	_onRegExComplete(error, matches) {
+	_onRegExComplete(error, matches, mode) {
 		let result = {
 			time: error ? null : Utils.now()-this._startTime,
 			error,
+			mode,
 			matches
 		};
 		
 		let tool = this._req.tool;
-		result.tool = { id: tool.id };
-		if (!error || error.warning && tool.input != null) {
-			let str = Utils.unescSubstStr(tool.input);
-			result.tool.result = (tool.id === "replace") ? this._getReplace(str) : this._getList(str);
+		if (tool) {
+			result.tool = { id: tool.id };
+			if (!error || error.warning && tool.input != null) {
+				let str = Utils.unescSubstStr(tool.input);
+				result.tool.result = (tool.id === "replace") ? this._getReplace(str) : this._getList(str);
+			}
 		}
 		this._callback(result);
 	}

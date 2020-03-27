@@ -60,6 +60,10 @@ export default class RegExr extends EventDispatcher {
 		this._savedHash = null;
 
 		let params = Utils.getUrlParams();
+		if (Utils.isLocal && params.id) {
+			Server.load(params.id).then((o) => this.state = o);
+			params = {};
+		}
 		if (params.engine) { this.flavor.value = params.engine; }
 		if (params.expression) { this.expression.value = params.expression; }
 		if (params.text) { this.text.value = params.text; }
@@ -86,11 +90,14 @@ export default class RegExr extends EventDispatcher {
 
 // getter / setters:
 	get state() {
+		console.log(this.text.mode);
 		let o = {
 			expression: this.expression.value,
 			text: this.text.value,
+			tests: this.text.tests,
 			flavor: this.flavor.value,
-			tool: this.tools.value
+			tool: this.tools.value,
+			mode: this.text.mode,
 		};
 		// copy share values onto the pattern object:
 		return Utils.copy(this.share.value, o);
@@ -101,6 +108,8 @@ export default class RegExr extends EventDispatcher {
 		this.flavor.value = o.flavor;
 		this.expression.value = o.expression;
 		this.text.value = o.text;
+		this.text.tests = o.tests;
+		this.text.mode = o.mode;
 		this.tools.value = o.tool;
 		this.share.pattern = o;
 		this.resetUnsaved();
@@ -113,6 +122,7 @@ export default class RegExr extends EventDispatcher {
 			+ this.text.value+"\t"
 			+ this.flavor.value+"\t"
 			+ share.author+"\t" + share.name+"\t" + share.description+"\t" + share.keywords+"\t"
+			+ JSON.stringify(this.text.tests)+"\t"
 			//+ this.tools.value.input+"\t"
 			//+ this.tools.value.id+"\t"
 		)
@@ -163,7 +173,7 @@ export default class RegExr extends EventDispatcher {
 
 		this.theme = new Theme(this.el);
 
-		let el = $.query(".app > .doc", this.el);
+		let el = this.docEl = $.query(".app > .doc", this.el);
 		this.expression = new Expression($.query("> section.expression", el));
 		this.text = new Text($.query("> section.text", el));
 		this.tools = new Tools($.query("> section.tools", el));
@@ -174,6 +184,7 @@ export default class RegExr extends EventDispatcher {
 
 		this.expression.on("change", ()=> this._change());
 		this.text.on("change", ()=> this._change());
+		this.text.on("modechange", ()=> this._modeChange());
 		this.flavor.on("change", ()=> this._change());
 		this.tools.on("change", ()=> this._change());
 		this.share.on("change", ()=> this._change());
@@ -196,17 +207,31 @@ export default class RegExr extends EventDispatcher {
 
 	_change() {
 		this.dispatchEvent("change");
-		var solver = this.flavor.solver, exp = this.expression;
-		solver.solve({pattern:exp.pattern, flags:exp.flags, text:this.text.value, tool:this.tools.value}, (result) => this._handleResult(result));
+		let solver = this.flavor.solver, exp = this.expression;
+		let o = {pattern:exp.pattern, flags:exp.flags, mode:this.text.mode};
+		if (o.mode === "tests") {
+			o.tests = this.text.tests;
+		} else {
+			o.text = this.text.value;
+			o.tool = this.tools.value;
+		}
+		solver.solve(o, (result) => this._handleResult(result));
 	}
 
+	_modeChange() {
+		$.toggleClass(this.docEl, "tests-mode", this.text.mode === "tests");
+		this._change();
+	}
+	
 	_handleResult(result) {
-		this.result = this._processResult(result);;
+		this.result = this._processResult(result);
 		this.dispatchEvent("result");
 	}
 
 	_processResult(result) {
-		result.matches && result.matches.forEach((o, i)=>o.num=i);
+		if (result.mode === "text") {
+			result.matches && result.matches.forEach((o, i)=>o.num=i);
+		}
 		return result;
 	}
 }
