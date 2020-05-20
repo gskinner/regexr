@@ -31,19 +31,16 @@ class login extends \core\AbstractAction {
     function tryLogin($type) {
         $session = new \core\Session($this->db, SESSION_NAME);
         $exception = null;
+        $adapter = null;
 
         $auth = new \core\Authentication();
         try {
             $adapter = $auth->connect($type);
-
-            if (!$adapter->isConnected()) {
-                $adapter->authenticate();
-            }
         } catch (\Exception $ex) {
             $exception = $ex;
         }
 
-        if ($adapter->isConnected()) {
+        if (!is_null($adapter) && $adapter->isConnected()) {
             $userProfile = null;
 
             try {

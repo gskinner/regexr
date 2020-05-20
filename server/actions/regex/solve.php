@@ -79,7 +79,7 @@ class solve extends \core\AbstractAction {
             // Stop capturing warnings.
             restore_error_handler();
 
-            if ($match === 1) {
+            if ($match > 0) {
                 $testResults[] = [
                     "id" => $id,
                     "i" => $matches[0][0][1],

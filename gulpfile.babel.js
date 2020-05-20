@@ -14,7 +14,7 @@ const rollup = require("rollup").rollup;
 const babel = require("rollup-plugin-babel");
 const terser = require("rollup-plugin-terser").terser;
 const replace = require("rollup-plugin-replace");
-const browser = require("browser-sync").create();
+const browser = require("browser-sync");
 const Vinyl = require("vinyl");
 const Buffer = require("buffer").Buffer;
 const del = require("del");
@@ -22,6 +22,9 @@ const Readable = require("stream").Readable;
 const createHash = require("crypto").createHash;
 const fs = require("fs");
 const basename = require("path").basename;
+
+let js_file = "regexr.js";
+let css_file = "regexr.css";
 
 // constants
 const isProduction = () => process.env.NODE_ENV === "production";
@@ -54,15 +57,14 @@ const serverCopyAndWatchGlob = [
 
 // tasks
 gulp.task("serve", () => {
-	browser.init({
-		server: {baseDir: "./"},
-		options: {ignored: "./dev/**/*"}
+	browser({
+		server: { baseDir: "./deploy/" },
 	});
 });
 
 gulp.task("watch", () => {
 	gulp.watch("./dev/src/**/*.js", gulp.series("js", "browserreload"));
-	gulp.watch("./index.html", gulp.series("browserreload"));
+	gulp.watch("./index.html", gulp.series("dev-html", "browserreload"));
 	gulp.watch("./dev/icons/*.svg", gulp.series("icons"));
 	gulp.watch("./dev/inject/*", gulp.series("inject", "browserreload"));
 	gulp.watch("./dev/sass/**/*.scss", gulp.series("sass"));
@@ -98,7 +100,7 @@ gulp.task("js", () => {
 		bundleCache = bundle.cache;
 		return bundle.write({
 			format: "iife",
-			file: "./deploy/regexr.js",
+			file: `./deploy/${js_file}`,
 			name: "regexr",
 			sourcemap: !isProduction()
 		})
@@ -120,7 +122,7 @@ gulp.task("sass-themes", gulp.parallel(themes.map(theme => `sass-${theme}`)));
 
 const defaultSass = () => {
 	const str = buildSass("default")
-		.pipe(rename("regexr.css"))
+		.pipe(rename(css_file))
 		.pipe(gulp.dest("deploy"));
 
 	return isProduction()
@@ -134,8 +136,8 @@ gulp.task("sass", gulp.series(defaultSass, "sass-themes"));
 gulp.task("html", () => {
 	return gulp.src("./index.html")
 		.pipe(template({
-			js_version: createFileHash("deploy/regexr.js"),
-			css_version: createFileHash("deploy/regexr.css")
+			js_file,
+			css_file,
 		}))
 		.pipe(htmlmin({
 			collapseWhitespace: true,
@@ -143,6 +145,29 @@ gulp.task("html", () => {
 			removeComments: true
 		}))
 		.pipe(gulp.dest("build"));
+});
+
+gulp.task("dev-html", () => {
+	return gulp.src("./index.html")
+		.pipe(template({
+			js_file,
+			css_file,
+		}))
+		.pipe(htmlmin({
+			collapseWhitespace: true,
+			conservativeCollapse: true,
+			removeComments: true
+		}))
+		.pipe(gulp.dest("deploy"));
+});
+
+
+gulp.task("createFileHashes", (cb) => {
+	const js_version = createFileHash(`deploy/regexr.js`);
+	const css_version = createFileHash("deploy/regexr.css");
+	js_file = `deploy/${js_version}.js`;
+	css_file = `deploy/${css_version}.css`;
+	cb();
 });
 
 gulp.task("icons", () => {
@@ -197,12 +222,30 @@ gulp.task("copy-server", () => {
 	.pipe(gulp.dest("./build/"));
 });
 
+gulp.task("rename-css", () => {
+	return gulp.src("./build/deploy/regexr.css")
+		.pipe(rename(basename(css_file)))
+		.pipe(gulp.dest("./build/deploy/"));
+});
+
+gulp.task("rename-js", () => {
+	return gulp.src("./build/deploy/regexr.js")
+		.pipe(rename(basename(js_file)))
+		.pipe(gulp.dest("./build/deploy/"));
+});
+
+gulp.task("clean-build", () => {
+	return del([
+		"./build/deploy/regexr.*",
+	]);
+})
 
 gulp.task("build", gulp.parallel("js", "sass"));
 gulp.task("server", gulp.series("copy-server", "watch-server"));
+gulp.task("rename", gulp.parallel("rename-css", "rename-js"));
 
 gulp.task("default",
-	gulp.series("build",
+	gulp.series("build","dev-html",
 		gulp.parallel("serve", "watch")
 	)
 );
@@ -210,7 +253,7 @@ gulp.task("default",
 gulp.task("deploy",
 	gulp.series(
 		cb => (process.env.NODE_ENV = "production") && cb(),
-		"clean", "build", "html", "copy"
+		"clean", "build", "createFileHashes", "html", "copy", "rename", "clean-build"
 	)
 );
 
