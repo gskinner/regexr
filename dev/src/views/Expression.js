@@ -64,7 +64,6 @@ export default class Expression extends EventDispatcher {
 	
 	set flags(flags) {
 		flags = app.flavor.validateFlagsStr(flags);
-		Track.event("set_flags", "engagement", {flags:flags});
 		let str = this.editor.getValue(), index = str.lastIndexOf(this.delim);
 		this.editor.replaceRange(flags, {line: 0, ch: index + 1}, {line: 0, ch: str.length }); // this doesn't work if readOnly is false.
 	}
@@ -191,11 +190,13 @@ export default class Expression extends EventDispatcher {
 	_onFlavorListChange() {
 		app.tooltip.toggle.hide("flavor");
 		app.flavor.value = this.flavorList.selected;
+		Track.page("flavor/"+this.flavorList.selected);
 	}
 	
 	_onFlagListChange() {
 		let sel = this.flagsList.selected;
 		this.flags = sel ? sel.join("") : "";
+		Track.event("set_flags", "engagement", this.flags);
 	}
 	
 	_onFlavorChange() {

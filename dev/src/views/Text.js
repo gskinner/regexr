@@ -32,6 +32,7 @@ import TextHighlighter from "./TextHighlighter";
 import TextHover from "./TextHover";
 import EventDispatcher from "../events/EventDispatcher";
 import List from "../controls/List";
+import Track from "../utils/Track";
 
 import app from "../app";
 
@@ -155,6 +156,8 @@ export default class Text extends EventDispatcher {
 		this.dispatchEvent("modechange");
 		if (this.mode === "text") { this.editor.refresh(); }
 		else { $.addClass(this.el, "tests-viewed"); }
+
+		Track.page("mode/"+this.mode);
 	}
 	
 	_setResult(val) {

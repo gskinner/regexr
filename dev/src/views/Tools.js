@@ -69,7 +69,6 @@ export default class Tools extends EventDispatcher {
 	
 	show(id) {
 		if (!id || id === this._toolId) { return; }
-		Track.page("tool/"+id);
 
 		this.toolList.selected = this._toolId = id;
 		let input = (id === "replace" || id === "list");
@@ -138,6 +137,7 @@ export default class Tools extends EventDispatcher {
 	
 	_handleListChange() {
 		this.show(this.toolList.selected);
+		Track.page("tool/"+this.toolList.selected);
 	}
 	
 	_handleHeaderClick(evt) {
