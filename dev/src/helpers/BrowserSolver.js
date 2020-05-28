@@ -29,7 +29,7 @@ export default class BrowserSolver {
 		try {
 			this._regex = regex = new RegExp(o.pattern, o.flags);
 		} catch(e) {
-			return this._onRegExComplete({id:"regexparse", name: e.name, message: e.message});
+			return this._onRegExComplete({id:"regexparse", name: e.name, message: e.message}, null, mode);
 		}
 		
 		if (window.Worker) {
