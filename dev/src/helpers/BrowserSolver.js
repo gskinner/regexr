@@ -33,28 +33,28 @@ export default class BrowserSolver {
 		}
 		
 		if (window.Worker) {
-			if (this._worker) {
-				clearTimeout(this._timeoutId);
-				this._worker.terminate();
+			if (!this._worker) {
+				this._worker = new Worker("assets/workers/RegExWorker.js");
 			}
-	
-			let worker = this._worker = new Worker("assets/workers/RegExWorker.js");
-	
-			worker.onmessage = (evt) => {
+
+			this._worker.onmessage = (evt) => {
 				if (evt.data === "onload") {
 					this._startTime = Utils.now();
-					this._timeoutId = setTimeout(()=> {
+					this._timeoutId = setTimeout(() => {
+						this._worker.terminate();
+						this._worker = null;
 						this._onRegExComplete({id: "timeout"}); // TODO: make this a warning, and return all results so far.
-						worker.terminate();
 					}, 250);
 				} else {
 					clearTimeout(this._timeoutId);
 					this._onRegExComplete(evt.data.error, evt.data.matches, evt.data.mode);
 				}
 			};
-			
+
+			clearTimeout(this._timeoutId);
+
 			// we need to pass the pattern and flags as text, because Safari strips the unicode flag when passing a RegExp to a Worker
-			worker.postMessage({pattern:o.pattern, flags:o.flags, text, tests, mode});
+			this._worker.postMessage({pattern:o.pattern, flags:o.flags, text, tests, mode});
 		} else {
 			this._startTime = Utils.now();
 			

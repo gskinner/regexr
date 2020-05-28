@@ -25,7 +25,5 @@ onmessage = function (evt) {
 		}
 	}
 	// end share
-	
 	postMessage({error: error, matches: matches, mode: mode});
-	self.close();
 };
