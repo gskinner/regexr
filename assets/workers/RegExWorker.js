@@ -1,10 +1,16 @@
+/**
+ * This file is now added to the index.html file
+ * in .regexWorker
+ *
+ * Its currently manually minified. But that should move to the build process.
+ */
 
 // in plain JS for now:
 onmessage = function (evt) {
 	postMessage("onload");
 	var data = evt.data, text = data.text, tests = data.tests, mode = data.mode;
 	var regex = new RegExp(data.pattern, data.flags);
-	
+
 	// shared between BrowserSolver & RegExWorker
 	var matches = [], match, index, error;
 	if (mode === "tests") {

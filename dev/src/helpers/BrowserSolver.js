@@ -19,45 +19,47 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 import Utils from "../utils/Utils";
 
 export default class BrowserSolver {
-	
-	
+
+	constructor() {
+		const workerBlob = new Blob([
+			document.querySelector('#regexWorker').textContent
+		], { type: "text/javascript" });
+		this._workerObjectURL = URL.createObjectURL(workerBlob);
+	}
+
 	solve(o, callback) {
 		this._callback = callback;
 		this._req = o;
-		
+
 		let regex, text=o.text, tests=o.tests, mode = o.mode;
 		try {
 			this._regex = regex = new RegExp(o.pattern, o.flags);
 		} catch(e) {
 			return this._onRegExComplete({id:"regexparse", name: e.name, message: e.message}, null, mode);
 		}
-		
-		if (window.Worker) {
-			if (!this._worker) {
-				this._worker = new Worker("assets/workers/RegExWorker.js");
-			}
 
-			this._worker.onmessage = (evt) => {
+		if (window.Worker) {
+			const worker = new Worker(this._workerObjectURL);
+
+			worker.onmessage = (evt) => {
 				if (evt.data === "onload") {
 					this._startTime = Utils.now();
 					this._timeoutId = setTimeout(() => {
-						this._worker.terminate();
-						this._worker = null;
-						this._onRegExComplete({id: "timeout"}); // TODO: make this a warning, and return all results so far.
+						worker.terminate();
+						this._onRegExComplete({id: "timeout"}, null, mode); // TODO: make this a warning, and return all results so far.
 					}, 250);
 				} else {
 					clearTimeout(this._timeoutId);
+					worker.terminate();
 					this._onRegExComplete(evt.data.error, evt.data.matches, evt.data.mode);
 				}
 			};
 
-			clearTimeout(this._timeoutId);
-
 			// we need to pass the pattern and flags as text, because Safari strips the unicode flag when passing a RegExp to a Worker
-			this._worker.postMessage({pattern:o.pattern, flags:o.flags, text, tests, mode});
+			worker.postMessage({pattern:o.pattern, flags:o.flags, text, tests, mode});
 		} else {
 			this._startTime = Utils.now();
-			
+
 			// shared between BrowserSolver & RegExWorker
 			var matches = [], match, index, error;
 			if (mode === "tests") {
@@ -78,11 +80,11 @@ export default class BrowserSolver {
 				}
 			}
 			// end share
-			
+
 			this._onRegExComplete(error, matches, mode);
 		}
 	}
-	
+
 	_onRegExComplete(error, matches, mode) {
 		let result = {
 			time: error ? null : Utils.now()-this._startTime,
@@ -90,7 +92,7 @@ export default class BrowserSolver {
 			mode,
 			matches
 		};
-		
+
 		let tool = this._req.tool;
 		if (tool) {
 			result.tool = { id: tool.id };
@@ -101,22 +103,22 @@ export default class BrowserSolver {
 		}
 		this._callback(result);
 	}
-	
+
 	_getReplace(str) {
 		return this._req.text.replace(this._regex, str);
 	}
-	
+
 	_getList(str) {
 		// TODO: should we move this into a worker?
 		let source = this._req.text, result = "", repl, ref, trimR = 0, regex;
-		
+
 		// build a RegExp without the global flag:
 		try {
 			regex = new RegExp(this._req.pattern, this._req.flags.replace("g", ""));
 		} catch(e) {
 			return null;
 		}
-		
+
 		if (str.search(/\$[&1-9`']/) === -1) {
 			trimR = str.length;
 			str = "$&"+str;
