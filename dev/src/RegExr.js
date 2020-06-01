@@ -188,7 +188,6 @@ export default class RegExr extends EventDispatcher {
 		this.flavor.on("change", ()=> this._change());
 		this.tools.on("change", ()=> this._change());
 		this.share.on("change", ()=> this._change());
-		this._change();
 	}
 
 	_migrateFavorites() {
