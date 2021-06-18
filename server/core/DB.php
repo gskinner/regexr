@@ -134,7 +134,7 @@ class DB {
         $q = "SELECT * FROM $table WHERE {$where} LIMIT 1";
         $result = $this->execute($q, $params);
 
-        return !is_null($result);
+        return count($result) > 0;
     }
 
     function getLastError() {
