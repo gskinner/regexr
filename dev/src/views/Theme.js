@@ -27,9 +27,15 @@ export default class Theme extends EventDispatcher {
 		this.el = el;
 		this.urlTemplate = "./assets/themes/%name%.css";
 		this.targetNode = this._node = null;
-		this._dark = false;
 		this._initUI();
-		this.dark = !!app.prefs.read("dark");
+		let dark = app.prefs.read("dark");
+		if (dark !== undefined) {
+			this.dark = !!dark;
+		} else if (window.matchMedia) {
+			this.dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+		} else {
+			this.dark = false;
+		}
 	}
 
 	set dark(val) {
@@ -40,7 +46,7 @@ export default class Theme extends EventDispatcher {
 		$.toggleClass(this.themeBtn, "selected", val);
 		app.prefs.write("dark", val);
 	}
-	
+
 	get dark() {
 		return this._dark;
 	}
