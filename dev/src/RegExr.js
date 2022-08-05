@@ -60,13 +60,14 @@ export default class RegExr extends EventDispatcher {
 		this._savedHash = null;
 
 		let params = Utils.getUrlParams();
+		console.log(params);
 		if (Utils.isLocal && params.id) {
 			Server.load(params.id).then((o) => this.state = o);
 			params = {};
 		}
 		if (params.engine) { this.flavor.value = params.engine; }
-		if (params.expression) { this.expression.value = params.expression; }
-		if (params.text) { this.text.value = params.text; }
+		if (params.expression !== undefined) { this.expression.value = params.expression; }
+		if (params.text !== undefined) { this.text.value = params.text; }
 		if (params.tool) { this.tools.value = {id:params.tool, input:params.input}; }
 
 		window.onbeforeunload = (e) => this.unsaved ? "You have unsaved changes." : null;
