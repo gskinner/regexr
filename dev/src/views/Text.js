@@ -47,7 +47,7 @@ export default class Text extends EventDispatcher {
 	}
 	
 	set value(val) {
-		this.editor.setValue(val || this.defaultText);
+		this.editor.setValue(val ?? this.defaultText);
 	}
 	
 	get value() {
