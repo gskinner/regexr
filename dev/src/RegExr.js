@@ -60,7 +60,6 @@ export default class RegExr extends EventDispatcher {
 		this._savedHash = null;
 
 		let params = Utils.getUrlParams();
-		console.log(params);
 		if (Utils.isLocal && params.id) {
 			Server.load(params.id).then((o) => this.state = o);
 			params = {};
