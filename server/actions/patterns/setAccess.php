@@ -34,7 +34,7 @@ class setAccess extends \core\AbstractAction {
         if ($exists == true) {
             $result = $this->db->execute("UPDATE patterns SET visibility=? WHERE id=?", [
                 ["s", $visibility],
-                ["i", $patternId]
+                ["s", $patternId]
             ], true);
         } else {
             throw new \core\APIError(\core\ErrorCodes::API_PATTERN_NOT_FOUND);

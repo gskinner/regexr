@@ -17,8 +17,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-use \core\Cache;
-
 namespace patterns;
 
 class search extends \core\AbstractAction {
@@ -91,8 +89,8 @@ class search extends \core\AbstractAction {
         }
 
         $q .= " GROUP BY p.id ORDER by p.ratingSort DESC LIMIT ?, ?";
-        $searchSqlParams[] = ["d", $startIndex];
-        $searchSqlParams[] = ["d", $limit];
+        $searchSqlParams[] = ["s", $startIndex];
+        $searchSqlParams[] = ["s", $limit];
 
         $result = $this->db->execute($q, $searchSqlParams);
 

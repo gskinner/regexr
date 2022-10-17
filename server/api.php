@@ -19,8 +19,6 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 require_once("bootstrap.php");
 
-use core\Cache;
-
 // Everything comes back as JSON
 header('Content-Type: application/json');
 header('Access-Control-Allow-Methods: ' . (DEBUG?'POST, GET':'POST'));

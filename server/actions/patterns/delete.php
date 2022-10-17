@@ -44,19 +44,19 @@ class delete extends \core\AbstractAction {
                     && visibility IN ('$privateConst', '$protectedConst')";
 
             $exists = $this->db->execute($sql, [
-                ["i", $patternId],
+                ["s", $patternId],
                 ["s", $userProfile->userId]
             ], true);
 
             if (!is_null($exists)) {
-                $this->db->execute("DELETE IGNORE FROM patterns WHERE id=?", ["i", $patternId]);
+                $this->db->execute("DELETE IGNORE FROM patterns WHERE id=?", ["s", $patternId]);
                 $this->clean($patternId);
             } else {
                 throw new \core\APIError(\core\ErrorCodes::API_NOT_ALLOWED);
             }
         } else {
             // Admins can delete anything.
-            $this->db->execute("DELETE IGNORE FROM patterns WHERE id=?", ["i", $patternId]);
+            $this->db->execute("DELETE IGNORE FROM patterns WHERE id=?", ["s", $patternId]);
             $this->clean($patternId);
         }
 

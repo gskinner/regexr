@@ -101,7 +101,7 @@ class save extends \core\AbstractAction {
                     array_push($sqlParams, ["s", $access]);
                 }
 
-                array_push($sqlParams, ["i", $patternId]);
+                array_push($sqlParams, ["s", $patternId]);
 
                 $this->db->execute($sql, $sqlParams);
             }
