@@ -17,7 +17,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-require_once("bootstrap.php");
+require_once(__DIR__ . "/bootstrap.php");
 
 if (!isCLI()) {
     exit("cli only, bye.");
@@ -33,7 +33,6 @@ $api = new \core\API();
 $api->connect();
 $db = $api->getDB();
 
-// TODO: Write flag for if this is done or not.
 $runCount = 0;
 $deletedCount = 0;
 while (true) {
@@ -41,7 +40,7 @@ while (true) {
     $users = $db->execute("SELECT u.id as userId
                 FROM users as u
                 LEFT JOIN sessions as s ON s.userId=u.id
-                WHERE u.type='temporary' && s.id IS NULL LIMIT 100000");
+                WHERE u.type='temporary' && s.id IS NULL LIMIT 10000");
 
     $tmpUserCount = count($users);
 
