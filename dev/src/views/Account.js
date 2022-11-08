@@ -32,7 +32,7 @@ export default class Account extends EventDispatcher {
 		this._value = {};
 		this._initUI();
 	}
-	
+
 	get value() {
 		return this._value;
 	}
@@ -48,11 +48,11 @@ export default class Account extends EventDispatcher {
 	get username() { return this._value.username || ""; }
 	get authenticated() { return !!this._value.username; } // this._value.authenticated;
 	get type() { return this._value.type; }
-	
+
 	showTooltip() {
 		app.tooltip.toggle.toggleOn("signin", this.tooltipEl, this.signinBtn, true, 20);
 	}
-	
+
 // private methods:
 	_initUI() {
 		let template = (o) => '<svg class="icon inline"><use xlink:href="#'+o.toLowerCase()+'"></use></svg>'+o;
@@ -63,7 +63,7 @@ export default class Account extends EventDispatcher {
 		$.query(".signoutbtn", this.signoutEl).addEventListener("click", (evt) => this._doSignout());
 		this.signinBtn.addEventListener("click", (evt) => this.showTooltip());
 		$.query(".icon.help", this.signinEl).addEventListener("click", ()=> app.sidebar.goto("signin"));
-		this.signinList = new List($.query("ul.list", this.signinEl), {data:["GitHub","Facebook", "Google"], template});
+		this.signinList = new List($.query("ul.list", this.signinEl), {data:["GitHub", "Google"], template});
 		this.signinList.on("change", ()=>this._signinListChange());
 	}
 
@@ -89,7 +89,7 @@ export default class Account extends EventDispatcher {
 	_cleanSignout(err) {
 		$.removeClass(this.tooltipEl, "wait");
 	}
-	
+
 	_signinListChange() {
 		let service = this.signinList.selected.toLowerCase();
 		$.addClass(this.tooltipEl, "wait");
