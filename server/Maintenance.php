@@ -63,4 +63,6 @@ while (true) {
     sleep(3);
 }
 
-echo("Completed! Deleted $deletedCount users.\n");
+if (DEBUG) {
+    echo("Completed! Deleted $deletedCount users.\n");
+}
