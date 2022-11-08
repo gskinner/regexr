@@ -69,7 +69,7 @@ class search extends \core\AbstractAction {
         }
 
         // Do the actual search.
-        $q = "SELECT SQL_CALC_FOUND_ROWS p.*, urJoin.rating AS userRating, fJoin.patternId as favorite
+        $q = "SELECT p.*, urJoin.rating AS userRating, fJoin.patternId as favorite
         FROM patterns p
         LEFT JOIN userRatings urJoin ON urJoin.patternId = p.id AND urJoin.userId = ?
         LEFT JOIN favorites as fJoin ON fJoin.userId = ? AND fJoin.patternId=p.id
@@ -94,11 +94,7 @@ class search extends \core\AbstractAction {
 
         $result = $this->db->execute($q, $searchSqlParams);
 
-        // Returns the total results.
-        $countQuery = (object)$this->db->execute("SELECT FOUND_ROWS() as count", null, true);
-        $total = $countQuery->count;
-
-        $json = createPatternSet($result, $total, $startIndex, $limit);
+        $json = createPatternSet($result);
 
         return $json;
     }
