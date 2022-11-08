@@ -20,12 +20,12 @@ import Utils from "../utils/Utils";
 import app from "../app";
 
 export default class Server {
-	
+
 // regex:
 	static solve(req) {
 		return Server._getRequest("regex/solve", {data: JSON.stringify(req)});
 	}
-	
+
 	static version(flavor) {
 		return Server._getRequest("regex/version", {flavor:flavor});
 	}
@@ -34,11 +34,11 @@ export default class Server {
 	static communitySearch(str) {
 		return Server._getRequest("patterns/search", {query:str||"", startIndex:0, limit:100}, (data) => { this._processPatternList(data); });
 	}
-	
+
 	static load(id) {
 		return Server._getRequest("patterns/load", {patternId:id}, (data) => this._processPattern(data));
 	}
-	
+
 	static save(pattern, fork, community) {
 		// clone and prep the pattern object:
 		let o = this._prepPattern(pattern, fork, community);
@@ -48,15 +48,15 @@ export default class Server {
 	static rate(id, rating) {
 		return Server._getRequest("patterns/rate", {patternId:id, userRating:rating}, (data) => data.rating = Number(data.rating));
 	}
-	
+
 	static delete(id) {
 		return Server._getRequest("patterns/delete", {patternId:id});
 	}
-	
+
 	static favorite(id, value) {
 		return Server._getRequest("patterns/favorite", {patternId:id, favorite:!!value});
 	}
-	
+
 	static private(id, value) {
 		return Server.setAccess(id, value ? "private" : "protected");
 	}
@@ -77,7 +77,7 @@ export default class Server {
 	static logout() {
 		return Server._getRequest("account/logout", {});
 	}
-	
+
 	static verify() {
 		return Server._getRequest("account/verify", {});
 	}
@@ -127,9 +127,9 @@ export default class Server {
 		let req = new XMLHttpRequest(), p = new ServerPromise(req, postprocess), params = [];
 		req.open("POST", Server.url);
 		req.setRequestHeader("Content-type", "application/x-www-form-urlencoded", true);
-		req.timeout = 5000;
+		req.timeout = 30*1000;
 		data.action = action;
-		
+
 		if (Server.isLocal && Server.useBeta) { data.userId = 111; }
 		for (let n in data) { params.push(n + "=" + encodeURIComponent(data[n])); }
 		if (Server.isLocal) { console.log(data); }
@@ -154,7 +154,7 @@ class ServerPromise {
 		if (ff) { this.finally(ff); }
 		return this;
 	}
-	
+
 	catch(f) {
 		this._errorF = f;
 		if (this._err) { f(this._err); }
@@ -166,7 +166,7 @@ class ServerPromise {
 		if (this._complete) { f(); }
 		return this;
 	}
-	
+
 	abort() {
 		if (this._complete) { return; }
 		this._complete = true;
@@ -174,7 +174,7 @@ class ServerPromise {
 		this._finallyF && this._finallyF();
 		this._loadF = this._errorF = this._finallyF = null; // just to make sure.
 	}
-	
+
 	_load() {
 		let json;
 		this._complete = true;
@@ -187,7 +187,7 @@ class ServerPromise {
 		this._loadF && this._loadF(this._data);
 		this._finallyF && this._finallyF();
 	}
-	
+
 	_error(e) {
 		this._err = (e.data && e.data.error) || e.message || e.detail || e.type || String(e);
 		this._errorF && this._errorF(this._err);
