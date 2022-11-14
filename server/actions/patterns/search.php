@@ -32,52 +32,25 @@ class search extends \core\AbstractAction {
         $this->userProfile = $this->getUserProfile();
 
         $result = null;
-        $item = null;
 
-        // The default community search is cached in Maintenance.php
-        if (empty($query)) {
-           // $item = \core\Cache::LoadItem(\core\Cache::CommunityKey($query, $startIndex, $limit));
-        }
-
-        // Disable cache, for testing
-        $item = null;
-
-        if (!is_null($item)) {
-            $result = $item;
-        } else {
-            $result = $this->searchCommunity($query, $startIndex, $limit, $type);
-        }
+        $result = $this->searchCommunity($query, $startIndex, $limit, $type);
 
         return new \core\Result($result);
     }
 
     public function searchCommunity($query, $startIndex, $limit, $type) {
         // Build the search query.
-        $whereStatements = array();
+        $whereStatements = [];
         $searchSqlParams = [];
 
         // Search everything using the query.
         if (!empty($query)) {
-            $whereStatements[] = " p.name LIKE ?";
-            $whereStatements[] = " p.description LIKE ?";
-            $whereStatements[] = " p.author LIKE  ?";
-
-            $preparedQuery = "%{$query}%";
-            $searchSqlParams[] = ["s", $preparedQuery];
-            $searchSqlParams[] = ["s", $preparedQuery];
-            $searchSqlParams[] = ["s", $preparedQuery];
+            $whereStatements[] = "MATCH(`name`, `description`, `pattern`, `replace`, `author`) AGAINST(? IN NATURAL LANGUAGE MODE)";
+            $searchSqlParams[] = ["s", $query];
         }
 
         // Do the actual search.
-        $q = "SELECT p.*, urJoin.rating AS userRating, fJoin.patternId as favorite
-        FROM patterns p
-        LEFT JOIN userRatings urJoin ON urJoin.patternId = p.id AND urJoin.userId = ?
-        LEFT JOIN favorites as fJoin ON fJoin.userId = ? AND fJoin.patternId=p.id
-        WHERE p.visibility='public'
-        ";
-
-        $searchSqlParams[] = ["s", $this->userProfile->userId];
-        $searchSqlParams[] = ["s", $this->userProfile->userId];
+        $q = "SELECT p.* FROM patterns p WHERE p.visibility='public'";
 
         if (!is_null($type)) {
             $typeArray = quoteStringArray($type);
@@ -94,6 +67,37 @@ class search extends \core\AbstractAction {
 
         $result = $this->db->execute($q, $searchSqlParams);
 
+        // Inject userRating and favorite
+        $patternIds = quoteStringArray(array_map(function ($pattern) {
+            return idx($pattern, 'id');
+        }, $result));
+
+        $userId = $this->userProfile->userId;
+
+        $userRatings = $this->db->execute("SELECT rating, patternId FROM userRatings WHERE patternId IN ($patternIds) AND userId=?", [
+            ['s', $userId]
+        ]);
+
+        $userFavorites = $this->db->execute("SELECT patternId FROM favorites WHERE patternId IN ($patternIds) AND userId=?", [
+            ['s', $userId]
+        ]);
+
+        function injectIntoResults($result, $sourceList, $sourceKey, $destKey)
+        {
+            for ($i = 0; $i < count($sourceList); $i++) {
+                $sourceValue = $sourceList[$i];
+                for ($j = 0; $j < count($result); $j++) {
+                    if (idx($result[$j], 'id') === $sourceValue->patternId) {
+                        $result[$i]->{$destKey} = idx($result[$j], $sourceKey, true);
+                        break;
+                    }
+                }
+            }
+        }
+
+        injectIntoResults($result, $userRatings, 'rating', 'userRating');
+        injectIntoResults($result, $userFavorites, null, 'favorite');
+
         $json = createPatternSet($result);
 
         return $json;
@@ -106,10 +110,10 @@ class search extends \core\AbstractAction {
     public function getSchema() {
         $flavorValues = $this->getFlavorValues();
         return array(
-            "query" => array("type"=>self::STRING, "required"=>true),
-            "startIndex" => array("type"=>self::NUMBER, "required"=>false, "default"=>0),
-            "limit" => array("type"=>self::NUMBER, "required"=>false, "default"=>100),
-            "flavor" => array("type"=>self::ENUM_ARRAY, "values"=>$flavorValues, "default"=>$flavorValues, "required"=>false)
+            "query" => array("type" => self::STRING, "required" => true),
+            "startIndex" => array("type" => self::NUMBER, "required" => false, "default" => 0),
+            "limit" => array("type" => self::NUMBER, "required" => false, "default" => 100),
+            "flavor" => array("type" => self::ENUM_ARRAY, "values" => $flavorValues, "default" => $flavorValues, "required" => false)
         );
     }
 }
