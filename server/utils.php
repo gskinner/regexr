@@ -122,9 +122,10 @@ function createPatternNode($row) {
     }
 
     // Migrate over old "replace" and "state" formats.
-    if (!empty($tool) && array_key_exists('toolValue', $tool)) {
+    $toolValue = idx($tool, 'toolValue');
+    if (!empty($tool) && !is_null($toolValue)) {
         $id =  $tool['tool'];
-        $value = $tool['toolValue'];
+        $value = $toolValue;
         $tool = ['id' => $id, 'input' => $value];
     } else if (!empty($replace) && empty($tool)) {
         $tool['id'] = 'replace';
