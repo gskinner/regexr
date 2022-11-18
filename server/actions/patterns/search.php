@@ -45,7 +45,7 @@ class search extends \core\AbstractAction {
 
         // Search everything using the query.
         if (!empty($query)) {
-            $whereStatements[] = "MATCH(`name`, `description`, `pattern`, `replace`, `author`) AGAINST(? IN NATURAL LANGUAGE MODE)";
+            $whereStatements[] = "MATCH(`name`, `description`, `author`) AGAINST(? IN NATURAL LANGUAGE MODE)";
             $searchSqlParams[] = ["s", $query];
         }
 
