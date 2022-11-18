@@ -72,7 +72,7 @@ class load extends \core\AbstractAction {
     }
 
     function trackVisit($id) {
-        $sql = "UPDATE patterns SET visits=visits+1 WHERE id=?";
+        $sql = "UPDATE patterns SET visits=visits+1, lastAccessed=NOW() WHERE id=?";
         $this->db->execute($sql, [
             ["s", $id]
         ]);
@@ -84,3 +84,4 @@ class load extends \core\AbstractAction {
         );
     }
 }
+
