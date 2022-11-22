@@ -40,7 +40,7 @@ while (true) {
     $users = $db->execute("SELECT u.id as userId
                 FROM users as u
                 LEFT JOIN sessions as s ON s.userId=u.id
-                WHERE u.type='temporary' && s.id IS NULL LIMIT 10000");
+                WHERE u.type='temporary' AND s.id IS NULL LIMIT 10000");
 
     $tmpUserCount = count($users);
 
@@ -55,7 +55,7 @@ while (true) {
     $usersToDelete = quoteStringArray(array_column($users, "userId"));
 
     $db->begin();
-    $db->execute("DELETE FROM patterns WHERE visibility='private' && owner IN ($usersToDelete)");
+    $db->execute("DELETE FROM patterns WHERE visibility='private' AND owner IN ($usersToDelete)");
     $db->execute("DELETE FROM favorites WHERE userId IN ($usersToDelete)");
     $db->execute("DELETE FROM users WHERE id IN ($usersToDelete)");
     $db->commit();

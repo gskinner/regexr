@@ -35,7 +35,7 @@ class rate extends \core\AbstractAction {
         $userProfile = $this->getUserProfile();
         $voteQuery = null;
 
-        $sql = "SELECT * FROM userRatings WHERE patternId=? && userId=? LIMIT 1";
+        $sql = "SELECT * FROM userRatings WHERE patternId=? AND userId=? LIMIT 1";
         $existing = $this->db->execute($sql, [
             ["s", $patternId],
             ["s", $userProfile->userId]

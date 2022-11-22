@@ -66,7 +66,7 @@ class login extends \core\AbstractAction {
                     if ($sessionData->type == "temporary") {
                         // Migrate all the temp users favorites / ratings / patterns to the correct user
                         // Then delete the old user / session.
-                        $existingUser = $this->db->execute("SELECT * FROM users WHERE email=? && type=?", [
+                        $existingUser = $this->db->execute("SELECT * FROM users WHERE email=? AND type=?", [
                             ["s", $email],
                             ["s", $type]
                         ], true);
@@ -87,7 +87,7 @@ class login extends \core\AbstractAction {
                             $this->db->execute("DELETE IGNORE
                                                 FROM favorites
                                                 WHERE userId=?
-                                                && patternId IN (SELECT patternId FROM (SELECT patternId FROM favorites WHERE userId=?) as child)
+                                                AND patternId IN (SELECT patternId FROM (SELECT patternId FROM favorites WHERE userId=?) as child)
                                             ", [
                                                 ["s", $temporaryUserId],
                                                 ["s", $existingUserId]
@@ -106,7 +106,7 @@ class login extends \core\AbstractAction {
                             $this->db->execute("DELETE IGNORE
                                                 FROM userRatings
                                                 WHERE userId=?
-                                                && patternId IN (SELECT patternId FROM (SELECT patternId FROM userRatings WHERE userId=?) as child)
+                                                AND patternId IN (SELECT patternId FROM (SELECT patternId FROM userRatings WHERE userId=?) as child)
                                             ", [
                                                 ["s", $temporaryUserId],
                                                 ["s", $existingUserId]
@@ -159,7 +159,7 @@ class login extends \core\AbstractAction {
                                 ]);
 
                 $accessToken = serialize($adapter->getAccessToken());
-                $userIdData = $this->db->execute("SELECT * FROM users WHERE email=? && type=?", [
+                $userIdData = $this->db->execute("SELECT * FROM users WHERE email=? AND type=?", [
                     ["s", $email],
                     ["s", $type]
                 ],true);

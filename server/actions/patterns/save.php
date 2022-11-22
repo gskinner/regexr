@@ -54,7 +54,7 @@ class save extends \core\AbstractAction {
             $protectedState = \core\PatternVisibility::PROTECTED;
             $privateState = \core\PatternVisibility::PRIVATE;
 
-            $sql = "SELECT * FROM patterns WHERE id=? && owner=? && visibility IN (?, ?) LIMIT 1";
+            $sql = "SELECT * FROM patterns WHERE id=? AND owner=? AND visibility IN (?, ?) LIMIT 1";
             $existingPattern = $this->db->execute($sql, [
                 ["s", $patternId],
                 ["s", $userProfile->userId],

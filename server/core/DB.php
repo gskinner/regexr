@@ -129,7 +129,7 @@ class DB {
             $params[] = ["s", $value];
         }
 
-        $where = implode(" && ", $where);
+        $where = implode(" AND ", $where);
 
         $q = "SELECT * FROM $table WHERE {$where} LIMIT 1";
         $result = $this->execute($q, $params);

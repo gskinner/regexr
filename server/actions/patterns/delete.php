@@ -40,8 +40,8 @@ class delete extends \core\AbstractAction {
 
             $sql = "SELECT id FROM patterns
                     WHERE id=?
-                    && owner=?
-                    && visibility IN ('$privateConst', '$protectedConst')";
+                    AND owner=?
+                    AND visibility IN ('$privateConst', '$protectedConst')";
 
             $exists = $this->db->execute($sql, [
                 ["s", $patternId],

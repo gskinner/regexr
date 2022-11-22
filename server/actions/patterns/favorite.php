@@ -39,7 +39,7 @@ class favorite extends \core\AbstractAction {
                 ["s", $patternId],
             ]);
         } else {
-            $sql = "DELETE IGNORE FROM favorites WHERE patternId=? && userId=?";
+            $sql = "DELETE IGNORE FROM favorites WHERE patternId=? AND userId=?";
             $this->db->execute($sql, [
                 ["s", $patternId],
                 ["s", $userProfile->userId],

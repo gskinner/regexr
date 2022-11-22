@@ -54,11 +54,11 @@ class search extends \core\AbstractAction {
 
         if (!is_null($type)) {
             $typeArray = quoteStringArray($type);
-            $q .= " && p.flavor IN ($typeArray)";
+            $q .= " AND p.flavor IN ($typeArray)";
         }
 
         if (count($whereStatements) > 0) {
-            $q .= " && (" . implode("||", $whereStatements) . ")";
+            $q .= " AND (" . implode(" OR ", $whereStatements) . ")";
         }
 
         $q .= " GROUP BY p.id ORDER by p.ratingSort DESC LIMIT ?, ?";
