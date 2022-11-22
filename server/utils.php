@@ -19,6 +19,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 // Global utility methods.
 
+
 /**
  * @param $value
  * @param $key
@@ -64,6 +65,11 @@ function realStringLength($str) {
 */
 function now() {
     return microtime(true)*1000;
+}
+
+function isGuid($guid) {
+    $match = preg_match("/^[a-f0-9]{8}(-[a-f0-9]{4}){4}[a-f0-9]{8}$/i", $guid);
+    return $match == 1;
 }
 
 function formatActionNameForExecution($name) {

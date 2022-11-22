@@ -31,7 +31,7 @@ class save extends \core\AbstractAction {
     function savePattern($userProfile) {
         $keywords = $this->getValue('keywords');
         $name = $this->getValue('name');
-        $pattern = addslashes($this->getValue('expression'));
+        $pattern = addslashes($this->getValue('expression') ?? '');
         $content = $this->getValue('text');
         $description = $this->getValue('description');
         $id = $this->getValue('id');

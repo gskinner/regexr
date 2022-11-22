@@ -61,7 +61,7 @@ class search extends \core\AbstractAction {
             $q .= " AND (" . implode(" OR ", $whereStatements) . ")";
         }
 
-        $q .= " GROUP BY p.id ORDER by p.ratingSort DESC LIMIT ?, ?";
+        $q .= " ORDER BY p.ratingSort DESC LIMIT ?, ?";
         $searchSqlParams[] = ["s", $startIndex];
         $searchSqlParams[] = ["s", $limit];
 
