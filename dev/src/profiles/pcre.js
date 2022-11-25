@@ -24,38 +24,39 @@ let y=true, n=false;
 let pcre = {
 	id: "pcre",
 	label: "PCRE",
-	browser: false,
-	
+	browser: true, // TODO Check for proper WASM support
+
 	flags: {
 		"u": n,
-		"y": n
+		"y": n,
+		"U": n
 	},
-	
+
 	badEscChars: "uUlLN".split("").reduce((o, c) => { o[c] = y; return o}, {}),
 
 	escCharCodes: {
 		"v": n // vertical tab // PCRE support \v as vertical whitespace
 	},
-	
+
 	tokens: {
 		"escunicodeu": n, // \uFFFF
 		"escunicodeub": n, // \u{00A9}
 		// octalo PCRE 8.34+
 	},
-	
+
 	substTokens: {
 		"subst_$esc": n, // $$
 		"subst_$&match": n, // $&
 		"subst_$before": n, // $`
 		"subst_$after": n // $'
 	},
-	
+
 	config: {
 		"reftooctalalways": n, // does a single digit reference \1 become an octal? (vs remain an unmatched ref)
 		"substdecomposeref": n, // will a subst reference decompose? (ex. \3 becomes "\" & "3" if < 3 groups)
 		"looseesc": n // should unrecognized escape sequences match the character (ex. \u could match "u") // disabled when `u` flag is set
 	},
-	
+
 	docs: {
 		"escoctal":{ext:"+<p>The syntax <code>\\o{FFF}</code> is also supported.</p>"},
 		"numref":{

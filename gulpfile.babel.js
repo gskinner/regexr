@@ -3,17 +3,16 @@ const gulp = require("gulp");
 const inject = require("gulp-inject");
 const rename = require("gulp-rename");
 const template = require("gulp-template");
-const sass = require("gulp-sass");
-sass.compiler = require("sass");
+const sass = require('gulp-sass')(require('sass'))
 const cleanCSS = require("gulp-clean-css");
 const htmlmin = require("gulp-htmlmin");
 const svgstore = require("gulp-svgstore");
 const svgmin = require("gulp-svgmin");
 const autoprefixer = require("gulp-autoprefixer");
 const rollup = require("rollup").rollup;
-const babel = require("rollup-plugin-babel");
-const terser = require("rollup-plugin-terser").terser;
-const replace = require("rollup-plugin-replace");
+const babel = require("@rollup/plugin-babel");
+const terser = require("@rollup/plugin-terser");
+const replace = require("@rollup/plugin-replace");
 const browser = require("browser-sync");
 const Vinyl = require("vinyl");
 const Buffer = require("buffer").Buffer;
@@ -22,9 +21,12 @@ const Readable = require("stream").Readable;
 const createHash = require("crypto").createHash;
 const fs = require("fs");
 const basename = require("path").basename;
+const nodePolyfills = require('rollup-plugin-polyfill-node');
 
 let js_file = "regexr.js";
 let css_file = "regexr.css";
+let worker_file = "";
+const workerFileSource = `./dev/src/helpers/RegExWorker.js`
 
 // constants
 const isProduction = () => process.env.NODE_ENV === "production";
@@ -63,7 +65,7 @@ gulp.task("serve", () => {
 });
 
 gulp.task("watch", () => {
-	gulp.watch("./dev/src/**/*.js", gulp.series("js", "browserreload"));
+	gulp.watch("./dev/src/**/*.js", gulp.series("js", "regex-worker", "dev-html", "browserreload"));
 	gulp.watch("./index.html", gulp.series("dev-html", "browserreload"));
 	gulp.watch("./dev/icons/*.svg", gulp.series("icons"));
 	gulp.watch("./dev/inject/*", gulp.series("inject", "browserreload"));
@@ -80,7 +82,7 @@ gulp.task("watch-server", () => {
 });
 
 gulp.task("js", () => {
-	const plugins = [babelPlugin, replacePlugin];
+	const plugins = [babelPlugin, replacePlugin, nodePolyfills()];
 	if (isProduction()) { plugins.push(terserPlugin); }
 	return rollup({
 		input: "./dev/src/app.js",
@@ -104,6 +106,25 @@ gulp.task("js", () => {
 			name: "regexr",
 			sourcemap: !isProduction()
 		})
+	});
+});
+
+gulp.task("regex-worker", () => {
+	const plugins = [babelPlugin, nodePolyfills()];
+	if (isProduction()) { plugins.push(terserPlugin); }
+
+	return rollup({
+		input: workerFileSource,
+		plugins,
+	}).then(bundle => {
+		return bundle.generate({
+			format: "iife",
+			name: basename(workerFileSource),
+			sourcemap: !isProduction()
+		});
+	}).then(s => {
+		worker_file = s.output[0].code;
+		return s;
 	});
 });
 
@@ -138,6 +159,7 @@ gulp.task("html", () => {
 		.pipe(template({
 			js_file,
 			css_file,
+			worker_file,
 		}))
 		.pipe(htmlmin({
 			collapseWhitespace: true,
@@ -152,6 +174,7 @@ gulp.task("dev-html", () => {
 		.pipe(template({
 			js_file,
 			css_file,
+			worker_file,
 		}))
 		.pipe(htmlmin({
 			collapseWhitespace: true,
@@ -234,13 +257,18 @@ gulp.task("rename-js", () => {
 		.pipe(gulp.dest("./build/deploy/"));
 });
 
+gulp.task("copy-wasm", () => {
+	return gulp.src("./dev/src/pcre2-wasm/dist/libpcre2.wasm")
+		.pipe(gulp.dest("./build/deploy/"));
+});
+
 gulp.task("clean-build", () => {
 	return del([
 		"./build/deploy/regexr.*",
 	]);
 })
 
-gulp.task("build", gulp.parallel("js", "sass"));
+gulp.task("build", gulp.parallel("js", "regex-worker", "sass", "copy-wasm"));
 gulp.task("server", gulp.series("copy-server", "watch-server"));
 gulp.task("rename", gulp.parallel("rename-css", "rename-js"));
 
@@ -253,7 +281,7 @@ gulp.task("default",
 gulp.task("deploy",
 	gulp.series(
 		cb => (process.env.NODE_ENV = "production") && cb(),
-		"clean", "build", "createFileHashes", "html", "copy", "rename", "clean-build"
+		"clean", "build", "createFileHashes", "html", "copy", "rename", "copy-wasm", "clean-build"
 	)
 );
 
