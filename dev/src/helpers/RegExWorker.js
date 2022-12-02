@@ -75,7 +75,7 @@ onmessage = async function (evt) {
 			matchResult.forEach((match) => {
 				const groups = [];
 				for (let i = 1; i < match.length; i++) {
-					groups.push({ s: match[i].match });
+					groups.push({ s: match[i].match, i: match[i].start, l: match[i].end - match[i].start });
 				}
 
 				matches.push({
