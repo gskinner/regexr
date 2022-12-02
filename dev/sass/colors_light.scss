@@ -2,8 +2,8 @@
 
 // base colors:
 // inherit theme-color
-$theme-color: darken($theme-color, 6);
-$base-color: mix(#808080, invert($theme-color), 95);
+$theme-color: darken($theme-color, 6%);
+$base-color: mix(#808080, invert($theme-color), 95%);
 
 // core colors:
 $black: lighten($base-color, 44%);

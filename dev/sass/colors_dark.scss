@@ -1,8 +1,8 @@
 @import "colors";
 
 // base colors:
-$theme-color: desaturate(darken($theme-color, 18), 20);
-$base-color: mix(#808080, darken($theme-color, 20), 90);
+$theme-color: desaturate(darken($theme-color, 18%), 20%);
+$base-color: mix(#808080, darken($theme-color, 20%), 90%);
 
 // core colors:
 // inherited
@@ -16,7 +16,7 @@ $doc-dark: mix($doc-black, $base-color, 50%);
 $doc-mid: $mid;
 
 $doc-white: mix($black, $darkest, 30%);
-$doc-lightest: mix($doc-white, $base-color, 92%); 
+$doc-lightest: mix($doc-white, $base-color, 92%);
 $doc-lighter: mix($doc-white, $base-color, 80%);
 $doc-light: mix($doc-white, $base-color, 60%);
 

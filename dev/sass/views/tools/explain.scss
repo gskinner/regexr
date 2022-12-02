@@ -1,11 +1,11 @@
 .doc > section.tools > article .explain {
-	
+
 	> .desc {
 		color: $doc-mid;
 		display: block;
 		padding: $pad*0.5;
 	}
-	
+
 	div {
 		padding: 0.5em 1em 0.5em 2.5em;
 		margin-top: 0.75em;
@@ -18,17 +18,17 @@
 	div.selected {
 		@extend %selected-token;
 	}
-	
+
 	div.related {
 		@extend %related-token;
 	}
-	
+
 	div.applied {
 		margin-left: 1em;
 		margin-top: 0;
 		border: none;
 		background: rgba($doc-light, 0.3);
-		
+
 		+ div.applied {
 			margin-top: 1px;
 			margin-left: 2em;
@@ -36,7 +36,7 @@
 	}
 
 	div.error {
-		background: mix($doc-white, $error-color, 85);
+		background: mix($doc-white, $error-color, 85%);
 		border-color: $error-color;
 
 		&.warning {
@@ -76,20 +76,20 @@
 	.exp-group-0, .exp-group-1, .exp-group-2, .exp-group-3 {
 		border-color: rgba($group-color, 0.25);
 	}
-	
-	.exp-group-0 { background: mix($doc-white, $groupbg-color, 92); }
 
-	.exp-group-1 { background: mix($doc-white, $groupbg-color, 87); }
+	.exp-group-0 { background: mix($doc-white, $groupbg-color, 92%); }
 
-	.exp-group-2 { background: mix($doc-white, $groupbg-color, 82); }
+	.exp-group-1 { background: mix($doc-white, $groupbg-color, 87%); }
 
-	.exp-group-3 { background: mix($doc-white, $groupbg-color, 77); }
-	
+	.exp-group-2 { background: mix($doc-white, $groupbg-color, 82%); }
+
+	.exp-group-3 { background: mix($doc-white, $groupbg-color, 77%); }
+
 	// silly:
 	.exp-group-4 { background: $doc-darker; color: $doc-white; padding: $pad; }
 
 	.exp-group-set {
-		background: mix($doc-white, $setbg-color, 75);
+		background: mix($doc-white, $setbg-color, 75%);
 		border-color: rgba($set-color, 0.25);
 	}
 }

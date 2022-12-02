@@ -11,7 +11,7 @@
 	.logo {
 		flex: none;
 		font-size: 1.125rem;
-		margin-top: $pad/16;
+		margin-top: calc($pad/16);
 		color: $theme-color;
 		width: 1.5em;
 		height: 1.5em;
@@ -160,7 +160,7 @@
 		color: $mid;
 
 		.distractor {
-			margin-right: $pad/2;
+			margin-right: calc($pad/2);
 		}
 	}
 

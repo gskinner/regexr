@@ -1,6 +1,6 @@
 #share_main, #share_community {
 	margin: -$pad;
-	
+
 	.list {
 		background: transparent;
 		border: none;
@@ -14,8 +14,8 @@
 	}
 
 	.button {
-		padding-left: $pad*2;
-		padding-right: $pad*2;
+		padding-left: calc($pad*2);
+		padding-right: cacl($pad*2);
 	}
 
 	.buttons.wait {
@@ -26,7 +26,7 @@
 	}
 
 	.status {
-		margin-left: $pad/2;
+		margin-left: calc($pad/2);
 	}
 }
 
@@ -46,16 +46,16 @@
 	}
 
 	.delete.row:hover {
-		background: rgba($error-color, 0.6);
+		background: rgba($error-color, 0.6%);
 	}
 
 	> .info {
 		padding: $pad;
-		margin-bottom: $pad * 0.5;
+		margin-bottom: calc($pad * 0.5);
 		border-bottom: solid 1px $darker;
-		
+
 		> .row {
-			padding: 0 0 $pad/2 0;
+			padding: 0 0 calc($pad/2) 0;
 			border: 0;
 			color: $light;
 			align-items: flex-start;
@@ -70,8 +70,8 @@
 	> .save {
 		flex-direction: column;
 		align-items: flex-start;
-		padding: $pad*1.25 $pad*0.5;
-		margin-bottom: $pad*0.5;
+		padding: calc($pad*1.25) calc($pad*0.5);
+		margin-bottom: calc($pad*0.5);
 		background: $darker;
 		border: 0;
 		box-shadow: -3px 3px 6px $light-shadow;
@@ -81,27 +81,27 @@
 		}
 
 		.buttons {
-			padding: $pad*0.5 0 0 0;
+			padding: calc($pad*0.5) 0 0 0;
 			border: 0;
 			color: $white;
 
 			.button {
-				margin: 0 $pad*0.5 0 0;
+				margin: 0 calc($pad*0.5) 0 0;
 			}
 		}
 	}
 }
 
 
-	
+
 #share_community {
-	margin: 0 $pad/2;
+	margin: 0 calc($pad/2);
 
 	> .buttons {
 		justify-content: flex-end;
 		color: $white;
 		border: none;
-		
+
 	}
 
 	.inputs, .buttons {

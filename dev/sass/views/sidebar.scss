@@ -12,12 +12,12 @@
 	flex: 1 0 350px;
 	width: 350px;
 	transition: flex $transition-t ease-out;
-	
+
 	background: $darkest;
 	display: flex;
 	flex-direction: column;
 	color: $light;
-	
+
 	border-right: 1px solid $darker;
 	box-shadow: 1px 2px 8px $strong-shadow;
 	z-index: 100;
@@ -25,30 +25,30 @@
 	> .blocker {
 		display: none;
 	}
-	
+
 	.row, .list > li {
 		display: flex;
 		flex: 0 0 auto;
-		padding: $pad/2;
+		padding: calc($pad/2);
 		align-items: center;
 		justify-content: center;
-		border-bottom: 1px solid rgba($white, 0.06);
+		border-bottom: 1px solid rgba($white, 0.06%);
 		transition: background $transition-t;
 		color: $light;
-		
+
 		> * {
-			margin: 0 $pad/2;
+			margin: 0 calc($pad/2);
 		}
-		
+
 		input, .label {
 			flex: 1;
 		}
-		
+
 		.icon {
 			color: $dark;
 		}
 	}
-	
+
 	header.row {
 		flex: 0 0 $title-height;
 		padding: 0;
@@ -59,8 +59,8 @@
 			align-items: center;
 			cursor: pointer;
 			margin: 0;
-			padding: $pad/2 0;
-			
+			padding: calc($pad/2) 0;
+
 			.icon {
 				flex: 0 0 auto;
 				margin: 0 $pad;
@@ -75,7 +75,7 @@
 		}
 
 		.close.icon {
-			padding: $pad*0.75 $pad;
+			padding: calc($pad*0.75) $pad;
 			margin: 0;
 		}
 	}
@@ -83,11 +83,11 @@
 	code {
 		color: $white;
 	}
-	
+
 	&.closed {
 		flex: 0 $closed-sidebar-width;
 	}
-	
+
 	> .min, > .full {
 		.list {
 			flex: 1 1 0%; // setting this and .content to 0% (instead of 50%) fixes issues in FireFox.
@@ -96,27 +96,27 @@
 			overflow-y: auto;
 			background: $darker;
 			border-bottom: 2px solid $darker;
-			
+
 			li, .row {
 				@extend %link;
 				color: $light;
-				
+
 				&:hover:not(.inactive) {
-					background: mix($dark, $darker, 50);
+					background: mix($dark, $darker, 50%);
 					.token, .rating, .icon { color: currentColor; }
 				}
-				
+
 				&.selected {
 					background: $dark;
 					color: $lighter;
-					
+
 					.token, .rating, .icon { color: currentColor; }
 					&:hover {
 						background: $dark;
 						color: $white;
 					}
 				}
-				
+
 				&.disabled {
 					pointer-events: none;
 					opacity: $disabled-opacity;
@@ -136,14 +136,14 @@
 					}
 					.icon.copy {
 						padding: $pad; /* easier to click */
-						margin: -$pad 1.5*$pad -$pad -$pad;
+						margin: (-$pad) calc(1.5*$pad) (-$pad) (-$pad);
 						color: $dark;
 						&:hover {
 							color: $white;
 						}
 					}
 				}
-		
+
 				&.active {
 					@extend %activerow;
 				}
@@ -155,13 +155,13 @@
 					color: $mid;
 					pointer-events: none;
 				}
-		
+
 				.token {
 					color: $mid;
 					font-family: $monospace;
 					font-weight: bold;
 				}
-				
+
 				.rating {
 					display: flex;
 					align-items: center;
@@ -170,79 +170,79 @@
 
 					.favorites.icon {
 						color: $theme-color;
-						padding: 0 $pad*0.25;
+						padding: 0 calc($pad*0.25);
 					}
 				}
 			}
 		}
 	}
-	
+
 	> .min {
 		display: none;
 		background: $darker;
-		
+
 		> .list > li:first-child {
 			@extend %title;
 			background: $darkest;
 			padding: 0;
 		}
 	}
-	
+
 	> .full {
 		display: flex;
 		flex-direction: column;
 		flex: 1;
 		min-height: 0; // fix for Chrome 72+
-		
+
 		// states:
 		&.no-search > .search {
 			display: none;
 		}
-		
+
 		&.no-list > .list {
 			display: none;
 		}
-		
+
 		> header {
-			
+
 			h1 {
 				color: $white;
 			}
-			
+
 			.icon {
 				@extend %link;
 				color: $dark;
 			}
 		}
-		
+
 		> .search {
-			padding: 0 $pad/2;
-			
+			padding: 0 calc($pad/2);
+
 			input {
 				background: none;
 				padding: 0;
-				
+
 				&:focus {
 					border-bottom: 1px dotted $darker;
 					margin-bottom: -1px;
 				}
 			}
-			
+
 			svg.icon {
 				width: 1em;
 				height: 1em;
 				margin-right: 0.375em;
-				
+
 				&.search:hover {
 					color: $white;
 					cursor: pointer;
 				}
-				
+
 				&.distractor {
 					display: none;
 				}
 			}
-			
+
 			&.wait {
 				svg.icon.search {
 					display: none;
@@ -252,7 +252,7 @@
 				}
 			}
 		}
-		
+
 		> .content {
 			flex: 1 1 0%;
 			overflow-y: auto;
@@ -262,19 +262,19 @@
 			overflow-wrap: break-word;
 			border-top: 2px solid $darkest;
 			line-height: 1.4em;
-			
+
 			h1 {
 				margin-top: 1.5em;
 				color: $white;
 			}
-			
+
 			code em {
 				font-style: normal;
 				background: $match-color;
 				color: $white;
 				margin-right: 1px;
 			}
-			
+
 			b {
 				color: $lighter;
 			}
@@ -288,11 +288,11 @@
 		> .hello {
 			flex: 0 0 0;
 			padding: 0;
-			border: $pad*0.25 solid $black;
+			border: calc($pad*0.25) solid $black;
 			background: $black;
 
 			.noad {
-				padding: $pad*0.75;
+				padding: calc($pad*0.75);
 				color: $mid;
 
 				b {
@@ -306,17 +306,17 @@
 #cheatsheet {
 	table {
 		width: 100%;
-		
+
 		th {
 			@extend %link;
 			text-align: left;
 			background: $darker;
-			padding: $pad/4 $pad/2;
+			padding: calc($pad/4) calc($pad/2);
 			color: $theme-color;
 		}
 
 		tr + tr > th {
-			border-top: $pad/2 solid $darkest;
+			border-top: calc($pad/2) solid $darkest;
 		}
 
 		td {

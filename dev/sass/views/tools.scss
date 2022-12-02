@@ -8,7 +8,7 @@
 		// this is a bit hacky, but lets us reuse the help icon everywhere.
 		position: absolute;
 		right: $pad*0.25;
-		transform: translate(0, -50%) translate(0, $input-height/2);
+		transform: translate(0, -50%) translate(0, calc($input-height/2));
 		padding: $pad;
 		color: rgba($doc-black, 0.25);
 		z-index: 10;
@@ -16,7 +16,7 @@
 			color: $doc-darkest !important;
 		}
 	}
-	
+
 	.inputtool {
 		display: none;
 		flex-direction: column;
@@ -27,18 +27,18 @@
 			flex: 0 $input-height;
 			background: $doc-white;
 			border-bottom: solid 1px $doc-lighter;
-			
+
 			> .CodeMirror {
 				padding: $pad 0 0 $pad;
 				height: 100%;
 				font-weight: bold;
 			}
 		}
-		
-		
+
+
 		.result {
 			flex: 1;
-			
+
 			textarea {
 				box-sizing: border-box;
 				padding: $pad 0 $pad $pad;
@@ -58,7 +58,7 @@
 			}
 		}
 	}
-	
+
 	.content {
 		flex: 1 1 0%; // fix for FireFox (vs just `1`)
 		min-height: 0; // fix for Chrome 72+
@@ -66,7 +66,7 @@
 		display: block;
 		padding: $pad;
 	}
-	
+
 	&.showinput {
 		.inputtool {
 			display: flex;
