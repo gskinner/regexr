@@ -475,7 +475,7 @@ export default class ExpressionLexer {
 		// Note: Chrome does weird things with \x & \u depending on a number of factors, we ignore this.
 		let i = token.i, match, profile = this._profile;
 		let sub = str.substr(i + 1), c = sub[0], val;
-		if (i + 1 === (closeIndex || str.length)) {
+		if (closeIndex === i + 1 || str.length === i + 1) {
 			token.error = {id: "esccharopen"};
 			return;
 		}
