@@ -502,7 +502,7 @@ export default class ExpressionLexer {
 			if ((i = sub.indexOf("\\E")) !== -1) { token.l += i + 2; e+=2; }
 			else { token.l += closeIndex - token.i - 1; }
 			token.value = str.substr(token.i+2, token.l-e);
-		} else if (profile.tokens.escunicodeub && this._modes.u && (match = sub.match(/^u\{(\d+)}/))) {
+		} else if (profile.tokens.escunicodeub && this._modes.u && (match = sub.match(/^u\{([\da-fA-F]+)}/))) {
 			// unicodeu: \u{0061}
 			token.type = "escunicodeub";
 			token.l += match[0].length;
