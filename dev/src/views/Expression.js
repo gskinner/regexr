@@ -223,7 +223,7 @@ export default class Expression extends EventDispatcher {
 		// catches pasting full expressions in.
 		// TODO: will need to be updated to work with other delimeters
 		this._deferUpdate();
-		let str = evt.text[0];
+		let str = evt.text[0].trim();
 		if (str.length < 3 || !str.match(/^\/.+[^\\]\/[a-z]*$/ig) || evt.from.ch !== 1 || evt.to.ch != 1 + evt.removed[0].length) {
 			// not pasting a full expression.
 			return;
