@@ -184,12 +184,14 @@ export default class ExpressionLexer {
 
 	addJSWarnings(token) {
 		if (token.error) { return; }
-		if ((token.type === "neglookbehind" || token.type === "poslookbehind") ||
-			(token.type === "sticky" || token.type === "unicode" || token.type == "dotall") ||
-			(token.type === "unicodecat" || token.type === "unicodescript") ||
-			(token.type === "namedgroup")
-			) {
-				token.error = {id: "jsfuture", warning:true};
+
+		// https://caniuse.com/js-regexp-lookbehind
+		// - lookbehind missing in iOS Safari (16.3) as of 2023-02-16
+		if ([
+			"neglookbehind",
+			"poslookbehind"
+		].includes(token.type)) {
+			token.error = { id: "jsfuture", warning: true };
 		}
 	}
 
