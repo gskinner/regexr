@@ -29,7 +29,13 @@ export default class Theme extends EventDispatcher {
 		this.targetNode = this._node = null;
 		this._dark = false;
 		this._initUI();
-		this.dark = !!app.prefs.read("dark");
+
+		if (app.prefs.read("dark") !== undefined) {
+			this.dark = app.prefs.read("dark");
+		} else {
+			// Use the browser preference if no setting was previously saved
+			this.dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+		}
 	}
 
 	set dark(val) {
@@ -40,7 +46,7 @@ export default class Theme extends EventDispatcher {
 		$.toggleClass(this.themeBtn, "selected", val);
 		app.prefs.write("dark", val);
 	}
-	
+
 	get dark() {
 		return this._dark;
 	}
