@@ -30,7 +30,8 @@ try {
 
 $pattern = 'null';
 $result = [];
-$success = preg_match("/([a-z0-9]+)\$/", $_SERVER['REQUEST_URI'], $result);
+$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+$success = preg_match("/([a-z0-9]+)\$/", $path, $result);
 if ($success == true) {
     $stringId = $result[0];
     $id = convertFromURL($stringId);
