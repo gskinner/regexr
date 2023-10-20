@@ -80,7 +80,20 @@ function elt(tag, content, className, style) {
 function eltP(tag, content, className, style) {
   var e = elt(tag, content, className, style)
   e.setAttribute("role", "presentation")
+  e.setAttribute("id", "presentation")
   return e
+}
+function copyExpression() {
+  var expressionText = ""
+  document.getElementById("presentation").childNodes.forEach((child) => {
+    expressionText += child.innerText
+  })
+  navigator.clipboard.writeText(expressionText)
+
+  document.getElementById("copyExpressionButton").innerText= "Copied !"
+  setTimeout(() => {
+    document.getElementById("copyExpressionButton").innerText= "Copy Expression"
+  }, 800);
 }
 
 var range
