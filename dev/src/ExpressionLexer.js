@@ -685,7 +685,7 @@ export default class ExpressionLexer {
 		let end = str.indexOf("}", i + 1);
 		token.l += end - i;
 		let arr = str.substring(i + 1, end).split(",");
-		token.min = parseInt(arr[0]);
+		token.min = parseInt(arr[0]) ?? 0;
 		token.max = (arr[1] === undefined) ? token.min : (arr[1] === "") ? -1 : parseInt(arr[1]);
 		if (token.max !== -1 && token.min > token.max) {
 			token.error = {id: "quantrev"};
