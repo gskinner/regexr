@@ -67,6 +67,4 @@ $closeScriptTag = '</script>';
 $scriptIdx = strrpos($indexFile, $openScriptTag) + strlen($openScriptTag);
 $endIndexFile = strrpos($indexFile, $closeScriptTag, $scriptIdx);
 
-ob_start('ob_gzhandler');
 echo(substr($indexFile, 0, $scriptIdx) . $initTemplate . substr($indexFile, $endIndexFile));
-ob_flush();
