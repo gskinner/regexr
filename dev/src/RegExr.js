@@ -65,8 +65,8 @@ export default class RegExr extends EventDispatcher {
 			params = {};
 		}
 		if (params.engine) { this.flavor.value = params.engine; }
-		if (params.expression) { this.expression.value = params.expression; }
-		if (params.text) { this.text.value = params.text; }
+		if (params.expression !== undefined) { this.expression.value = params.expression; }
+		if (params.text !== undefined) { this.text.value = params.text; }
 		if (params.tool) { this.tools.value = {id:params.tool, input:params.input}; }
 
 		window.onbeforeunload = (e) => this.unsaved ? "You have unsaved changes." : null;

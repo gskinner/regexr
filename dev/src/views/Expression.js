@@ -43,7 +43,7 @@ export default class Expression extends EventDispatcher {
 	}
 	
 	set value(expression) {
-		let regex = Utils.decomposeRegEx(expression || Expression.DEFAULT_EXPRESSION, this.delim);
+		let regex = Utils.decomposeRegEx(expression ?? Expression.DEFAULT_EXPRESSION, this.delim);
 		this.pattern = regex.source;
 		this.flags = regex.flags;
 	}
